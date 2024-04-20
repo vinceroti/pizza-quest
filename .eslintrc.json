@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
+  "plugins": ["simple-import-sort"],
+  "extends": ["next/core-web-vitals", "prettier", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "object-curly-newline": "off",
+    "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "ignorePattern": "className=\"[^\"]*\""
+      }
+    ],
+    "semi": ["error", "always"],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+// Main Colors
+$light-blue: #4d90fe;
+$medium-blue: #007acc;
+$dark-blue: #02142B;
+$dark-blue-start: rgb(36, 92, 222);
+$dark-blue-end: rgb(25, 25, 112);
+$red: #e91c00;
+$dark-red: #C51800;
+$extra-dark-red: #951200;
+$white: #fff;
+$black: #000;
+$dark-gray: #111111;
+$green: #00a107;
+$light-green: #17ff21;
+$dark-green: #19801E;
+$yellow: #ffc107;
+$opaque-text-color-light: rgba(255, 255, 255, 0.8);
+$opaque-text-color-medium: rgba(255, 255, 255, 0.5);
+$text-color: $white;
+$light-gray: #d4d4d4;
+$medium-gray: #9CABB6;
+$default-background: linear-gradient(to bottom, $dark-blue-start, $dark-blue-end 90%, lighten($dark-blue-end, 5%));
+
+// Divider Line
+$divider-line-background: $white;
+

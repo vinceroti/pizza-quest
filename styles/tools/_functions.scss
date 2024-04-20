@@ -1,0 +1,61 @@
+@use "sass:math";
+
+$em-base: 18px;
+
+@function em($pxval, $base: $em-base) {
+  @if not unitless($pxval) {
+    $pxval: strip-unit($pxval);
+  }
+  @if not unitless($base) {
+    $base: strip-unit($base);
+  }
+  @return (calc($pxval / $base)) * 1em;
+}
+
+@function rem($pxval, $base: $em-base) {
+  @if not unitless($pxval) {
+    $pxval: strip-unit($pxval);
+  }
+  @if not unitless($base) {
+    $base: strip-unit($base);
+  }
+  @return (calc($pxval / $base)) * 1rem;
+}
+
+@function font-size($key, $rem: false) {
+  @if map-has-key($font-sizes, $key) {
+    $val: map-get($font-sizes, $key);
+    @return $val;
+  }
+
+  @warn "Unknown `#{$key}` in $font-sizes.";
+}
+
+@function spacing($key) {
+  @if map-has-key($spacing, $key) {
+    @return map-get($spacing, $key);
+  }
+
+  @warn "Unknown `#{$key}` in $spacing.";
+  @return null;
+}
+
+@function z-index($key) {
+  @if map-has-key($zindex, $key) {
+    @return map-get($zindex, $key);
+  }
+
+  @warn "Unknown `#{$key}` in $zindex.";
+  @return null;
+}
+
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return math.div($number, $number * 0 + 1);
+  }
+
+  @return $number;
+}

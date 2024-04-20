@@ -1,0 +1,74 @@
+// primary font
+@mixin font-p400 {
+  font-family: 'Roboto-Regular', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin font-p400-italic {
+  font-family: 'Roboto-Regular-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin font-p500 {
+  font-family: 'Roboto-Medium', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@mixin font-p500-italic {
+  font-family: 'Roboto-Medium-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+@mixin font-p700 {
+  font-family: 'Roboto-Bold', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@mixin font-p700-italic {
+  font-family: 'Roboto-Bold-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+// secondary font
+@mixin font-s400 {
+  font-family: 'RobotoCondensed-Regular', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin font-s400-italic {
+  font-family: 'RobotoCondensed-Regular-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin font-s700 {
+  font-family: 'RobotoCondensed-Bold', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@mixin font-s700-italic {
+  font-family: 'RobotoCondensed-Bold-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+// mono font
+@mixin font-m400 {
+  font-family: 'RobotoMono-Regular', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin font-m400-italic {
+  font-family: 'RobotoMono-Regular-Italic', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}

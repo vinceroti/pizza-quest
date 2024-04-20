@@ -1,0 +1,28 @@
+@use 'sass:list';
+
+@mixin aspect-ratio($aspect-ratio) {
+  position: relative;
+  width: 100%;
+  aspect-ratio: $aspect-ratio;
+  overflow: hidden;
+  .img-container {
+    height: 100%;
+  }
+  img {
+    // Object fit compresses the image, this is a workaround
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.one-one-ratio {
+  @include aspect-ratio(list.slash(1, 1));
+}
+
+.six-nine-ratio {
+  @include aspect-ratio(list.slash(16, 9));
+}

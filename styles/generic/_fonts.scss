@@ -1,0 +1,47 @@
+.font-p400 {
+  @include font-p400;
+}
+
+.font-p400-italic {
+  @include font-p400-italic;
+}
+
+.font-p500 {
+  @include font-p500;
+}
+
+.font-p500-italic {
+  @include font-p500-italic ;
+}
+
+.font-p700 {
+  @include font-p700;
+}
+
+.font-p700-italic {
+  @include font-p700-italic;
+}
+
+.font-s400 {
+  @include font-s400;
+}
+
+.font-s400-italic {
+  @include font-s400-italic;
+}
+
+.font-s700 {
+  @include font-s700;
+}
+
+.font-s700-italic {
+  @include font-s700-italic;
+}
+
+.font-m400 {
+  @include font-m400;
+}
+
+.font-m400-italic {
+  @include font-m400-italic;
+}
