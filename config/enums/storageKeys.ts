@@ -1,4 +1,1 @@
-export enum StorageKeys {
-	Region = 'region',
-	Resorts = 'resorts',
-}
+export enum StorageKeys {}

@@ -9,8 +9,5 @@ const nextConfig = {
       @import '@/styles/settings/_fonts';
     `,
 	},
-	images: {
-		domains: ['api.weather.gov'],
-	},
 };
 module.exports = nextConfig;

@@ -7,7 +7,6 @@ import * as React from 'react';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import SnowfallComponent from '@/components/Snowfall';
 import theme from '~/theme';
 
 export default function RootLayout({
@@ -28,7 +27,6 @@ export default function RootLayout({
 						</ThemeProvider>
 					</AppRouterCacheProvider>
 					<Footer />
-					<SnowfallComponent />
 				</div>
 			</body>
 		</html>
