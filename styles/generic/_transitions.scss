@@ -28,7 +28,7 @@
 .fade-height-enter-active {
   opacity: 1;
   max-height: 100vh;
-  transition: all 0.2s;
+  transition: opacity 0.2s ease, max-height 0.2s ease;
 }
 
 .fade-height-exit {
@@ -39,7 +39,7 @@
 .fade-height-exit-active {
   opacity: 0;
   max-height: 0;
-  transition: all 0.2s;
+  transition: opacity 0.2s ease, max-height 0.2s ease;
 }
 
 .fade-enter {

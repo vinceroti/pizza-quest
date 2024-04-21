@@ -1,18 +1,19 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
+import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import type { IWeatherData } from '@/interfaces/IWeather';
 
 interface IProps {
-	name: string;
-	weatherData: IWeatherData;
+	data: Array<{ name: string; weatherData: IWeatherData }> | null;
 }
 
-export default function BestDay(props: Array<IProps>) {
+export default function BestDay({ data }: IProps) {
 	const [summary, setSummary] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const nodeRef = React.useRef(null);
 
 	const handleClick = async () => {
 		if (!summary) {
@@ -26,7 +27,7 @@ export default function BestDay(props: Array<IProps>) {
 		try {
 			const response = await fetch('/api/chatgpt', {
 				method: 'POST',
-				body: JSON.stringify(props),
+				body: JSON.stringify(data),
 			});
 
 			if (!response.ok) {
@@ -63,10 +64,11 @@ export default function BestDay(props: Array<IProps>) {
 			<CSSTransition
 				in={!!summary && !isLoading}
 				timeout={200}
+				nodeRef={nodeRef}
 				classNames="fade"
 				unmountOnExit
 			>
-				<div className="mt-4">
+				<div className="mt-4" ref={nodeRef}>
 					<h4>Best Day Summary</h4>
 					<div dangerouslySetInnerHTML={{ __html: summary }} />
 				</div>

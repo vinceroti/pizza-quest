@@ -1,7 +1,6 @@
-import '@/styles/pages/index.scss';
+'use client';
 
-import { getCookie, setCookie } from 'cookies-next';
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { setCookie } from 'cookies-next';
 import { useMemo, useState } from 'react';
 
 import BestDay from '@/components/BestDay';
@@ -13,11 +12,6 @@ import { StorageKeys } from '@/config/enums/storageKeys';
 import { MountainUrls } from '@/config/settings';
 import type { IWeatherData } from '@/interfaces/IWeather';
 
-const initialState = States.Washington;
-const initialResorts: Mountain[] = Object.values(
-	MountainUrls[initialState],
-).map(({ name }) => name);
-
 const getMountainData = (state: States) => {
 	return Promise.all(
 		MountainUrls[state].map(async ({ name, url }) => {
@@ -28,28 +22,15 @@ const getMountainData = (state: States) => {
 	);
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-	let savedRegion =
-		(getCookie(StorageKeys.Region, { req, res }) as States) || initialState;
-
-	let savedResorts: Mountain[] | string =
-		getCookie(StorageKeys.Resorts, { req, res }) || '[]';
-	savedResorts = JSON.parse(savedResorts);
-
-	if (!savedResorts.length) {
-		savedResorts = initialResorts;
-		savedRegion = initialState;
-	}
-
-	const ssrData = await getMountainData(savedRegion);
-	return { props: { ssrData, savedRegion, savedResorts } };
-};
-
-export default function Home({
+export default function HomePage({
 	savedRegion,
 	savedResorts,
 	ssrData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: {
+	savedRegion: States;
+	savedResorts: Mountain[];
+	ssrData: Array<{ name: Mountain; weatherData: IWeatherData; state: States }>;
+}) {
 	// global state store will solve this (but learning the old fansioned way for now)
 	const [region, setRegion] = useState<States>(savedRegion);
 	const [resorts, setResorts] = useState<Mountain[]>(savedResorts);
@@ -87,13 +68,19 @@ export default function Home({
 	return (
 		<div className="max-w-lg scrim w-full">
 			<div className="mt-4 mb-2 flex gap-2 items-start">
-				{Regions({ onRegionChange, region })}
-				{Resorts({ onResortsChange, resorts, region })}
+				<Regions region={region} onRegionChange={onRegionChange} />
+				<Resorts
+					region={region}
+					resorts={resorts}
+					onResortsChange={onResortsChange}
+				/>
 			</div>
 			<div className="mb-4">
-				{ListMountains({ data: filteredData, isLoading })}
+				<ListMountains data={filteredData} isLoading={isLoading} />
 			</div>
-			<div className="mb-4">{BestDay(filteredData)}</div>
+			<div className="mb-4">
+				<BestDay data={filteredData} />
+			</div>
 		</div>
 	);
 }
