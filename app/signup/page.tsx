@@ -4,17 +4,24 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import * as React from 'react';
-const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+import { signup } from '~/actions';
+
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 	event.preventDefault();
 	const data = new FormData(event.currentTarget);
-	console.log({
-		email: data.get('email'),
-		password: data.get('password'),
-	});
-	// Here you can add what to do with the data.
+	try {
+		const user = await signup(
+			data.get('email') as string,
+			data.get('password') as string,
+			data.get('username') as string,
+		);
+		console.log('User created:', user);
+	} catch (error) {
+		console.error(error);
+	}
 };
 
 export default function Signup() {
