@@ -15,20 +15,26 @@ export async function signup(
 	try {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const findUser = await prisma.user.findUnique({
+		const existingUser = await prisma.user.findFirst({
 			where: {
-				email,
+				OR: [{ email }, { username }],
 			},
 		});
 
-		if (findUser) {
-			throw new Error('Email already exists');
+		if (existingUser) {
+			if (existingUser.email === email) {
+				throw new Error('Email already exists. Please login instead.');
+			}
+
+			if (existingUser.username === username) {
+				throw new Error('Username already exists. Please try another.');
+			}
 		}
 
 		const user = await prisma.user.create({
 			data: {
 				email,
-				name: username,
+				username,
 				password: hashedPassword,
 			},
 		});
@@ -37,7 +43,7 @@ export async function signup(
 		return {
 			id: user.id,
 			email: user.email,
-			name: user.name,
+			username: user.username,
 		};
 	} catch (error) {
 		throw error;
