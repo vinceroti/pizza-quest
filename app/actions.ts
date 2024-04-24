@@ -12,11 +12,19 @@ export async function signup(
 ) {
 	// Optional: Add validation for email, password, and username
 
-	// Hash the password
-	const hashedPassword = await bcrypt.hash(password, 10);
-
 	try {
-		// Create the user in the database
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const findUser = await prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
+
+		if (findUser) {
+			throw new Error('Email already exists');
+		}
+
 		const user = await prisma.user.create({
 			data: {
 				email,
@@ -32,8 +40,7 @@ export async function signup(
 			name: user.name,
 		};
 	} catch (error) {
-		// Handle potential errors, such as duplicate email
-		throw new Error('An error occurred during signup. - ' + error.message);
+		throw error;
 	}
 }
 

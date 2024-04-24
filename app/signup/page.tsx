@@ -1,30 +1,39 @@
 'use client';
 
+import LoadingButton from '@mui/lab/LoadingButton';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
-import * as React from 'react';
+import { useState } from 'react';
 
 import { signup } from '~/actions';
 
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-	event.preventDefault();
-	const data = new FormData(event.currentTarget);
-	try {
-		const user = await signup(
-			data.get('email') as string,
-			data.get('password') as string,
-			data.get('username') as string,
-		);
-		console.log('User created:', user);
-	} catch (error) {
-		console.error(error);
-	}
-};
-
 export default function Signup() {
+	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	const clearError = () => setErrorMessage('');
+
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setLoading(true);
+		const data = new FormData(event.currentTarget);
+		try {
+			const user = await signup(
+				data.get('email') as string,
+				data.get('password') as string,
+				data.get('username') as string,
+			);
+			console.log('User created:', user);
+		} catch (error) {
+			setErrorMessage(error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<Container component="main" maxWidth="xs">
 			<Box
@@ -77,14 +86,20 @@ export default function Signup() {
 						id="confirmPassword"
 						autoComplete="new-password"
 					/>
-					<Button
+					<LoadingButton
+						loading={loading}
 						type="submit"
 						fullWidth
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
 						Register
-					</Button>
+					</LoadingButton>
+					{errorMessage && (
+						<Alert severity="error" variant="filled" onClose={clearError}>
+							{errorMessage}
+						</Alert>
+					)}
 					<p className="mt-2">
 						Already have an account?
 						<Link href="/" className="ml-2">
