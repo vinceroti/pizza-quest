@@ -14,6 +14,32 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## Installing PostgreSQL
+
+If you don't have PostgreSQL installed, you can install it using Homebrew:
+
+1. **Open your terminal**.
+
+2. **Check if Homebrew is installed**. If it's not, you can install it using the following command:
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+3. **Install PostgreSQL**:
+
+   ```bash
+   brew install postgresql
+   ```
+
+4. **Start the PostgreSQL service**:
+
+   ```bash
+   brew services start postgresql@14
+   ```
+
+Now, you should have `psql`, the PostgreSQL command line interface, installed on your machine.
+
 ## Creating a PostgreSQL Database
 
 Before proceeding with Prisma setup, ensure you have a PostgreSQL database. Here's how to create one:
@@ -48,21 +74,7 @@ Before proceeding with Prisma setup, ensure you have a PostgreSQL database. Here
 
 To set up a local database for development:
 
-1. **Install Prisma CLI**:
-
-   ```bash
-   yarn add prisma --dev
-   ```
-
-2. **Initialize Prisma** in your project:
-
-   ```bash
-   npx prisma init
-   ```
-
-   This command creates a new `prisma` directory with a `schema.prisma` file for your database schema, and a `.env` file for environment variables.
-
-3. **Configure your database connection** in the `.env` file:
+1. **Configure your database connection** in the `.env` file:
 
    ```plaintext
    DATABASE_URL="postgresql://username:password@localhost:5432/mydatabase"
@@ -70,9 +82,8 @@ To set up a local database for development:
 
    Replace `username`, `password`, and `mydatabase` with your PostgreSQL credentials and database name.
 
-4. **Create your database schema** in `schema.prisma`. Define your models which Prisma will use to create database tables.
 
-5. **Run Prisma Migrate** to create the database tables:
+3. **Run Prisma Migrate** to create the database tables:
 
    ```bash
    npx prisma migrate dev --name init
@@ -80,13 +91,8 @@ To set up a local database for development:
 
    This command creates the tables in your database based on the models defined in `schema.prisma`.
 
-6. **Install Prisma Client** to query the database:
 
-   ```bash
-   yarn add @prisma/client
-   ```
-
-7. **Generate Prisma Client**:
+4. **Generate Prisma Client**:
    ```bash
    npx prisma generate
    ```

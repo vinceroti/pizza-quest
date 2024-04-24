@@ -17,9 +17,9 @@ model User {
   id             Int      @id @default(autoincrement())
   name           String?
   email          String   @unique
-  emailVerified  DateTime?
+  email_verified  DateTime?
   image          String?
   password       String   // Added password field
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updated_at
 }
