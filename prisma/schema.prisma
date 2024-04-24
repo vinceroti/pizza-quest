@@ -20,6 +20,6 @@ model User {
   email_verified  DateTime?
   image          String?
   password       String   // Added password field
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
