@@ -8,24 +8,43 @@ import TextField from '@mui/material/TextField';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { emailValidation, passwordValidation } from '@/utils/validation';
 import { signup } from '~/actions';
 
 export default function Signup() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState(false);
-
-	const clearError = () => setErrorMessage('');
+	const [passwordError, setPasswordError] = useState('');
+	const [confirmPasswordError, setConfirmPasswordError] = useState('');
+	const [emailError, setEmailError] = useState('');
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setLoading(true);
+
+		setErrorMessage('');
 		const data = new FormData(event.currentTarget);
+		const email = data.get('email') as string;
+		const password = data.get('password') as string;
+		const confirmPassword = data.get('confirmPassword') as string;
+
+		const { isValid: isEmailValid, emailErrorMsg } = emailValidation(email);
+		const {
+			isValid: isPasswordValid,
+			passwordErrorMsg,
+			confirmPasswordErrorMsg,
+		} = passwordValidation(password, confirmPassword);
+
+		if (!isPasswordValid || !isEmailValid) {
+			setPasswordError(passwordErrorMsg);
+			setConfirmPasswordError(confirmPasswordErrorMsg);
+			setEmailError(emailErrorMsg);
+			return;
+		}
+
+		setLoading(true);
+
 		try {
-			const user = await signup(
-				data.get('email') as string,
-				data.get('password') as string,
-				data.get('username') as string,
-			);
+			const user = await signup(email, password, confirmPassword);
 			console.log('User created:', user);
 		} catch (error) {
 			setErrorMessage(error.message);
@@ -51,20 +70,13 @@ export default function Signup() {
 						margin="normal"
 						required
 						fullWidth
-						id="username"
-						label="Username"
-						name="username"
-						autoComplete="username"
-					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
 						id="email"
-						label="Email Address"
+						label="Email"
 						name="email"
 						autoComplete="email"
 						autoFocus
+						error={!!emailError}
+						helperText={emailError}
 					/>
 					<TextField
 						margin="normal"
@@ -75,6 +87,8 @@ export default function Signup() {
 						type="password"
 						id="password"
 						autoComplete="new-password"
+						error={!!passwordError}
+						helperText="Password must be at least 8 characters long."
 					/>
 					<TextField
 						margin="normal"
@@ -85,6 +99,8 @@ export default function Signup() {
 						type="password"
 						id="confirmPassword"
 						autoComplete="new-password"
+						error={!!confirmPasswordError}
+						helperText={confirmPasswordError}
 					/>
 					<LoadingButton
 						loading={loading}
@@ -96,7 +112,11 @@ export default function Signup() {
 						Register
 					</LoadingButton>
 					{errorMessage && (
-						<Alert severity="error" variant="filled" onClose={clearError}>
+						<Alert
+							severity="error"
+							variant="filled"
+							onClose={() => setErrorMessage('')}
+						>
 							{errorMessage}
 						</Alert>
 					)}

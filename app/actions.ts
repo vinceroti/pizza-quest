@@ -3,33 +3,44 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+import { generatePizzaUsername } from '@/utils';
+import { emailValidation, passwordValidation } from '@/utils/validation';
+
 const prisma = new PrismaClient();
 
 export async function signup(
 	email: string,
 	password: string,
-	username: string,
+	confirmPassword: string,
 ) {
-	// Optional: Add validation for email, password, and username
+	const { isValid: isPasswordValid, passwordErrorMsg } = passwordValidation(
+		password,
+		confirmPassword,
+	);
+	const { isValid: isEmailValid, emailErrorMsg } = emailValidation(email);
+
+	if (!isPasswordValid) {
+		throw new Error(passwordErrorMsg);
+	}
+
+	if (!isEmailValid) {
+		throw new Error(emailErrorMsg);
+	}
 
 	try {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const existingUser = await prisma.user.findFirst({
 			where: {
-				OR: [{ email }, { username }],
+				OR: [{ email }],
 			},
 		});
 
 		if (existingUser) {
-			if (existingUser.email === email) {
-				throw new Error('Email already exists. Please login instead.');
-			}
-
-			if (existingUser.username === username) {
-				throw new Error('Username already exists. Please try another.');
-			}
+			throw new Error('Email already exists. Please login instead.');
 		}
+
+		const username = await generatePizzaUsername();
 
 		const user = await prisma.user.create({
 			data: {
