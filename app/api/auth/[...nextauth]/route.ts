@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs'; // Import bcryptjs
-import NextAuth from 'next-auth';
+import NextAuth, { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-const handler = NextAuth({
+const prisma = new PrismaClient();
+
+export const authOptions: NextAuthOptions = {
 	providers: [
 		CredentialsProvider({
 			credentials: {
@@ -15,8 +17,6 @@ const handler = NextAuth({
 				password: { label: 'Password', type: 'password' },
 			},
 			authorize: async (credentials) => {
-				const prisma = new PrismaClient();
-
 				if (!credentials) {
 					return null;
 				}
@@ -27,18 +27,18 @@ const handler = NextAuth({
 					},
 				});
 
-				console.log('User:', credentials.email);
 				if (
 					user &&
 					(await bcrypt.compare(credentials.password, user.password))
 				) {
-					// Transform the user object to exclude sensitive and unnecessary fields
 					return {
-						id: user.id.toString(),
-						name: user.name || '', // Use an empty string if name is null
 						email: user.email,
-						emailVerified: user.emailVerified,
+						id: user.id,
+						username: user.username,
 						image: user.image,
+						emailVerified: user.email_verified,
+						createdAt: user.createdAt,
+						updatedAt: user.updatedAt,
 					};
 				} else {
 					return null;
@@ -46,22 +46,23 @@ const handler = NextAuth({
 			},
 		}),
 	],
-	pages: {
-		signIn: '/auth/signin', // A custom sign-in page
-		error: '/auth/error', // Error page
-	},
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ user, token }) {
 			if (user) {
-				token.id = user.id;
+				// Note that this if condition is needed
+				token.user = { ...user };
 			}
 			return token;
 		},
 		async session({ session, token }) {
-			session.user.id = token.id;
+			if (token?.user) {
+				// Note that this if condition is needed
+				session.user = token.user;
+			}
 			return session;
 		},
 	},
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

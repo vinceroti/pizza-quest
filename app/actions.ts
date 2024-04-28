@@ -2,6 +2,8 @@
 
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
 import { generatePizzaUsername } from '@/utils';
 import { emailValidation, passwordValidation } from '@/utils/validation';
@@ -42,7 +44,7 @@ export async function signup(
 
 		const username = await generatePizzaUsername();
 
-		const user = await prisma.user.create({
+		await prisma.user.create({
 			data: {
 				email,
 				username,
@@ -50,15 +52,16 @@ export async function signup(
 			},
 		});
 
-		// Return the created user (excluding the password)
-		return {
-			id: user.id,
-			email: user.email,
-			username: user.username,
-		};
+		// session created - redirect to dashboard
+		redirect('/dashboard');
 	} catch (error) {
 		throw error;
 	}
 }
 
-export default signup;
+export async function sessionRedirect() {
+	const session = await getServerSession();
+	if (session) {
+		redirect('/dashboard');
+	}
+}

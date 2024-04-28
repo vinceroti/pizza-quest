@@ -22,6 +22,9 @@ export default function Signup() {
 		event.preventDefault();
 
 		setErrorMessage('');
+		setPasswordError('');
+		setConfirmPasswordError('');
+
 		const data = new FormData(event.currentTarget);
 		const email = data.get('email') as string;
 		const password = data.get('password') as string;
@@ -44,8 +47,7 @@ export default function Signup() {
 		setLoading(true);
 
 		try {
-			const user = await signup(email, password, confirmPassword);
-			console.log('User created:', user);
+			await signup(email, password, confirmPassword);
 		} catch (error) {
 			setErrorMessage(error.message);
 		} finally {
@@ -88,7 +90,7 @@ export default function Signup() {
 						id="password"
 						autoComplete="new-password"
 						error={!!passwordError}
-						helperText="Password must be at least 8 characters long."
+						helperText={passwordError}
 					/>
 					<TextField
 						margin="normal"
