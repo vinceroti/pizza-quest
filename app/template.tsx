@@ -13,6 +13,7 @@ export default function Transition({
 			animate={{ y: 1, opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ ease: 'easeInOut', duration: 0.75 }}
+			className="w-full h-full flex flex-col items-center justify-center flex-1"
 		>
 			{children}
 		</motion.div>

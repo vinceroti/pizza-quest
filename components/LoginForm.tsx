@@ -50,7 +50,7 @@ export default function LoginForm() {
 				return;
 			}
 
-			router.push('/dashboard');
+			await router.push('/dashboard');
 		} catch (error) {
 			setErrorMessage(true);
 		} finally {
@@ -110,7 +110,7 @@ export default function LoginForm() {
 							variant="filled"
 							onClose={() => setErrorMessage(false)}
 						>
-							Password or email is incorrect. Please try again.
+							Password or email is incorrect.
 						</Alert>
 					)}
 					<Typography variant="body2" align="center" sx={{ mt: 2 }}>

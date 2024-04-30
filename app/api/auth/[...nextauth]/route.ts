@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
 						id: user.id,
 						username: user.username,
 						image: user.image,
-						emailVerified: user.email_verified,
+						emailVerified: user.emailVerified,
 						createdAt: user.createdAt,
 						updatedAt: user.updatedAt,
 					};
@@ -49,14 +49,12 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ user, token }) {
 			if (user) {
-				// Note that this if condition is needed
 				token.user = { ...user };
 			}
 			return token;
 		},
 		async session({ session, token }) {
 			if (token?.user) {
-				// Note that this if condition is needed
 				session.user = token.user;
 			}
 			return session;

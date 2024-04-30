@@ -1,7 +1,6 @@
 'use client';
 
 import {
-	Box,
 	Button,
 	FormControl,
 	FormGroup,
@@ -32,7 +31,7 @@ export default function Dashboard() {
 	};
 
 	return (
-		<Box sx={{ '& > :not(style)': { m: 1 } }}>
+		<div>
 			<h4>Upload and Rate Pizza Slices</h4>
 			<h6>Welcome, {session?.user?.username}</h6>
 			<FormControl
@@ -79,6 +78,6 @@ export default function Dashboard() {
 					Sign Out
 				</Button>
 			</FormControl>
-		</Box>
+		</div>
 	);
 }
