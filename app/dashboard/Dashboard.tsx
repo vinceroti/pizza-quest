@@ -10,7 +10,7 @@ import {
 	InputLabel,
 	Rating,
 } from '@mui/material';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 export default function Dashboard() {
@@ -68,14 +68,6 @@ export default function Dashboard() {
 				</FormGroup>
 				<Button type="submit" variant="contained" color="primary">
 					Submit
-				</Button>
-				<Button
-					onClick={() => signOut()}
-					variant="contained"
-					color="secondary"
-					sx={{ mt: 2 }}
-				>
-					Sign Out
 				</Button>
 			</FormControl>
 		</div>

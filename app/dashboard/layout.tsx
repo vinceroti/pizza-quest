@@ -7,8 +7,8 @@ export default function Layout({ children }) {
 	const { data: session } = useSession();
 
 	return (
-		<div className="w-full h-full flex-1 bg-blue-500 text-white rounded-lg shadow-lg">
-			<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700 rounded-t-lg">
+		<div className="w-full h-full flex-1 bg-blue-500 text-white rounded-md shadow-lg">
+			<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700 rounded-t-md">
 				<ul className="flex space-x-4 justify-end w-full">
 					<li>{session?.user?.username}</li>
 					<li>
