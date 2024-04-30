@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 
 import { emailValidation, passwordValidation } from '@/utils/validation';
@@ -17,6 +19,7 @@ export default function Signup() {
 	const [passwordError, setPasswordError] = useState('');
 	const [confirmPasswordError, setConfirmPasswordError] = useState('');
 	const [emailError, setEmailError] = useState('');
+	const router = useRouter();
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -48,6 +51,16 @@ export default function Signup() {
 
 		try {
 			await signup(email, password, confirmPassword);
+			const signInResponse = await signIn('credentials', {
+				email,
+				password,
+				redirect: false,
+			});
+			if (signInResponse?.error) {
+				setErrorMessage(signInResponse.error);
+				return;
+			}
+			router.push('/dashboard');
 		} catch (error) {
 			setErrorMessage(error.message);
 		} finally {

@@ -52,8 +52,14 @@ export async function signup(
 			},
 		});
 
-		// session created - redirect to dashboard
-		redirect('/dashboard');
+		return {
+			success: true,
+			user: {
+				email,
+				username,
+			},
+			message: 'User successfully created. Please log in.',
+		};
 	} catch (error) {
 		throw error;
 	}
@@ -63,5 +69,12 @@ export async function sessionRedirect() {
 	const session = await getServerSession();
 	if (session) {
 		redirect('/dashboard');
+	}
+}
+
+export async function protectedRedirect() {
+	const session = await getServerSession();
+	if (!session) {
+		redirect('/');
 	}
 }
