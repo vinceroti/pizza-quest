@@ -1,9 +1,18 @@
+'use client';
+
 import '@/styles/pages/index.scss';
 
 // FA Snowflake icon isn't getting taken from global config (TODO)
 import { faPizzaSlice } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSession } from 'next-auth/react';
+
 export default function Header() {
+	const { data: session } = useSession();
+
+	if (session) {
+		return null;
+	}
 	const textShadow = '1px 3px 3px rgba(0, 0, 0, 0.5)';
 
 	return (

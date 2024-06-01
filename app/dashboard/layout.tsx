@@ -7,10 +7,13 @@ export default function Layout({ children }) {
 	const { data: session } = useSession();
 
 	return (
-		<div className="w-full h-full flex-1 bg-blue-500 text-white rounded-md shadow-lg">
-			<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700 rounded-t-md">
+		<div className="w-full h-full flex-1 bg-gradient-to-b from-blue-500 to-transparent text-white">
+			<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700">
 				<ul className="flex space-x-4 justify-end w-full">
 					<li>{session?.user?.username}</li>
+					<li>
+						<Link href="/dashboard/new">Submit Pizza</Link>
+					</li>
 					<li>
 						<Link href="/settings">Settings</Link>
 					</li>
@@ -19,7 +22,7 @@ export default function Layout({ children }) {
 					</li>
 				</ul>
 			</nav>
-			<div className="p-1">{children}</div>
+			<div className="p-4">{children}</div>
 		</div>
 	);
 }
