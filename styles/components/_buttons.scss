@@ -1,0 +1,7 @@
+.button-link {
+  @include font-p700;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
+}

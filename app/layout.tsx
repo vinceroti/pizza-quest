@@ -5,9 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import * as React from 'react';
 
-import AppLoading from '@/components/AppLoading';
 import Footer from '@/components/Footer';
-import Header from '@/components/Header';
 import { Providers } from '~/providers';
 import theme from '~/theme';
 
@@ -21,14 +19,8 @@ export default function RootLayout({
 			<body>
 				<div className="app">
 					<Providers>
-						<Header />
 						<AppRouterCacheProvider>
-							<ThemeProvider theme={theme}>
-								<main className="flex grow flex-col items-center justify-between">
-									<AppLoading />
-									{children}
-								</main>
-							</ThemeProvider>
+							<ThemeProvider theme={theme}>{children}</ThemeProvider>
 						</AppRouterCacheProvider>
 						<Footer />
 					</Providers>
