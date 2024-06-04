@@ -9,7 +9,7 @@ export default function DashboardNav() {
 	const { data: session } = useSession();
 	return (
 		<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700">
-			<ul className="flex space-x-4 justify-end w-full">
+			<ul className="flex space-x-4 justify-end w-full max-width m-auto">
 				<li className="mr-auto">
 					<FontAwesomeIcon icon="user" /> {session?.user?.username}
 				</li>
