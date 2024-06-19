@@ -1,3 +1,5 @@
+import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
+
 function passwordValidation(password: string, confirmPassword: string) {
 	let isValid = true;
 	let passwordErrorMsg = '';
@@ -59,4 +61,45 @@ function emailValidation(email: string) {
 	};
 }
 
-export { emailValidation, passwordValidation };
+function pizzaValidation(data: PizzaSlice): boolean {
+	let isValid = true;
+	let message = '';
+
+	if (data.overall < 1 || data.overall > 5) {
+		isValid = false;
+		message = 'Overall rating must be between 1 and 5';
+	}
+
+	if (data.crustDough < 1 || data.crustDough > 5) {
+		isValid = false;
+		
+	}
+
+	if (data.sauce < 1 || data.sauce > 5) {
+		isValid = false;
+	}
+
+	if (data.toppingToPizzaRatio < 1 || data.toppingToPizzaRatio > 5) {
+		isValid = false;
+	}
+
+	if (data.creativity < 1 || data.creativity > 5) {
+		isValid = false;
+	}
+
+	if (data.authenticity < 1 || data.authenticity > 5) {
+		isValid = false;
+	}
+
+	if (data.pizzaPlace.length < 1) {
+		isValid = false;
+	}
+
+	if (data.userId < -1) {
+		isValid = false;
+	}
+
+	return { isValid, message };
+}
+
+export { emailValidation, passwordValidation, pizzaValidation };

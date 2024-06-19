@@ -1,6 +1,8 @@
 'use client';
 
+import LoadingButton from '@mui/lab/LoadingButton';
 import {
+	Alert,
 	Button,
 	FormControl,
 	FormGroup,
@@ -8,9 +10,15 @@ import {
 	Grid,
 	TextField,
 } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import { submitSlice } from '@/app/actions';
+import { pizzaValidation } from '@/utils/validation';
+
 export default function Dashboard() {
+	const { data: session } = useSession();
+
 	const [pizzaPlace, setPizzaPlace] = useState('');
 	const [overall, setOverall] = useState('');
 	const [crustDough, setCrustDough] = useState('');
@@ -19,11 +27,46 @@ export default function Dashboard() {
 	const [creativity, setCreativity] = useState('');
 	const [authenticity, setAuthenticity] = useState('');
 	const [notes, setNotes] = useState('');
+	const [loading, setLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// handle form submission here
+
+		const data = {
+			pizzaPlace,
+			overall,
+			crustDough,
+			sauce,
+			toppingToPizzaRatio,
+			creativity,
+			authenticity,
+			notes,
+			userId: session?.user?.id,
+		};
+
+		const { isValid } = pizzaValidation(data);
+
+		if (!isValid) {
+			setErrorMessage('Invalid pizza slice data');
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			const sliceResponse = await submitSlice(data);
+			if (sliceResponse?.error) {
+				setErrorMessage(sliceResponse.error);
+				return;
+			}
+		} catch (error) {
+			setErrorMessage(error.message);
+		} finally {
+			setLoading(false);
+		}
 	};
+
 	return (
 		<div>
 			<h4>Upload and Rate Pizza Slices</h4>
@@ -126,9 +169,25 @@ export default function Dashboard() {
 						</Grid>
 					</Grid>
 				</FormGroup>
-				<Button type="submit" variant="contained" color="primary">
+				<LoadingButton
+					loading={loading}
+					type="submit"
+					fullWidth
+					variant="contained"
+					color="primary"
+					sx={{ mt: 3, mb: 2 }}
+				>
 					Submit
-				</Button>
+				</LoadingButton>
+				{errorMessage && (
+					<Alert
+						severity="error"
+						variant="filled"
+						onClose={() => setErrorMessage('')}
+					>
+						{errorMessage}
+					</Alert>
+				)}
 			</FormControl>
 		</div>
 	);
