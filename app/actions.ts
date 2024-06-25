@@ -1,9 +1,11 @@
 'use server';
 
 import { PrismaClient } from '@prisma/client';
+import AWS from 'aws-sdk';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
+import { v4 as uuidv4 } from 'uuid';
 
 import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { generatePizzaUsername } from '@/utils';
@@ -14,6 +16,13 @@ import {
 } from '@/utils/validation';
 
 const prisma = new PrismaClient();
+
+AWS.config.update({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+	region: process.env.AWS_REGION,
+});
+const s3 = new AWS.S3();
 
 export async function signup(
 	email: string,
@@ -83,14 +92,48 @@ export async function protectedRedirect() {
 		redirect('/');
 	}
 }
+
+async function uploadImageToS3(
+	imageBuffer: Buffer,
+	mimeType: string,
+): Promise<string> {
+	const imageId = uuidv4();
+	const params = {
+		Bucket: process.env.AWS_BUCKET_NAME!,
+		Key: `${imageId}.${mimeType.split('/')[1]}`, // Extracts file extension from mimeType
+		Body: imageBuffer,
+		ContentType: mimeType,
+		ACL: 'public-read', // Ensure this matches your bucket's policy
+	};
+
+	try {
+		const { Location } = await s3.upload(params).promise();
+		return Location; // URL of the uploaded image
+	} catch (error) {
+		console.error('Error uploading image to S3:', error);
+		throw new Error('Image upload failed');
+	}
+}
+
 export async function submitSlice(data: PizzaSlice) {
 	if (!pizzaValidation(data)) {
 		throw new Error('Validation failed: Missing or invalid fields.');
 	}
 
+	// Assuming `data.image` contains the base64-encoded image
+	// Convert base64 to Buffer for S3 upload
+	const imageBuffer = Buffer.from(data.image, 'base64');
+	const mimeType = 'image/png'; // This should be dynamically determined based on the actual image type
+
 	try {
+		// Upload image to S3 and get the URL
+		const imageUrl = await uploadImageToS3(imageBuffer, mimeType);
+
+		// Replace the image data with the URL
+		const newData = { ...data, image: imageUrl };
+
 		await prisma.pizzaSliceRating.create({
-			data,
+			data: newData,
 		});
 
 		return {

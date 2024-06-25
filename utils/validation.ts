@@ -63,16 +63,13 @@ function emailValidation(email: string) {
 
 function pizzaValidation(data: PizzaSlice): boolean {
 	let isValid = true;
-	let message = '';
 
 	if (data.overall < 1 || data.overall > 5) {
 		isValid = false;
-		message = 'Overall rating must be between 1 and 5';
 	}
 
 	if (data.crustDough < 1 || data.crustDough > 5) {
 		isValid = false;
-		
 	}
 
 	if (data.sauce < 1 || data.sauce > 5) {
@@ -99,7 +96,7 @@ function pizzaValidation(data: PizzaSlice): boolean {
 		isValid = false;
 	}
 
-	return { isValid, message };
+	return isValid;
 }
 
 export { emailValidation, passwordValidation, pizzaValidation };

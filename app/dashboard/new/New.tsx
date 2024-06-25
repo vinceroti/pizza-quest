@@ -29,9 +29,11 @@ export default function Dashboard() {
 	const [notes, setNotes] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setIsSubmitted(true);
 
 		const data = {
 			pizzaPlace,
@@ -45,7 +47,7 @@ export default function Dashboard() {
 			userId: session?.user?.id,
 		};
 
-		const { isValid } = pizzaValidation(data);
+		const isValid = pizzaValidation(data);
 
 		if (!isValid) {
 			setErrorMessage('Invalid pizza slice data');
@@ -67,6 +69,8 @@ export default function Dashboard() {
 		}
 	};
 
+	const showError = (fieldValue) => isSubmitted && fieldValue === '';
+
 	return (
 		<div>
 			<h4>Upload and Rate Pizza Slices</h4>
@@ -85,6 +89,9 @@ export default function Dashboard() {
 								onChange={(e) => setPizzaPlace(e.target.value)}
 								fullWidth
 								margin="normal"
+								error={showError(pizzaPlace)}
+								required
+								helperText="Name of the pizza place where the slice is from"
 							/>
 							<TextField
 								label="Overall"
@@ -94,6 +101,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(overall)}
+								required
+								helperText="Rate the overall pizza slice (1 - 5)"
 							/>
 							<TextField
 								label="Crust/Dough"
@@ -103,6 +113,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(crustDough)}
+								required
+								helperText="Rate the crust/dough (1 - 5)"
 							/>
 						</Grid>
 						<Grid item xs={6}>
@@ -114,6 +127,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(sauce)}
+								required
+								helperText="Rate the sauce (1 - 5)"
 							/>
 							<TextField
 								label="Topping to Pizza Ratio"
@@ -123,6 +139,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(toppingToPizzaRatio)}
+								required
+								helperText="Rate the topping to pizza ratio (1 - 5)"
 							/>
 							<TextField
 								label="Creativity"
@@ -132,6 +151,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(creativity)}
+								required
+								helperText="Rate the creativity (1 - 5)"
 							/>
 							<TextField
 								label="Authenticity"
@@ -141,6 +163,9 @@ export default function Dashboard() {
 								InputProps={{ inputProps: { min: 0, max: 5 } }}
 								fullWidth
 								margin="normal"
+								error={showError(authenticity)}
+								required
+								helperText="Rate how authentic the pizza slice is (1 - 5)"
 							/>
 						</Grid>
 						<Grid item xs={12}>

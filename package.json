@@ -22,6 +22,8 @@
     "@mui/material": "^5.15.14",
     "@mui/material-nextjs": "^5.15.11",
     "@prisma/client": "^5.12.1",
+    "@types/bcryptjs": "^2.4.6",
+    "aws-sdk": "^2.1645.0",
     "bcryptjs": "^2.4.3",
     "cookies-next": "^4.1.1",
     "framer-motion": "^11.1.7",
@@ -32,12 +34,14 @@
     "prisma": "^5.12.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-transition-group": "^4.4.5"
+    "react-transition-group": "^4.4.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.0.0",
     "autoprefixer": "^10",
