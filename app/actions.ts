@@ -100,14 +100,15 @@ async function uploadImageToS3(
 	const imageId = uuidv4();
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME!,
-		Key: `slices/${imageId}.${mimeType.split('/')[1]}`,
+		Key: imageId,
 		Body: imageBuffer,
 		ContentType: mimeType,
+		ACL: 'public-read',
 	};
 
 	try {
 		const { Location } = await s3.upload(params).promise();
-		return Location; // URL of the uploaded image
+		return Location;
 	} catch (error) {
 		console.error('Error uploading image to S3:', error);
 		throw new Error('Image upload failed');
@@ -125,11 +126,13 @@ export async function submitSlice(data: PizzaSlice) {
 		const image = data.image;
 
 		if (image) {
-			const imageBuffer = Buffer.from(image.data, 'base64');
+			const strippedImage = image.data.replace(
+				/^data:image\/[a-z]+;base64,/,
+				'',
+			);
+			const imageBuffer = Buffer.from(strippedImage, 'base64');
 			imageUrl = await uploadImageToS3(imageBuffer, image.type);
 		}
-
-		console.log('Image URL:', imageUrl);
 
 		const newData = { ...data, image: imageUrl };
 
@@ -144,5 +147,38 @@ export async function submitSlice(data: PizzaSlice) {
 	} catch (error) {
 		console.error('Error submitting pizza slice rating:', error);
 		throw new Error('Failed to submit pizza slice rating.');
+	}
+}
+
+/**
+ * Fetches all pizza slice ratings made by a specific user.
+ * @param userId The ID of the user whose pizza slice ratings to retrieve.
+ * @returns A list of pizza slice ratings made by the specified user.
+ */
+export async function getPersonalUserPizzaSliceData(userId: number) {
+	try {
+		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
+			where: {
+				userId: userId,
+			},
+		});
+		return pizzaSliceRatings;
+	} catch (error) {
+		console.error('Error fetching pizza slice ratings for user:', error);
+		throw error;
+	}
+}
+
+/**
+ * Fetches all pizza slice ratings in the database.
+ * @returns A list of all pizza slice ratings.
+ */
+export async function getAllPizzaSliceData() {
+	try {
+		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany();
+		return pizzaSliceRatings;
+	} catch (error) {
+		console.error('Error fetching all pizza slice ratings:', error);
+		throw error;
 	}
 }

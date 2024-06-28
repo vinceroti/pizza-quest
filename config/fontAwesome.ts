@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config, library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import {
+	faCircleNotch,
 	faImage,
 	faPizzaSlice,
 	faUser,
@@ -11,4 +12,11 @@ import {
 
 config.autoAddCss = false;
 
-library.add(faUser, faCircleCheck, faXmark, faImage, faPizzaSlice);
+library.add(
+	faUser,
+	faCircleCheck,
+	faXmark,
+	faImage,
+	faPizzaSlice,
+	faCircleNotch,
+);
