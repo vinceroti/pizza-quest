@@ -100,10 +100,9 @@ async function uploadImageToS3(
 	const imageId = uuidv4();
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME!,
-		Key: `${imageId}.${mimeType.split('/')[1]}`, // Extracts file extension from mimeType
+		Key: `slices/${imageId}.${mimeType.split('/')[1]}`,
 		Body: imageBuffer,
 		ContentType: mimeType,
-		ACL: 'public-read', // Ensure this matches your bucket's policy
 	};
 
 	try {
@@ -120,16 +119,18 @@ export async function submitSlice(data: PizzaSlice) {
 		throw new Error('Validation failed: Missing or invalid fields.');
 	}
 
-	// Assuming `data.image` contains the base64-encoded image
-	// Convert base64 to Buffer for S3 upload
-	const imageBuffer = Buffer.from(data.image, 'base64');
-	const mimeType = 'image/png'; // This should be dynamically determined based on the actual image type
+	let imageUrl = null;
 
 	try {
-		// Upload image to S3 and get the URL
-		const imageUrl = await uploadImageToS3(imageBuffer, mimeType);
+		const image = data.image;
 
-		// Replace the image data with the URL
+		if (image) {
+			const imageBuffer = Buffer.from(image.data, 'base64');
+			imageUrl = await uploadImageToS3(imageBuffer, image.type);
+		}
+
+		console.log('Image URL:', imageUrl);
+
 		const newData = { ...data, image: imageUrl };
 
 		await prisma.pizzaSliceRating.create({

@@ -1,15 +1,19 @@
 'use client';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
 	Alert,
+	Box,
 	Button,
 	FormControl,
 	FormGroup,
-	FormLabel,
 	Grid,
+	Rating,
 	TextField,
+	Typography,
 } from '@mui/material';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -20,20 +24,37 @@ export default function Dashboard() {
 	const { data: session } = useSession();
 
 	const [pizzaPlace, setPizzaPlace] = useState('');
-	const [overall, setOverall] = useState('');
-	const [crustDough, setCrustDough] = useState('');
-	const [sauce, setSauce] = useState('');
-	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState('');
-	const [creativity, setCreativity] = useState('');
-	const [authenticity, setAuthenticity] = useState('');
+	const [overall, setOverall] = useState(2.5);
+	const [crustDough, setCrustDough] = useState(2.5);
+	const [sauce, setSauce] = useState(2.5);
+	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState(2.5);
+	const [creativity, setCreativity] = useState(2.5);
+	const [authenticity, setAuthenticity] = useState(2.5);
 	const [notes, setNotes] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [file, setFile] = useState<File | null>(null);
+	const [success, setSuccess] = useState(false);
+
+	const PizzaIcon = () => (
+		<FontAwesomeIcon icon="pizza-slice" className="m-0.5" />
+	);
+
+	const toBase64 = (file: File) =>
+		new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = (error) => reject(error);
+		});
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setIsSubmitted(true);
+		setErrorMessage('');
+
+		const fileBase64 = file ? await toBase64(file) : null;
 
 		const data = {
 			pizzaPlace,
@@ -44,6 +65,7 @@ export default function Dashboard() {
 			creativity,
 			authenticity,
 			notes,
+			image: { type: file?.type, data: fileBase64 },
 			userId: session?.user?.id,
 		};
 
@@ -62,6 +84,7 @@ export default function Dashboard() {
 				setErrorMessage(sliceResponse.error);
 				return;
 			}
+			setSuccess(true);
 		} catch (error) {
 			setErrorMessage(error.message);
 		} finally {
@@ -69,151 +92,213 @@ export default function Dashboard() {
 		}
 	};
 
+	const handleFileChange = (event) => {
+		const file = event.target.files[0];
+		if (file) {
+			setFile(file);
+		}
+	};
+
 	const showError = (fieldValue) => isSubmitted && fieldValue === '';
 
 	return (
 		<div>
-			<h4>Upload and Rate Pizza Slices</h4>
-			<FormControl
-				component="form"
-				onSubmit={handleSubmit}
-				sx={{ width: '100%' }}
-			>
-				<FormGroup>
-					<FormLabel component="legend">Rate your Pizza Slice</FormLabel>
-					<Grid container spacing={2}>
-						<Grid item xs={6}>
-							<TextField
-								label="Pizza Place"
-								value={pizzaPlace}
-								onChange={(e) => setPizzaPlace(e.target.value)}
-								fullWidth
-								margin="normal"
-								error={showError(pizzaPlace)}
-								required
-								helperText="Name of the pizza place where the slice is from"
-							/>
-							<TextField
-								label="Overall"
-								value={overall}
-								onChange={(e) => setOverall(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(overall)}
-								required
-								helperText="Rate the overall pizza slice (1 - 5)"
-							/>
-							<TextField
-								label="Crust/Dough"
-								value={crustDough}
-								onChange={(e) => setCrustDough(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(crustDough)}
-								required
-								helperText="Rate the crust/dough (1 - 5)"
-							/>
-						</Grid>
-						<Grid item xs={6}>
-							<TextField
-								label="Sauce"
-								value={sauce}
-								onChange={(e) => setSauce(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(sauce)}
-								required
-								helperText="Rate the sauce (1 - 5)"
-							/>
-							<TextField
-								label="Topping to Pizza Ratio"
-								value={toppingToPizzaRatio}
-								onChange={(e) => setToppingToPizzaRatio(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(toppingToPizzaRatio)}
-								required
-								helperText="Rate the topping to pizza ratio (1 - 5)"
-							/>
-							<TextField
-								label="Creativity"
-								value={creativity}
-								onChange={(e) => setCreativity(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(creativity)}
-								required
-								helperText="Rate the creativity (1 - 5)"
-							/>
-							<TextField
-								label="Authenticity"
-								value={authenticity}
-								onChange={(e) => setAuthenticity(e.target.value)}
-								type="number"
-								InputProps={{ inputProps: { min: 0, max: 5 } }}
-								fullWidth
-								margin="normal"
-								error={showError(authenticity)}
-								required
-								helperText="Rate how authentic the pizza slice is (1 - 5)"
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<input
-								accept="image/*"
-								id="contained-button-file"
-								type="file"
-								style={{ display: 'none' }}
-							/>
-							<label htmlFor="contained-button-file">
-								<Button variant="contained" component="span">
-									Upload Pizza Slice Image
-								</Button>
-							</label>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								label="Notes"
-								value={notes}
-								onChange={(e) => setNotes(e.target.value)}
-								multiline
-								margin="normal"
-								fullWidth
-								rows={2}
-							/>
-						</Grid>
-					</Grid>
-				</FormGroup>
-				<LoadingButton
-					loading={loading}
-					type="submit"
-					fullWidth
-					variant="contained"
-					color="primary"
-					sx={{ mt: 3, mb: 2 }}
+			<h4 className="mb-5">Upload and Rate Pizza Slices</h4>
+			{success ? (
+				<div className="mt-20">
+					<h4>Success!</h4>
+					<FontAwesomeIcon
+						icon={{ prefix: 'far', iconName: 'circle-check' }}
+						className="light-green mb-5 mt-3"
+						size="4x"
+					/>
+					<p>Your pizza slice rating has been submitted successfully.</p>
+				</div>
+			) : (
+				<FormControl
+					component="form"
+					onSubmit={handleSubmit}
+					sx={{ width: '100%' }}
 				>
-					Submit
-				</LoadingButton>
-				{errorMessage && (
-					<Alert
-						severity="error"
-						variant="filled"
-						onClose={() => setErrorMessage('')}
+					<FormGroup>
+						<TextField
+							label="Pizza Place"
+							value={pizzaPlace}
+							onChange={(e) => setPizzaPlace(e.target.value)}
+							fullWidth
+							margin="normal"
+							error={showError(pizzaPlace)}
+							required
+							sx={{
+								mb: 1,
+								mt: 1,
+								marginRight: 'auto',
+								marginLeft: 'auto',
+								maxWidth: 400,
+							}}
+							helperText="Name of the pizza place where the slice is from"
+						/>
+						<Grid container spacing={2}>
+							<Grid item xs={6}>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">Overall Rating</Typography>
+									<Rating
+										name="overall-rating"
+										value={overall}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setOverall(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">Crust/Dough Rating</Typography>
+									<Rating
+										name="crust-dough-rating"
+										value={crustDough}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setCrustDough(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">Authenticity</Typography>
+									<Rating
+										name="authenticity"
+										value={authenticity}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setAuthenticity(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+							</Grid>
+							<Grid item xs={6}>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">Sauce Rating</Typography>
+									<Rating
+										name="sauce-rating"
+										value={sauce}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setSauce(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">
+										Topping to Pizza Ratio
+									</Typography>
+									<Rating
+										name="topping-to-pizza-ratio"
+										value={toppingToPizzaRatio}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setToppingToPizzaRatio(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+								<Box mb={2} mt={2}>
+									<Typography component="legend">Creativity</Typography>
+									<Rating
+										name="creativity"
+										value={creativity}
+										precision={0.5}
+										onChange={(event, newValue) => {
+											setCreativity(newValue);
+										}}
+										icon={<PizzaIcon />}
+										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+									/>
+								</Box>
+							</Grid>
+							<Grid item xs={12}>
+								<div className="mb-3 flex justify-center">
+									<div className="image-upload-container m-auto relative flex">
+										{file && (
+											<>
+												<Image
+													src={URL.createObjectURL(file)}
+													alt="Pizza Slice"
+													width={208}
+													height={117}
+													className="rounded-lg"
+												/>
+												<button
+													className="delete-image-button absolute top-0 right-0 bg-black bg-opacity-50 button-link p-2.5 rounded-bl-lg rounded-tr-lg flex items-center justify-center hover:bg-opacity-70 ease-in-out transition"
+													onClick={() => setFile(null)}
+												>
+													<FontAwesomeIcon icon="xmark" size="xl" />
+												</button>
+											</>
+										)}
+									</div>
+								</div>
+								<input
+									accept="image/*"
+									id="contained-button-file"
+									type="file"
+									className="hidden"
+									onChange={handleFileChange}
+								/>
+								<label htmlFor="contained-button-file">
+									<Button variant="contained" component="span">
+										<FontAwesomeIcon icon="image" className="mr-1" />
+										{file ? file.name : 'Upload Image'}
+									</Button>
+								</label>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="Notes"
+									value={notes}
+									onChange={(e) => setNotes(e.target.value)}
+									multiline
+									margin="normal"
+									fullWidth
+									rows={2}
+								/>
+							</Grid>
+						</Grid>
+					</FormGroup>
+					<LoadingButton
+						loading={loading}
+						type="submit"
+						fullWidth
+						variant="contained"
+						color="primary"
+						sx={{
+							mt: 3,
+							mb: 2,
+							maxWidth: 400,
+							marginLeft: 'auto',
+							marginRight: 'auto',
+						}}
 					>
-						{errorMessage}
-					</Alert>
-				)}
-			</FormControl>
+						Submit
+					</LoadingButton>
+					{errorMessage && (
+						<Alert
+							severity="error"
+							variant="filled"
+							onClose={() => setErrorMessage('')}
+						>
+							{errorMessage}
+						</Alert>
+					)}
+				</FormControl>
+			)}
 		</div>
 	);
 }

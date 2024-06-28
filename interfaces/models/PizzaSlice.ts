@@ -7,6 +7,6 @@ export interface PizzaSlice {
 	creativity: number;
 	authenticity: number;
 	notes?: string;
-	image?: string;
+	image?: { type: string; data: string };
 	userId: number;
 }

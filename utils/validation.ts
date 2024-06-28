@@ -96,6 +96,10 @@ function pizzaValidation(data: PizzaSlice): boolean {
 		isValid = false;
 	}
 
+	if (!data.image?.type || !data.image?.data) {
+		isValid = false;
+	}
+
 	return isValid;
 }
 
