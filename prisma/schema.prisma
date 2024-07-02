@@ -14,52 +14,63 @@ datasource db {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  username       String   @unique
-  email          String   @unique
-  emailVerified  DateTime?
-  image          String?
-  password       String   // Added password field
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  pizzaRatings   PizzaSliceRating[]
+  id            Int                @id @default(autoincrement())
+  username      String             @unique
+  email         String             @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  pizzaRatings  PizzaSliceRating[]
+  Comment       Comment[]
+  Like          Like[]
 }
 
+
 model PizzaSliceRating {
-  id                    Int      @id @default(autoincrement())
-  pizzaPlace            String
-  overall               Float
-  crustDough            Float
-  sauce                 Float
-  toppingToPizzaRatio   Float
-  creativity            Float
-  authenticity          Float
-  notes                 String?
-  image                 String?   // URL to s3 bucket image
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  userId                Int
-  user                  User      @relation(fields: [userId], references: [id])
-  comments              Comment[]
-  likes                 Like[]
+  id                  Int       @id @default(autoincrement())
+  pizzaPlaceId        String
+  pizzaPlace          PizzaPlace @relation(fields: [pizzaPlaceId], references: [id])
+  overall             Float
+  crustDough          Float
+  sauce               Float
+  toppingToPizzaRatio Float
+  creativity          Float
+  authenticity        Float
+  notes               String?
+  image               String? // URL to s3 bucket image
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  userId              Int
+  user                User      @relation(fields: [userId], references: [id])
+  comments            Comment[]
+  likes               Like[]
+}
+
+model PizzaPlace {
+  id                  String   @id
+  description         String
+  mainText            String
+  secondaryText       String
+  pizzaSliceRatings   PizzaSliceRating[]
 }
 
 model Comment {
-  id                 Int               @id @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   text               String
-  createdAt          DateTime          @default(now())
+  createdAt          DateTime         @default(now())
   pizzaSliceRatingId Int
-  pizzaSliceRating   PizzaSliceRating  @relation(fields: [pizzaSliceRatingId], references: [id])
+  pizzaSliceRating   PizzaSliceRating @relation(fields: [pizzaSliceRatingId], references: [id])
   userId             Int
-  user               User              @relation(fields: [userId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
 }
 
 model Like {
-  id                 Int               @id @default(autoincrement())
-  createdAt          DateTime          @default(now())
+  id                 Int              @id @default(autoincrement())
+  createdAt          DateTime         @default(now())
   pizzaSliceRatingId Int
-  pizzaSliceRating   PizzaSliceRating  @relation(fields: [pizzaSliceRatingId], references: [id])
+  pizzaSliceRating   PizzaSliceRating @relation(fields: [pizzaSliceRatingId], references: [id])
   userId             Int
-  user               User              @relation(fields: [userId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
 }
-

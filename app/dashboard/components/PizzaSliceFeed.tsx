@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
 import { PizzaSliceRating } from '@prisma/client';
 import { useEffect, useState } from 'react';
 
@@ -65,10 +64,8 @@ export default function PizzaSliceFeed() {
 									alt="Pizza image"
 								/>
 								<CardContent>
-									<Typography variant="h5" component="div">
-										{slice.pizzaPlace}
-									</Typography>
-									<Typography variant="body2" color="text.secondary">
+									<h5>{slice.pizzaPlace.mainText}</h5>
+									<div>
 										Overall: {slice.overall}
 										<br />
 										Crust/Dough: {slice.crustDough}
@@ -82,7 +79,7 @@ export default function PizzaSliceFeed() {
 										Authenticity: {slice.authenticity}
 										<br />
 										Notes: {slice.notes}
-									</Typography>
+									</div>
 								</CardContent>
 							</Card>
 						))}

@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { v4 as uuidv4 } from 'uuid';
 
+import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
 import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { generatePizzaUsername } from '@/utils';
 import {
@@ -134,7 +135,30 @@ export async function submitSlice(data: PizzaSlice) {
 			imageUrl = await uploadImageToS3(imageBuffer, image.type);
 		}
 
-		const newData = { ...data, image: imageUrl };
+		// Check if the pizza place already exists
+		let pizzaPlace = await prisma.pizzaPlace.findUnique({
+			where: { id: data.pizzaPlace.place_id },
+		});
+
+		// If the pizza place doesn't exist, create a new one
+		if (!pizzaPlace) {
+			pizzaPlace = await prisma.pizzaPlace.create({
+				data: {
+					id: data.pizzaPlace.place_id,
+					description: data.pizzaPlace.description,
+					mainText: data.pizzaPlace.structured_formatting.main_text,
+					secondaryText: data.pizzaPlace.structured_formatting.secondary_text,
+				},
+			});
+		}
+
+		const newData = {
+			...data,
+			pizzaPlaceId: pizzaPlace.id,
+			image: imageUrl,
+		};
+
+		delete newData.pizzaPlace;
 
 		await prisma.pizzaSliceRating.create({
 			data: newData,
@@ -170,15 +194,35 @@ export async function getPersonalUserPizzaSliceData(userId: number) {
 }
 
 /**
- * Fetches all pizza slice ratings in the database.
- * @returns A list of all pizza slice ratings.
+ * Fetches all pizza slice ratings in the database along with their associated pizza place data.
+ * @returns A list of all pizza slice ratings with pizza place data.
  */
 export async function getAllPizzaSliceData() {
 	try {
-		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany();
+		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
+			include: {
+				pizzaPlace: true, // Include the related pizza place data
+			},
+		});
 		return pizzaSliceRatings;
 	} catch (error) {
 		console.error('Error fetching all pizza slice ratings:', error);
+		throw error;
+	}
+}
+
+export async function searchPizzaPlaces(query: string) {
+	try {
+		const response = await fetch(
+			// eslint-disable-next-line max-len
+			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&components=country:us&key=${process.env.GOOGLE_PLACES_API_KEY}`,
+		);
+		const data = await response.json();
+		return data.predictions.filter((prediction: GooglePrediction) =>
+			prediction.types?.includes('restaurant'),
+		);
+	} catch (error) {
+		console.error('Error fetching data from Google Places API', error);
 		throw error;
 	}
 }

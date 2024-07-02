@@ -1,5 +1,7 @@
+import GooglePrediction from './GooglePrediction';
+
 export interface PizzaSlice {
-	pizzaPlace: string;
+	pizzaPlace: GooglePrediction;
 	overall: number;
 	crustDough: number;
 	sauce: number;

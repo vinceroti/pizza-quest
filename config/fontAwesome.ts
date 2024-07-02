@@ -6,6 +6,7 @@ import {
 	faCircleNotch,
 	faImage,
 	faPizzaSlice,
+	faTimes,
 	faUser,
 	faXmark,
 } from '@fortawesome/free-solid-svg-icons';
@@ -17,6 +18,7 @@ library.add(
 	faCircleCheck,
 	faXmark,
 	faImage,
+	faTimes,
 	faPizzaSlice,
 	faCircleNotch,
 );

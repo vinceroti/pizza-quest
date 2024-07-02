@@ -18,12 +18,15 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import { submitSlice } from '@/app/actions';
+import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
 import { pizzaValidation } from '@/utils/validation';
+
+import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
 
 export default function Dashboard() {
 	const { data: session } = useSession();
 
-	const [pizzaPlace, setPizzaPlace] = useState('');
+	const [pizzaPlace, setPizzaPlace] = useState<Prediction | null>(null);
 	const [overall, setOverall] = useState(2.5);
 	const [crustDough, setCrustDough] = useState(2.5);
 	const [sauce, setSauce] = useState(2.5);
@@ -33,7 +36,6 @@ export default function Dashboard() {
 	const [notes, setNotes] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
-	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [file, setFile] = useState<File | null>(null);
 	const [success, setSuccess] = useState(false);
 
@@ -51,7 +53,6 @@ export default function Dashboard() {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setIsSubmitted(true);
 		setErrorMessage('');
 
 		const fileBase64 = file ? await toBase64(file) : null;
@@ -99,11 +100,14 @@ export default function Dashboard() {
 		}
 	};
 
-	const showError = (fieldValue) => isSubmitted && fieldValue === '';
+	const handlePizzaPlaceChange = (value: GooglePrediction) => {
+		setPizzaPlace(value);
+		console.log(value);
+	};
 
 	return (
 		<div>
-			<h4 className="mb-5">Upload and Rate Pizza Slices</h4>
+			<h4 className="mb-3">Upload and Rate Pizza Slices</h4>
 			{success ? (
 				<div className="mt-20">
 					<h4>Success!</h4>
@@ -121,22 +125,8 @@ export default function Dashboard() {
 					sx={{ width: '100%' }}
 				>
 					<FormGroup>
-						<TextField
-							label="Pizza Place"
-							value={pizzaPlace}
-							onChange={(e) => setPizzaPlace(e.target.value)}
-							fullWidth
-							margin="normal"
-							error={showError(pizzaPlace)}
-							required
-							sx={{
-								mb: 1,
-								mt: 1,
-								marginRight: 'auto',
-								marginLeft: 'auto',
-								maxWidth: 400,
-							}}
-							helperText="Name of the pizza place where the slice is from"
+						<PizzaPlaceAutoComplete
+							handleInputChange={handlePizzaPlaceChange}
 						/>
 						<Grid container spacing={2}>
 							<Grid item xs={6}>
