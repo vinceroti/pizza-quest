@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 
 import { getAllPizzaSliceData } from '@/app/actions';
 
+import CommentSection from './CommentSection';
+
 const renderPizzaSlices = (rating: number) => {
 	const fullSlices = Math.floor(rating);
 	const hasHalfSlice = rating % 1 !== 0;
@@ -133,6 +135,10 @@ export default function PizzaSliceFeed() {
 										<h5 className="mt-2 mb-0">{slice.pizzaPlace.mainText}</h5>
 										{slice.notes && <p className="mt-2">{slice.notes}</p>}
 									</div>
+									<CommentSection
+										comments={slice.comments}
+										pizzaSliceRatingId={slice.id}
+									/>
 								</CardContent>
 							</Card>
 						))}

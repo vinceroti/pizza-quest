@@ -238,3 +238,22 @@ export async function searchPizzaPlaces(query: string) {
 		throw error;
 	}
 }
+
+export async function addCommentToPizzaSliceRating(
+	pizzaSliceRatingId: number,
+	text: string,
+	userId: number,
+) {
+	try {
+		await prisma.comment.create({
+			data: {
+				pizzaSliceRatingId,
+				text,
+				userId,
+			},
+		});
+	} catch (error) {
+		console.error('Error adding comment:', error);
+		throw error;
+	}
+}
