@@ -201,7 +201,19 @@ export async function getAllPizzaSliceData() {
 	try {
 		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
 			include: {
-				pizzaPlace: true, // Include the related pizza place data
+				pizzaPlace: {
+					select: {
+						mainText: true, // Include only the main text of the pizza place
+					},
+				},
+				user: {
+					select: {
+						username: true, // Include only the user's name
+					},
+				},
+			},
+			orderBy: {
+				createdAt: 'desc', // Sort by createdAt in descending order
 			},
 		});
 		return pizzaSliceRatings;

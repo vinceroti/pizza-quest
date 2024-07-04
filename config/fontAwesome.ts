@@ -8,6 +8,7 @@ import {
 	faPizzaSlice,
 	faTimes,
 	faUser,
+	faUserCircle,
 	faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -16,6 +17,7 @@ config.autoAddCss = false;
 library.add(
 	faUser,
 	faCircleCheck,
+	faUserCircle,
 	faXmark,
 	faImage,
 	faTimes,

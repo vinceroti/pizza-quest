@@ -50,6 +50,7 @@ model PizzaSliceRating {
 
 model PizzaPlace {
   id                  String   @id
+  createdAt           DateTime @default(now())
   description         String
   mainText            String
   secondaryText       String
