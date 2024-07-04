@@ -61,46 +61,45 @@ function emailValidation(email: string) {
 	};
 }
 
-function pizzaValidation(data: PizzaSlice): boolean {
-	let isValid = true;
+function pizzaValidation(data: PizzaSlice) {
+	if (data.userId < -1) {
+		return 'User ID is required.';
+		// this should never happen
+	}
 
 	if (data.overall < 1 || data.overall > 5) {
-		isValid = false;
+		return 'Overall rating must be between 1 and 5 slices.';
 	}
 
 	if (data.crustDough < 1 || data.crustDough > 5) {
-		isValid = false;
+		return 'Crust/Dough rating must be between 1 and 5 slices.';
 	}
 
 	if (data.sauce < 1 || data.sauce > 5) {
-		isValid = false;
+		return 'Sauce rating must be between 1 and 5 slices.';
 	}
 
 	if (data.toppingToPizzaRatio < 1 || data.toppingToPizzaRatio > 5) {
-		isValid = false;
+		return 'Topping to Pizza Ratio rating must be between 1 and 5 slices.';
 	}
 
 	if (data.creativity < 1 || data.creativity > 5) {
-		isValid = false;
+		return 'Creativity rating must be between 1 and 5 slices.';
 	}
 
 	if (data.authenticity < 1 || data.authenticity > 5) {
-		isValid = false;
+		return 'Authenticity rating must be between 1 and 5 slices.';
 	}
 
 	if (data.pizzaPlace.length < 1) {
-		isValid = false;
-	}
-
-	if (data.userId < -1) {
-		isValid = false;
+		return 'Pizza place name is required.';
 	}
 
 	if (!data.image?.type || !data.image?.data) {
-		isValid = false;
+		return 'Image is required.';
 	}
 
-	return isValid;
+	return '';
 }
 
 export { emailValidation, passwordValidation, pizzaValidation };

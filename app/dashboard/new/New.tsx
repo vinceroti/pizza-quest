@@ -27,12 +27,12 @@ export default function Dashboard() {
 	const { data: session } = useSession();
 
 	const [pizzaPlace, setPizzaPlace] = useState<Prediction | null>(null);
-	const [overall, setOverall] = useState(2.5);
-	const [crustDough, setCrustDough] = useState(2.5);
-	const [sauce, setSauce] = useState(2.5);
-	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState(2.5);
-	const [creativity, setCreativity] = useState(2.5);
-	const [authenticity, setAuthenticity] = useState(2.5);
+	const [overall, setOverall] = useState(0);
+	const [crustDough, setCrustDough] = useState(0);
+	const [sauce, setSauce] = useState(0);
+	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState(0);
+	const [creativity, setCreativity] = useState(0);
+	const [authenticity, setAuthenticity] = useState(0);
 	const [notes, setNotes] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
@@ -70,10 +70,10 @@ export default function Dashboard() {
 			userId: session?.user?.id,
 		};
 
-		const isValid = pizzaValidation(data);
+		const errorMsg = pizzaValidation(data);
 
-		if (!isValid) {
-			setErrorMessage('Invalid pizza slice data');
+		if (errorMsg) {
+			setErrorMessage(errorMsg);
 			return;
 		}
 
@@ -100,11 +100,6 @@ export default function Dashboard() {
 		}
 	};
 
-	const handlePizzaPlaceChange = (value: GooglePrediction) => {
-		setPizzaPlace(value);
-		console.log(value);
-	};
-
 	return (
 		<div>
 			<h4 className="mb-3">Upload and Rate Pizza Slices</h4>
@@ -126,7 +121,9 @@ export default function Dashboard() {
 				>
 					<FormGroup>
 						<PizzaPlaceAutoComplete
-							handleInputChange={handlePizzaPlaceChange}
+							handleInputChange={(value: GooglePrediction) =>
+								setPizzaPlace(value)
+							}
 						/>
 						<Grid container spacing={2}>
 							<Grid item xs={6}>
