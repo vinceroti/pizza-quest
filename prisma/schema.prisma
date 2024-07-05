@@ -63,6 +63,7 @@ model Comment {
   createdAt          DateTime         @default(now())
   pizzaSliceRatingId Int
   pizzaSliceRating   PizzaSliceRating @relation(fields: [pizzaSliceRatingId], references: [id])
+  username           String
   userId             Int
   user               User             @relation(fields: [userId], references: [id])
 }
@@ -72,6 +73,7 @@ model Like {
   createdAt          DateTime         @default(now())
   pizzaSliceRatingId Int
   pizzaSliceRating   PizzaSliceRating @relation(fields: [pizzaSliceRatingId], references: [id])
+  username           String
   userId             Int
   user               User             @relation(fields: [userId], references: [id])
 }

@@ -117,8 +117,9 @@ async function uploadImageToS3(
 }
 
 export async function submitSlice(data: PizzaSlice) {
-	if (!pizzaValidation(data)) {
-		throw new Error('Validation failed: Missing or invalid fields.');
+	const errorMsg = pizzaValidation(data);
+	if (errorMsg) {
+		throw new Error(errorMsg);
 	}
 
 	let imageUrl = null;
@@ -201,6 +202,7 @@ export async function getAllPizzaSliceData() {
 	try {
 		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
 			include: {
+				comments: true,
 				pizzaPlace: {
 					select: {
 						mainText: true, // Include only the main text of the pizza place
@@ -239,19 +241,32 @@ export async function searchPizzaPlaces(query: string) {
 	}
 }
 
-export async function addCommentToPizzaSliceRating(
-	pizzaSliceRatingId: number,
-	text: string,
-	userId: number,
-) {
+export async function addCommentToPizzaSliceRating({
+	pizzaSliceRatingId,
+	text,
+	userId,
+	username,
+}: {
+	pizzaSliceRatingId: number;
+	text: string;
+	userId: number;
+	username: string;
+}) {
 	try {
 		await prisma.comment.create({
 			data: {
 				pizzaSliceRatingId,
 				text,
 				userId,
+				username,
 			},
 		});
+		const comments = await prisma.comment.findMany({
+			where: {
+				pizzaSliceRatingId,
+			},
+		});
+		return comments;
 	} catch (error) {
 		console.error('Error adding comment:', error);
 		throw error;

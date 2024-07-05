@@ -96,11 +96,13 @@ export default function PizzaSliceFeed() {
 									padding: '8px',
 									maxWidth: '500px',
 									marginBottom: '8px',
+									width: '100%',
+									display: 'flex',
+									flexWrap: 'wrap',
 								}}
 								key={slice.id}
-								className="max-w-md mx-auto bg-white shadow-md overflow-hidden md:max-w-2xl"
 							>
-								<div className="flex items-center mb-3">
+								<div className="flex items-center mb-3 w-full">
 									<FontAwesomeIcon
 										icon="user-circle"
 										className="text-gray-500 mr-2"
@@ -128,6 +130,7 @@ export default function PizzaSliceFeed() {
 									sx={{
 										padding: '1rem 1rem .5rem',
 										':last-child': { padding: '1rem 1rem .5rem' },
+										width: '100%',
 									}}
 								>
 									<div className="text-left">

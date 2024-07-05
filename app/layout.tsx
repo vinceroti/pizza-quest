@@ -3,6 +3,7 @@ import '@/styles/pages/app.scss';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import NextTopLoader from 'nextjs-toploader';
 import * as React from 'react';
 
 import Footer from '@/components/Footer';
@@ -20,6 +21,7 @@ export default function RootLayout({
 				<div className="app">
 					<Providers>
 						<AppRouterCacheProvider>
+							<NextTopLoader color="#ffc107" showSpinner={false} />
 							<ThemeProvider theme={theme}>{children}</ThemeProvider>
 						</AppRouterCacheProvider>
 						<Footer />

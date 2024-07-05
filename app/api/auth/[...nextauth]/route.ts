@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs'; // Import bcryptjs
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
@@ -31,15 +30,7 @@ export const authOptions: NextAuthOptions = {
 					user &&
 					(await bcrypt.compare(credentials.password, user.password))
 				) {
-					return {
-						email: user.email,
-						id: user.id,
-						username: user.username,
-						image: user.image,
-						emailVerified: user.emailVerified,
-						createdAt: user.createdAt,
-						updatedAt: user.updatedAt,
-					};
+					return user;
 				} else {
 					return null;
 				}
@@ -53,7 +44,7 @@ export const authOptions: NextAuthOptions = {
 			}
 			return token;
 		},
-		async session({  session, token }) {
+		async session({ session, token }) {
 			if (token?.user) {
 				session.user = token.user;
 			}

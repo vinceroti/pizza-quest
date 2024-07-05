@@ -34,6 +34,7 @@ CREATE TABLE "PizzaSliceRating" (
 -- CreateTable
 CREATE TABLE "PizzaPlace" (
     "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "description" TEXT NOT NULL,
     "mainText" TEXT NOT NULL,
     "secondaryText" TEXT NOT NULL,
@@ -47,6 +48,7 @@ CREATE TABLE "Comment" (
     "text" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "pizzaSliceRatingId" INTEGER NOT NULL,
+    "username" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
@@ -57,6 +59,7 @@ CREATE TABLE "Like" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "pizzaSliceRatingId" INTEGER NOT NULL,
+    "username" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Like_pkey" PRIMARY KEY ("id")
