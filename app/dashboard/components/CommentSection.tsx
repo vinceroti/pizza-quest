@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Button, List, ListItem, ListItemText, TextField } from '@mui/material';
-import { Comment, User } from '@prisma/client';
+import { Comment } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
@@ -11,7 +11,6 @@ import React, { useState } from 'react';
 import { addCommentToPizzaSliceRating } from '@/app/actions';
 interface CommentSectionProps {
 	comments: Comment[];
-	user: User;
 	pizzaSliceRatingId: number;
 }
 

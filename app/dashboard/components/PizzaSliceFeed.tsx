@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { getAllPizzaSliceData } from '@/app/actions';
 
 import CommentSection from './CommentSection';
+import LikeSection from './LikeSection';
 
 const renderPizzaSlices = (rating: number) => {
 	const fullSlices = Math.floor(rating);
@@ -134,7 +135,13 @@ export default function PizzaSliceFeed() {
 									}}
 								>
 									<div className="text-left">
-										{renderPizzaSlices(slice.overall)}
+										<div className="flex items-center justify-between">
+											{renderPizzaSlices(slice.overall)}
+											<LikeSection
+												likes={slice.likes}
+												pizzaSliceRatingId={slice.id}
+											/>
+										</div>
 										<h5 className="mt-2 mb-0">{slice.pizzaPlace.mainText}</h5>
 										{slice.notes && <p className="mt-2">{slice.notes}</p>}
 									</div>

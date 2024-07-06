@@ -272,3 +272,32 @@ export async function addCommentToPizzaSliceRating({
 		throw error;
 	}
 }
+
+export async function addLikeToPizzaSliceRating({
+	pizzaSliceRatingId,
+	userId,
+	username,
+}: {
+	pizzaSliceRatingId: number;
+	userId: number;
+	username: string;
+}) {
+	try {
+		await prisma.like.create({
+			data: {
+				pizzaSliceRatingId,
+				userId,
+				username,
+			},
+		});
+		const likes = await prisma.like.findMany({
+			where: {
+				pizzaSliceRatingId,
+			},
+		});
+		return likes;
+	} catch (error) {
+		console.error('Error adding like:', error);
+		throw error;
+	}
+}
