@@ -195,13 +195,17 @@ export async function getPersonalUserPizzaSliceData(userId: number) {
 }
 
 /**
- * Fetches all pizza slice ratings in the database along with their associated pizza place data.
- * @returns A list of all pizza slice ratings with pizza place data.
+ * Fetches pizza slice ratings in the database for a specific user along with their associated pizza place data.
+ * If no user ID is provided, it fetches all pizza slice ratings.
+ * @param userId The ID of the user whose pizza slice ratings are to be fetched.
+ * @returns A list of pizza slice ratings with pizza place data.
  */
-export async function getAllPizzaSliceData() {
+export async function getAllPizzaSliceData(userId?: number) {
 	try {
 		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
+			where: userId ? { userId } : undefined, // Filter by userId if provided
 			include: {
+				likes: true,
 				comments: true,
 				pizzaPlace: {
 					select: {
@@ -215,16 +219,15 @@ export async function getAllPizzaSliceData() {
 				},
 			},
 			orderBy: {
-				createdAt: 'desc', // Sort by createdAt in descending order
+				createdAt: 'desc', // Order by creation date
 			},
 		});
 		return pizzaSliceRatings;
 	} catch (error) {
-		console.error('Error fetching all pizza slice ratings:', error);
+		console.error('Error fetching pizza slice ratings:', error);
 		throw error;
 	}
 }
-
 export async function searchPizzaPlaces(query: string) {
 	try {
 		const response = await fetch(
@@ -298,6 +301,32 @@ export async function addLikeToPizzaSliceRating({
 		return likes;
 	} catch (error) {
 		console.error('Error adding like:', error);
+		throw error;
+	}
+}
+
+export async function removeLikeFromPizzaSliceRating({
+	pizzaSliceRatingId,
+	userId,
+}: {
+	pizzaSliceRatingId: number;
+	userId: number;
+}) {
+	try {
+		await prisma.like.deleteMany({
+			where: {
+				pizzaSliceRatingId,
+				userId,
+			},
+		});
+		const likes = await prisma.like.findMany({
+			where: {
+				pizzaSliceRatingId,
+			},
+		});
+		return likes;
+	} catch (error) {
+		console.error('Error removing like:', error);
 		throw error;
 	}
 }

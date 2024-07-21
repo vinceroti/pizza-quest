@@ -4,9 +4,12 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Like } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { addLikeToPizzaSliceRating } from '@/app/actions';
+import {
+	addLikeToPizzaSliceRating,
+	removeLikeFromPizzaSliceRating,
+} from '@/app/actions';
 
 interface LikeSectionProps {
 	likes: Like[];
@@ -32,9 +35,19 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 	const { data: session } = useSession();
 
 	const [likeCount, setLikeCount] = useState<number>(likes?.length || 0);
+	const [hasLiked, setHasLiked] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (session) {
+			const userHasLiked = likes.some(
+				(like) => like.userId === session.user.id,
+			);
+			setHasLiked(userHasLiked);
+		}
+	}, [session, likes]);
 
 	const handleAddLike = async () => {
-		if (session) {
+		if (session && !hasLiked) {
 			try {
 				const updatedLikes = await addLikeToPizzaSliceRating({
 					userId: session.user.id,
@@ -42,19 +55,52 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 					pizzaSliceRatingId,
 				});
 				setLikeCount(updatedLikes.length);
+				setHasLiked(true);
 			} catch (error) {
+				setLikeCount((prevCount) => prevCount - 1);
+				setHasLiked(false);
 				console.error('Failed to add like:', error);
+			}
+		}
+	};
+
+	const handleRemoveLike = async () => {
+		if (session && hasLiked) {
+			try {
+				const updatedLikes = await removeLikeFromPizzaSliceRating({
+					userId: session.user.id,
+					pizzaSliceRatingId,
+				});
+				setLikeCount(updatedLikes.length);
+				setHasLiked(false);
+			} catch (error) {
+				setLikeCount((prevCount) => prevCount + 1);
+				setHasLiked(true);
+				console.error('Failed to remove like:', error);
 			}
 		}
 	};
 
 	const debouncedHandleAddLike = useCallback(debounce(handleAddLike, 300), [
 		session,
+		hasLiked,
 	]);
 
+	const debouncedHandleRemoveLike = useCallback(
+		debounce(handleRemoveLike, 300),
+		[session, hasLiked],
+	);
+
 	const handleIconClick = () => {
-		setLikeCount((prevCount) => prevCount + 1);
-		debouncedHandleAddLike();
+		if (hasLiked) {
+			setLikeCount((prevCount) => prevCount - 1);
+			setHasLiked(false);
+			debouncedHandleRemoveLike();
+		} else {
+			setLikeCount((prevCount) => prevCount + 1);
+			setHasLiked(true);
+			debouncedHandleAddLike();
+		}
 	};
 
 	return (
@@ -66,7 +112,8 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 				>
 					<FontAwesomeIcon
 						icon={faThumbsUp}
-						className="text-gray-500 mr-2"
+						// eslint-disable-next-line max-len
+						className={`mr-2 ${hasLiked ? 'text-blue-500' : 'text-gray-500 hover:text-blue-500'} transition-colors duration-200`}
 						size="xl"
 					/>
 				</button>

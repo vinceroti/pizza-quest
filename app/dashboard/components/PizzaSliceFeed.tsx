@@ -53,14 +53,23 @@ const renderPizzaSlices = (rating: number) => {
 	);
 };
 
-export default function PizzaSliceFeed() {
+export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 	const [loading, setLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [feed, setFeed] = useState<PizzaSliceRating[]>([]);
+	const [filter, setFilter] = useState<'all' | 'user'>('all');
 
 	async function getFeed() {
 		try {
-			const sliceResponse = await getAllPizzaSliceData();
+			setLoading(true);
+			let sliceResponse: PizzaSliceRating[] | undefined;
+
+			if (filter === 'all') {
+				sliceResponse = await getAllPizzaSliceData();
+			} else {
+				sliceResponse = await getAllPizzaSliceData(userId);
+			}
+
 			if (sliceResponse?.error) {
 				setErrorMessage(sliceResponse.error);
 				return;
@@ -75,10 +84,27 @@ export default function PizzaSliceFeed() {
 
 	useEffect(() => {
 		getFeed();
-	}, []);
+	}, [filter]);
 
 	return (
 		<div className="mt-4 space-y-4">
+			<h3 className="text-center">Welcome to the Pizza Sphere</h3>
+			<div className="text-center mb-">
+				<button
+					className={`button-link mr-2 ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+					onClick={() => setFilter('all')}
+					disabled={filter === 'all'}
+				>
+					All
+				</button>
+				<button
+					className={`button-link ${filter === 'user' ? 'opacity-50 cursor-not-allowed' : ''}`}
+					onClick={() => setFilter('user')}
+					disabled={filter === 'user'}
+				>
+					Self
+				</button>
+			</div>
 			{loading ? (
 				<FontAwesomeIcon
 					icon="circle-notch"
@@ -89,7 +115,9 @@ export default function PizzaSliceFeed() {
 				<div className="text-center">{errorMessage}</div>
 			) : (
 				<div>
-					<h3 className="text-center">Welcome to the Pizza Sphere</h3>
+					{feed.length === 0 && (
+						<div className="text-center mt-10">No pizza slices to show.</div>
+					)}
 					<div className="mt-10">
 						{feed.map((slice) => (
 							<Card
