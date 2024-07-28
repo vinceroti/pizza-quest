@@ -63,7 +63,6 @@ export default function Signup() {
 			router.push('/dashboard');
 		} catch (error) {
 			setErrorMessage(error.message);
-		} finally {
 			setLoading(false);
 		}
 	};

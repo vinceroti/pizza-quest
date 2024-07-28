@@ -14,6 +14,7 @@ import {
 	emailValidation,
 	passwordValidation,
 	pizzaValidation,
+	usernameValidation,
 } from '@/utils/validation';
 
 const prisma = new PrismaClient();
@@ -327,6 +328,58 @@ export async function removeLikeFromPizzaSliceRating({
 		return likes;
 	} catch (error) {
 		console.error('Error removing like:', error);
+		throw error;
+	}
+}
+
+export async function userSettingsChange({
+	userId,
+	email,
+	username,
+}: {
+	userId: number;
+	email: string;
+	username: string;
+}) {
+	const { isValid: isEmailValid, emailErrorMsg } = emailValidation(email);
+	const { isValid: isUsernameValid, usernameErrorMsg } =
+		usernameValidation(username);
+
+	if (!isEmailValid) {
+		throw new Error(emailErrorMsg);
+	}
+
+	if (!isUsernameValid) {
+		throw new Error(usernameErrorMsg);
+	}
+
+	try {
+		// Check if another user with the same email exists
+		const existingUser = await prisma.user.findFirst({
+			where: {
+				email,
+				id: {
+					not: userId,
+				},
+			},
+		});
+
+		if (existingUser) {
+			throw new Error('Email already exists. Please use a different email.');
+		}
+
+		const user = await prisma.user.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				email,
+				username,
+			},
+		});
+		return user;
+	} catch (error) {
+		console.error('Error updating user settings:', error);
 		throw error;
 	}
 }

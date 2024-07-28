@@ -102,4 +102,30 @@ function pizzaValidation(data: PizzaSlice) {
 	return '';
 }
 
-export { emailValidation, passwordValidation, pizzaValidation };
+function usernameValidation(username: string) {
+	let isValid = true;
+	let usernameErrorMsg = '';
+
+	if (username.length < 3 || username.length > 20) {
+		usernameErrorMsg = 'Username must be between 3 and 20 characters long';
+		isValid = false;
+	}
+
+	if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+		usernameErrorMsg =
+			'Username can only contain alphanumeric characters and underscores';
+		isValid = false;
+	}
+
+	return {
+		isValid,
+		usernameErrorMsg,
+	};
+}
+
+export {
+	emailValidation,
+	passwordValidation,
+	pizzaValidation,
+	usernameValidation,
+};
