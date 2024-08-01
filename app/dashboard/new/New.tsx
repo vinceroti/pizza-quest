@@ -5,7 +5,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import {
 	Alert,
 	Box,
-	Button,
 	FormControl,
 	FormGroup,
 	Grid,
@@ -13,7 +12,6 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -21,6 +19,7 @@ import { submitSlice } from '@/app/actions';
 import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
 import { pizzaValidation } from '@/utils/validation';
 
+import ImageFileUpload from '../components/ImageFileUpload';
 import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
 
 export default function Dashboard() {
@@ -93,9 +92,10 @@ export default function Dashboard() {
 		}
 	};
 
-	const handleFileChange = (event) => {
-		const file = event.target.files[0];
-		if (file) {
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const files = event.target.files;
+		if (files && files.length > 0) {
+			const file = files[0];
 			setFile(file);
 		}
 	};
@@ -211,40 +211,12 @@ export default function Dashboard() {
 								</Box>
 							</Grid>
 							<Grid item xs={12}>
-								<div className="mb-3 flex justify-center">
-									<div className="image-upload-container m-auto relative flex">
-										{file && (
-											<>
-												<Image
-													src={URL.createObjectURL(file)}
-													alt="Pizza Slice"
-													width={208}
-													height={117}
-													className="rounded-lg"
-												/>
-												<button
-													className="delete-image-button absolute top-0 right-0 bg-black bg-opacity-50 button-link p-2.5 rounded-bl-lg rounded-tr-lg flex items-center justify-center hover:bg-opacity-70 ease-in-out transition"
-													onClick={() => setFile(null)}
-												>
-													<FontAwesomeIcon icon="xmark" size="xl" />
-												</button>
-											</>
-										)}
-									</div>
-								</div>
-								<input
-									accept="image/*"
-									id="contained-button-file"
-									type="file"
-									className="hidden"
-									onChange={handleFileChange}
+								<ImageFileUpload
+									file={file}
+									setFile={setFile}
+									handleFileChange={handleFileChange}
+									alt="Pizza Slice"
 								/>
-								<label htmlFor="contained-button-file">
-									<Button variant="contained" component="span">
-										<FontAwesomeIcon icon="image" className="mr-1" />
-										{file ? file.name : 'Upload Image'}
-									</Button>
-								</label>
 							</Grid>
 							<Grid item xs={12}>
 								<TextField

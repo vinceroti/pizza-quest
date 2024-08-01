@@ -9,5 +9,8 @@ const nextConfig = {
       @import '@/styles/settings/_fonts';
     `,
 	},
+	images: {
+		domains: ['pizza-quest.s3.us-east-2.amazonaws.com'],
+	},
 };
 module.exports = nextConfig;

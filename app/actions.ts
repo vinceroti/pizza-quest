@@ -98,11 +98,12 @@ export async function protectedRedirect() {
 async function uploadImageToS3(
 	imageBuffer: Buffer,
 	mimeType: string,
+	subFolder: string, // Add subFolder parameter
 ): Promise<string> {
 	const imageId = uuidv4();
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME!,
-		Key: imageId,
+		Key: `${subFolder}/${imageId}`, // Include subFolder in the Key
 		Body: imageBuffer,
 		ContentType: mimeType,
 		ACL: 'public-read',
@@ -134,7 +135,7 @@ export async function submitSlice(data: PizzaSlice) {
 				'',
 			);
 			const imageBuffer = Buffer.from(strippedImage, 'base64');
-			imageUrl = await uploadImageToS3(imageBuffer, image.type);
+			imageUrl = await uploadImageToS3(imageBuffer, image.type, 'pizza-slices');
 		}
 
 		// Check if the pizza place already exists
@@ -380,6 +381,33 @@ export async function userSettingsChange({
 		return user;
 	} catch (error) {
 		console.error('Error updating user settings:', error);
+		throw error;
+	}
+}
+
+export async function avatarUpload({
+	userId,
+	image,
+}: {
+	userId: number;
+	image: { type: string; data: string };
+}) {
+	try {
+		const strippedImage = image.data.replace(/^data:image\/[a-z]+;base64,/, '');
+		const imageBuffer = Buffer.from(strippedImage, 'base64');
+		const imageUrl = await uploadImageToS3(imageBuffer, image.type, 'avatars');
+
+		const user = await prisma.user.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				image: imageUrl,
+			},
+		});
+		return user;
+	} catch (error) {
+		console.error('Error uploading avatar:', error);
 		throw error;
 	}
 }

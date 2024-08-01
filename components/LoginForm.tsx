@@ -52,9 +52,8 @@ export default function LoginForm() {
 
 			await router.push('/dashboard');
 		} catch (error) {
-			setErrorMessage(true);
-		} finally {
 			setLoading(false);
+			setErrorMessage(true);
 		}
 	};
 	return (

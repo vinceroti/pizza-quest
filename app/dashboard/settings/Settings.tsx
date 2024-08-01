@@ -1,12 +1,16 @@
 'use client';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadingButton } from '@mui/lab';
 import { Alert, Box, TextField } from '@mui/material';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { emailValidation, usernameValidation } from '@/utils/validation';
-import { userSettingsChange } from '~/actions';
+import { avatarUpload, userSettingsChange } from '~/actions';
+
+import ImageFileUpload from '../components/ImageFileUpload';
 
 export default function Settings() {
 	const { data: session } = useSession();
@@ -19,8 +23,6 @@ export default function Settings() {
 	const [usernameError, setUsernameError] = useState('');
 	const [avatar, setAvatar] = useState<File | null>(null);
 	const [avatarLoading, setAvatarLoading] = useState(false);
-	const [avatarError, setAvatarError] = useState<string | null>(null);
-	const [avatarSuccess, setAvatarSuccess] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (session?.user) {
@@ -28,6 +30,24 @@ export default function Settings() {
 			setUsername(session.user.username || '');
 		}
 	}, [session]);
+
+	const toBase64 = (file: File) =>
+		new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = (error) => reject(error);
+		});
+
+	const handleFileChange = async (
+		event: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const files = event.target.files;
+		if (files && files.length > 0) {
+			const file = files[0];
+			setAvatar(file);
+		}
+	};
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -59,8 +79,9 @@ export default function Settings() {
 			});
 			if (settingsChangeResponse?.error) {
 				setError(settingsChangeResponse.error);
+			} else {
+				setSuccess('Settings updated successfully');
 			}
-			setSuccess('Settings updated successfully');
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -73,107 +94,118 @@ export default function Settings() {
 	) => {
 		event.preventDefault();
 		setAvatarLoading(true);
-		setAvatarError(null);
-		setAvatarSuccess(null);
+		setError(null);
+		setSuccess(null);
 
 		try {
 			const userId = session?.user?.id;
+			if (!avatar) throw new Error('Avatar is missing');
 			if (!userId) throw new Error('User ID is missing');
 
-			const formData = new FormData();
-			formData.append('avatar', avatar as Blob);
+			const avatarBase64 = await toBase64(avatar);
 
-			const response = await fetch(`/api/users/${userId}/avatar`, {
-				method: 'POST',
-				body: formData,
-			});
-			const data = await response.json();
-			if (data.error) {
-				setAvatarError(data.error);
+			if (typeof avatarBase64 !== 'string') {
+				throw new Error('Error converting avatar to base64');
 			}
-			setAvatarSuccess('Avatar uploaded successfully');
+
+			const avatarResponse = await avatarUpload({
+				userId,
+				image: { type: avatar.type, data: avatarBase64 },
+			});
+
+			if (avatarResponse?.error) {
+				setError(avatarResponse?.error);
+			} else {
+				setSuccess('Avatar uploaded successfully');
+			}
 		} catch (error) {
-			setAvatarError(error.message);
+			setError(error.message);
 		} finally {
 			setAvatarLoading(false);
+			setAvatar(null);
 		}
 	};
 
 	return (
-		<Box className="p-4 max-w-xl flex space-x-4">
-			<Box className="w-1/2">
-				<h3 className="mb-6">Upload Avatar</h3>
-				<form onSubmit={handleAvatarSubmit} className="space-y-4">
-					<TextField
-						type="file"
-						label="Avatar"
-						variant="outlined"
-						fullWidth
-						onChange={(e) => setAvatar(e.target.files[0])}
-					/>
-					<LoadingButton
-						loading={avatarLoading}
-						type="submit"
-						fullWidth
-						variant="contained"
-						sx={{ mt: 3, mb: 2 }}
+		<div>
+			<h3 className="mb-6 w-full">User Settings</h3>
+			<Box className="p-4 max-w-xxl flex space-x-4 items-stretch">
+				<Box className="w-1/4 mr-5">
+					<form
+						className="h-full flex flex-col justify-between items-center"
+						onSubmit={handleAvatarSubmit}
 					>
-						Upload Avatar
-					</LoadingButton>
-					{avatarError && (
-						<Alert
-							severity="error"
-							variant="filled"
-							onClose={() => setAvatarError('')}
+						{!session?.user?.image && !avatar && (
+							<FontAwesomeIcon icon="user-circle" className="h-28 w-28" />
+						)}
+						{session?.user?.image && !avatar && (
+							<Image
+								src={session.user.image}
+								alt="Avatar"
+								width={112}
+								height={112}
+								className="rounded-full h-28 w-28 object-cover"
+							/>
+						)}
+
+						<ImageFileUpload
+							file={avatar}
+							setFile={setAvatar}
+							alt="Avatar"
+							onlyCornerButton
+							imageClassName="h-28 w-28 object-cover"
+							handleFileChange={handleFileChange}
+						/>
+						{avatar && (
+							<LoadingButton
+								loading={avatarLoading}
+								fullWidth
+								variant="contained"
+								type="submit"
+							>
+								Upload Avatar
+							</LoadingButton>
+						)}
+					</form>
+				</Box>
+				<Box className="w-1/2">
+					<form onSubmit={handleSubmit} className="space-y-4">
+						<TextField
+							label="Email"
+							variant="outlined"
+							fullWidth
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							error={!!emailError}
+							helperText={emailError}
+						/>
+						<TextField
+							label="Username"
+							variant="outlined"
+							fullWidth
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							error={!!usernameError}
+							helperText={usernameError}
+						/>
+						<LoadingButton
+							loading={loading}
+							type="submit"
+							fullWidth
+							variant="contained"
+							sx={{ mt: 3, mb: 2 }}
 						>
-							{avatarError}
-						</Alert>
-					)}
-					{avatarSuccess && <Alert severity="success">{avatarSuccess}</Alert>}
-				</form>
+							Save Changes
+						</LoadingButton>
+					</form>
+				</Box>
 			</Box>
-			<Box className="w-1/2">
-				<h3 className="mb-6">User Settings</h3>
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<TextField
-						label="Email"
-						variant="outlined"
-						fullWidth
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						error={!!emailError}
-						helperText={emailError}
-					/>
-					<TextField
-						label="Username"
-						variant="outlined"
-						fullWidth
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						error={!!usernameError}
-						helperText={usernameError}
-					/>
-					<LoadingButton
-						loading={loading}
-						type="submit"
-						fullWidth
-						variant="contained"
-						sx={{ mt: 3, mb: 2 }}
-					>
-						Save Changes
-					</LoadingButton>
-					{error && (
-						<Alert
-							severity="error"
-							variant="filled"
-							onClose={() => setError('')}
-						>
-							{error}
-						</Alert>
-					)}
-					{success && <Alert severity="success">{success}</Alert>}
-				</form>
-			</Box>
-		</Box>
+			{error && (
+				<Alert severity="error" variant="filled" onClose={() => setError(null)}>
+					{error}
+				</Alert>
+			)}
+			{success && <Alert severity="success">{success}</Alert>}
+		</div>
 	);
 }
