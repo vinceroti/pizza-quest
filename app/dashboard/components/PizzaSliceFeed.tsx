@@ -88,7 +88,6 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 
 	return (
 		<div className="mt-4 space-y-4">
-			<h3 className="text-center">Welcome to the Pizza Sphere</h3>
 			<div className="text-center mb-">
 				<button
 					className={`button-link mr-2 ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}

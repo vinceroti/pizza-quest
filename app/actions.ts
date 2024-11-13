@@ -230,6 +230,42 @@ export async function getAllPizzaSliceData(userId?: number) {
 		throw error;
 	}
 }
+
+export async function getAllPizzaPlacesWithRatings() {
+	try {
+		const pizzaPlaces = await prisma.pizzaPlace.findMany({
+			include: {
+				pizzaSliceRatings: {
+					include: {
+						user: {
+							select: {
+								username: true,
+							},
+						},
+						comments: true,
+						likes: true,
+					},
+				},
+			},
+		});
+
+		// Calculate the average rating for each pizza place
+		const averageRatings: { [key: string]: number } = {};
+		pizzaPlaces.forEach((place) => {
+			averageRatings[place.id] = place.pizzaSliceRatings.reduce(
+				(acc, rating) => acc + rating.overall,
+				0,
+			);
+			averageRatings[place.id] /= place.pizzaSliceRatings.length;
+		});
+
+		return { pizzaPlaces, averageRatings };
+	} catch (error) {
+		console.error('Error fetching pizza places with ratings:', error);
+		throw error;
+	}
+}
+
 export async function searchPizzaPlaces(query: string) {
 	try {
 		const response = await fetch(

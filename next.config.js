@@ -10,7 +10,11 @@ const nextConfig = {
     `,
 	},
 	images: {
-		domains: ['pizza-quest.s3.us-east-2.amazonaws.com'],
+		remotePatterns: [
+			{
+				hostname: 'pizza-quest.s3.us-east-2.amazonaws.com',
+			},
+		],
 	},
 };
 module.exports = nextConfig;

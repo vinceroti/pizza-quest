@@ -13,7 +13,7 @@ import { avatarUpload, userSettingsChange } from '~/actions';
 import ImageFileUpload from '../components/ImageFileUpload';
 
 export default function Settings() {
-	const { data: session } = useSession();
+	const { data: session, update } = useSession();
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -69,19 +69,12 @@ export default function Settings() {
 		}
 
 		try {
-			const userId = session?.user?.id;
-			if (!userId) throw new Error('User ID is missing');
-
-			const settingsChangeResponse = await userSettingsChange({
-				userId,
+			await update({
 				email,
 				username,
 			});
-			if (settingsChangeResponse?.error) {
-				setError(settingsChangeResponse.error);
-			} else {
-				setSuccess('Settings updated successfully');
-			}
+
+			setSuccess('Settings updated successfully');
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -117,6 +110,7 @@ export default function Settings() {
 				setError(avatarResponse?.error);
 			} else {
 				setSuccess('Avatar uploaded successfully');
+				await update();
 			}
 		} catch (error) {
 			setError(error.message);

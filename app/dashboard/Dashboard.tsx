@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 
-import PizzaSliceFeed from './components/PizzaSliceFeed';
+import Table from './components/Table';
 
 export default function Dashboard() {
 	const { data: session } = useSession();
@@ -10,7 +10,7 @@ export default function Dashboard() {
 	return (
 		<div>
 			<h6>Welcome, {session?.user?.username}</h6>
-			<PizzaSliceFeed userId={session?.user?.id} />
+			<Table userId={session?.user?.id} />
 		</div>
 	);
 }

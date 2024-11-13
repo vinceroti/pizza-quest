@@ -17,6 +17,9 @@ export default function DashboardNav() {
 					<Link href="/dashboard">Home</Link>
 				</li>
 				<li>
+					<Link href="/dashboard/timeline">Timeline</Link>
+				</li>
+				<li>
 					<Link href="/dashboard/new">Submit Pizza</Link>
 				</li>
 				<li>
