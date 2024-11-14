@@ -31,7 +31,8 @@ export const authOptions: NextAuthOptions = {
 					user &&
 					(await bcrypt.compare(credentials.password, user.password))
 				) {
-					return { ...user, id: user.id.toString() };
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					return user as any;
 				} else {
 					return null;
 				}
