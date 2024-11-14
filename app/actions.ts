@@ -124,19 +124,16 @@ export async function submitSlice(data: PizzaSlice) {
 		throw new Error(errorMsg);
 	}
 
-	let imageUrl = null;
-
 	try {
 		const image = data.image;
 
-		if (image) {
-			const strippedImage = image.data.replace(
-				/^data:image\/[a-z]+;base64,/,
-				'',
-			);
-			const imageBuffer = Buffer.from(strippedImage, 'base64');
-			imageUrl = await uploadImageToS3(imageBuffer, image.type, 'pizza-slices');
-		}
+		const strippedImage = image.data.replace(/^data:image\/[a-z]+;base64,/, '');
+		const imageBuffer = Buffer.from(strippedImage, 'base64');
+		const imageUrl = await uploadImageToS3(
+			imageBuffer,
+			image.type,
+			'pizza-slices',
+		);
 
 		// Check if the pizza place already exists
 		let pizzaPlace = await prisma.pizzaPlace.findUnique({
@@ -155,13 +152,18 @@ export async function submitSlice(data: PizzaSlice) {
 			});
 		}
 
-		const newData: Omit<PizzaSlice, 'pizzaPlace'> = {
-			...data,
+		const newData = {
+			overall: data.overall,
+			crustDough: data.crustDough,
+			sauce: data.sauce,
+			toppingToPizzaRatio: data.toppingToPizzaRatio,
+			creativity: data.creativity,
+			authenticity: data.authenticity,
+			notes: data.notes,
+			userId: data.userId,
 			pizzaPlaceId: pizzaPlace.id,
 			image: imageUrl,
 		};
-
-		delete newData.pizzaPlace;
 
 		await prisma.pizzaSliceRating.create({
 			data: newData,

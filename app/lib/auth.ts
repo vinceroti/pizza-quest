@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'; // Import bcryptjs
 import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 const prisma = new PrismaClient();
+import { type Session } from 'next-auth';
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -30,7 +31,7 @@ export const authOptions: NextAuthOptions = {
 					user &&
 					(await bcrypt.compare(credentials.password, user.password))
 				) {
-					return user;
+					return { ...user, id: user.id.toString() };
 				} else {
 					return null;
 				}
@@ -46,7 +47,7 @@ export const authOptions: NextAuthOptions = {
 		},
 		async session({ session, token }) {
 			if (token?.user) {
-				session.user = token.user;
+				session.user = token.user as Session['user'];
 			}
 			return session;
 		},

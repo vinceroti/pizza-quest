@@ -27,20 +27,22 @@ export default function Dashboard() {
 	const { data: session } = useSession();
 
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
-	const [overall, setOverall] = useState(0);
-	const [crustDough, setCrustDough] = useState(0);
-	const [sauce, setSauce] = useState(0);
-	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState(0);
-	const [creativity, setCreativity] = useState(0);
-	const [authenticity, setAuthenticity] = useState(0);
+	const [overall, setOverall] = useState<number | null>(0);
+	const [crustDough, setCrustDough] = useState<number | null>(0);
+	const [sauce, setSauce] = useState<number | null>(0);
+	const [toppingToPizzaRatio, setToppingToPizzaRatio] = useState<number | null>(
+		0,
+	);
+	const [creativity, setCreativity] = useState<number | null>(0);
+	const [authenticity, setAuthenticity] = useState<number | null>(0);
 	const [notes, setNotes] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [file, setFile] = useState<File | null>(null);
 	const [success, setSuccess] = useState(false);
 
-	const PizzaIcon = () => (
-		<FontAwesomeIcon icon="pizza-slice" className="m-0.5" />
+	const PizzaIcon = ({ className }: { className?: string }) => (
+		<FontAwesomeIcon icon="pizza-slice" className={`m-0.5 ${className}`} />
 	);
 
 	const toBase64 = (file: File) =>
@@ -118,7 +120,7 @@ export default function Dashboard() {
 				>
 					<FormGroup>
 						<PizzaPlaceAutoComplete
-							handleInputChange={(value: GooglePrediction) =>
+							handleInputChange={(value: GooglePrediction | null) =>
 								setPizzaPlace(value)
 							}
 						/>
@@ -134,7 +136,7 @@ export default function Dashboard() {
 											setOverall(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 								<Box mb={2} mt={2}>
@@ -147,7 +149,7 @@ export default function Dashboard() {
 											setCrustDough(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 								<Box mb={2} mt={2}>
@@ -160,7 +162,7 @@ export default function Dashboard() {
 											setAuthenticity(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 							</Grid>
@@ -175,7 +177,7 @@ export default function Dashboard() {
 											setSauce(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 								<Box mb={2} mt={2}>
@@ -190,7 +192,7 @@ export default function Dashboard() {
 											setToppingToPizzaRatio(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 								<Box mb={2} mt={2}>
@@ -203,7 +205,7 @@ export default function Dashboard() {
 											setCreativity(newValue);
 										}}
 										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon style={{ opacity: 0.55 }} />}
+										emptyIcon={<PizzaIcon className="opacity-55" />}
 									/>
 								</Box>
 							</Grid>
