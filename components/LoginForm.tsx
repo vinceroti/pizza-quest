@@ -39,19 +39,14 @@ export default function LoginForm() {
 		setErrorMessage(false);
 		setLoading(true);
 		try {
-			const response = await signIn('credentials', {
+			await signIn('credentials', {
 				redirect: false,
 				email: formData.get('email'),
 				password: formData.get('password'),
 			});
 
-			if (response?.error) {
-				setErrorMessage(true);
-				return;
-			}
-
 			await router.push('/dashboard');
-		} catch (error) {
+		} catch (error: unknown) {
 			setLoading(false);
 			setErrorMessage(true);
 		}
@@ -113,7 +108,7 @@ export default function LoginForm() {
 						</Alert>
 					)}
 					<Typography variant="body2" align="center" sx={{ mt: 2 }}>
-						Don't have an account?
+						Don&apos;t have an account?
 						<Link href="/signup" className="ml-2">
 							Sign Up
 						</Link>

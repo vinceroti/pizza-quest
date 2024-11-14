@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
+import GooglePrediction from '@/interfaces/models/GooglePrediction';
 import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { generatePizzaUsername } from '@/utils';
 import {
@@ -155,7 +155,7 @@ export async function submitSlice(data: PizzaSlice) {
 			});
 		}
 
-		const newData = {
+		const newData: Omit<PizzaSlice, 'pizzaPlace'> = {
 			...data,
 			pizzaPlaceId: pizzaPlace.id,
 			image: imageUrl,

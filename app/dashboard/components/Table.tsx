@@ -13,24 +13,30 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	Typography,
 } from '@mui/material';
-import { PizzaPlace, PizzaSliceRating } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { getAllPizzaPlacesWithRatings } from '@/app/actions';
 
+// Extract the type of PizzaPlace from feed
+type PizzaPlace = Prisma.PromiseReturnType<
+	typeof getAllPizzaPlacesWithRatings
+>['pizzaPlaces'];
+
+type PizzaSliceRating = PizzaPlace[number]['pizzaSliceRatings'][number];
+
 export default function PizzaSliceFeed() {
 	const [loading, setLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState('');
-	const [feed, setFeed] = useState<PizzaPlace[]>([]);
+	const [feed, setFeed] = useState<PizzaPlace | []>([]);
 	const [ratings, setRatings] = useState<{ [key: string]: number }>({});
 	const [open, setOpen] = useState<{ [key: string]: boolean }>({});
 	const [openModal, setOpenModal] = useState(false);
 	const [selectedRating, setSelectedRating] = useState<{
-		place: PizzaPlace;
+		place: PizzaPlace[number];
 		rating: PizzaSliceRating;
 	} | null>(null);
 
@@ -38,15 +44,10 @@ export default function PizzaSliceFeed() {
 		try {
 			setLoading(true);
 			const response = await getAllPizzaPlacesWithRatings();
-
-			if (response.pizzaPlaces?.error) {
-				setErrorMessage(response.pizzaPlaces.error);
-				return;
-			}
 			setFeed(response.pizzaPlaces);
 			setRatings(response.averageRatings);
-		} catch (error) {
-			setErrorMessage(error.message);
+		} catch (error: unknown) {
+			setErrorMessage((error as Error).message);
 		} finally {
 			setLoading(false);
 		}
@@ -63,7 +64,10 @@ export default function PizzaSliceFeed() {
 		}));
 	};
 
-	const handleOpenModal = (rating, place) => {
+	const handleOpenModal = (
+		rating: PizzaSliceRating,
+		place: PizzaPlace[number],
+	) => {
 		setSelectedRating({ rating, place });
 		setOpenModal(true);
 	};
@@ -215,7 +219,7 @@ export default function PizzaSliceFeed() {
 																</TableCell>
 																<TableCell>
 																	<Image
-																		src={rating.image}
+																		src={rating.image || ''}
 																		alt="Pizza image"
 																		width={50}
 																		height={50}

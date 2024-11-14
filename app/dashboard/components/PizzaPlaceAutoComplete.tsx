@@ -10,7 +10,7 @@ import {
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { searchPizzaPlaces } from '@/app/actions';
-import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
+import GooglePrediction from '@/interfaces/models/GooglePrediction';
 
 interface PizzaPlaceAutoCompleteProps {
 	handleInputChange: (event: GooglePrediction | null) => void;

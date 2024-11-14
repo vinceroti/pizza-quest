@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import { PizzaSliceRating } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 
@@ -56,13 +56,17 @@ const renderPizzaSlices = (rating: number) => {
 export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 	const [loading, setLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState('');
-	const [feed, setFeed] = useState<PizzaSliceRating[]>([]);
+	const [feed, setFeed] = useState<
+		Prisma.PromiseReturnType<typeof getAllPizzaSliceData>
+	>([]);
 	const [filter, setFilter] = useState<'all' | 'user'>('all');
 
 	async function getFeed() {
 		try {
 			setLoading(true);
-			let sliceResponse: PizzaSliceRating[] | undefined;
+			let sliceResponse:
+				| Prisma.PromiseReturnType<typeof getAllPizzaSliceData>
+				| undefined;
 
 			if (filter === 'all') {
 				sliceResponse = await getAllPizzaSliceData();
@@ -70,13 +74,9 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 				sliceResponse = await getAllPizzaSliceData(userId);
 			}
 
-			if (sliceResponse?.error) {
-				setErrorMessage(sliceResponse.error);
-				return;
-			}
 			setFeed(sliceResponse);
-		} catch (error) {
-			setErrorMessage(error.message);
+		} catch (error: unknown) {
+			setErrorMessage((error as Error).message);
 		} finally {
 			setLoading(false);
 		}
@@ -151,7 +151,7 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 										maxHeight: '500px',
 										objectPosition: 'center',
 									}}
-									image={slice.image}
+									image={slice.image || ''}
 									alt="Pizza image"
 								/>
 								<CardContent

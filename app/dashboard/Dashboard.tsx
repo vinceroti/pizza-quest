@@ -10,7 +10,7 @@ export default function Dashboard() {
 	return (
 		<div>
 			<h6>Welcome, {session?.user?.username}</h6>
-			<Table userId={session?.user?.id} />
+			<Table />
 		</div>
 	);
 }

@@ -1,4 +1,4 @@
-export interface GooglePrediction {
+export default interface GooglePrediction {
 	description: string;
 	place_id: string;
 	structured_formatting: {

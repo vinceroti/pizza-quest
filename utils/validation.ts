@@ -1,5 +1,3 @@
-import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
-
 function passwordValidation(password: string, confirmPassword: string) {
 	let isValid = true;
 	let passwordErrorMsg = '';
@@ -61,7 +59,8 @@ function emailValidation(email: string) {
 	};
 }
 
-function pizzaValidation(data: PizzaSlice) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function pizzaValidation(data: { [key: string]: any }) {
 	if (data.userId < -1) {
 		return 'User ID is required.';
 		// this should never happen

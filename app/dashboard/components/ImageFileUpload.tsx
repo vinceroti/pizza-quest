@@ -46,24 +46,23 @@ const FileUpload: React.FC<FileUploadProps> = ({
 					)}
 				</div>
 			</div>
-			{!onlyCornerButton ||
-				(!file && (
-					<>
-						<input
-							accept="image/*"
-							id="contained-button-file"
-							type="file"
-							className="hidden"
-							onChange={handleFileChange}
-						/>
-						<label htmlFor="contained-button-file">
-							<Button variant="contained" component="span" fullWidth>
-								<FontAwesomeIcon icon="image" className="mr-1" />
-								{file ? file.name : 'Upload Image'}
-							</Button>
-						</label>
-					</>
-				))}
+			{(!onlyCornerButton || !file) && (
+				<>
+					<input
+						accept="image/*"
+						id="contained-button-file"
+						type="file"
+						className="hidden"
+						onChange={handleFileChange}
+					/>
+					<label htmlFor="contained-button-file">
+						<Button variant="contained" component="span" fullWidth>
+							<FontAwesomeIcon icon="image" className="mr-1" />
+							{file ? file.name : 'Upload Image'}
+						</Button>
+					</label>
+				</>
+			)}
 		</div>
 	);
 };

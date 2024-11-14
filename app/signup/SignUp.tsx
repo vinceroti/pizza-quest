@@ -51,18 +51,14 @@ export default function Signup() {
 
 		try {
 			await signup(email, password, confirmPassword);
-			const signInResponse = await signIn('credentials', {
+			await signIn('credentials', {
 				email,
 				password,
 				redirect: false,
 			});
-			if (signInResponse?.error) {
-				setErrorMessage(signInResponse.error);
-				return;
-			}
 			router.push('/dashboard');
-		} catch (error) {
-			setErrorMessage(error.message);
+		} catch (error: unknown) {
+			setErrorMessage((error as Error).message);
 			setLoading(false);
 		}
 	};
@@ -77,7 +73,7 @@ export default function Signup() {
 					alignItems: 'center',
 				}}
 			>
-				<h3>Let's Get Started</h3>
+				<h3>Let&apos;s Get Started</h3>
 				<p>Your quest for the greatest pizza slice begins now!</p>
 				<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
 					<TextField

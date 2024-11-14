@@ -16,7 +16,8 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import { submitSlice } from '@/app/actions';
-import { GooglePrediction } from '@/interfaces/models/GooglePrediction';
+import GooglePrediction from '@/interfaces/models/GooglePrediction';
+import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { pizzaValidation } from '@/utils/validation';
 
 import ImageFileUpload from '../components/ImageFileUpload';
@@ -25,7 +26,7 @@ import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
 export default function Dashboard() {
 	const { data: session } = useSession();
 
-	const [pizzaPlace, setPizzaPlace] = useState<Prediction | null>(null);
+	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
 	const [overall, setOverall] = useState(0);
 	const [crustDough, setCrustDough] = useState(0);
 	const [sauce, setSauce] = useState(0);
@@ -79,14 +80,10 @@ export default function Dashboard() {
 		setLoading(true);
 
 		try {
-			const sliceResponse = await submitSlice(data);
-			if (sliceResponse?.error) {
-				setErrorMessage(sliceResponse.error);
-				return;
-			}
+			await submitSlice(data as PizzaSlice);
 			setSuccess(true);
-		} catch (error) {
-			setErrorMessage(error.message);
+		} catch (error: unknown) {
+			setErrorMessage((error as Error).message);
 		} finally {
 			setLoading(false);
 		}

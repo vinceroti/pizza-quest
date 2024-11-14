@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { emailValidation, usernameValidation } from '@/utils/validation';
-import { avatarUpload, userSettingsChange } from '~/actions';
+import { avatarUpload } from '~/actions';
 
 import ImageFileUpload from '../components/ImageFileUpload';
 
@@ -75,8 +75,8 @@ export default function Settings() {
 			});
 
 			setSuccess('Settings updated successfully');
-		} catch (error) {
-			setError(error.message);
+		} catch (error: unknown) {
+			setError((error as Error).message);
 		} finally {
 			setLoading(false);
 		}
@@ -101,19 +101,15 @@ export default function Settings() {
 				throw new Error('Error converting avatar to base64');
 			}
 
-			const avatarResponse = await avatarUpload({
+			await avatarUpload({
 				userId,
 				image: { type: avatar.type, data: avatarBase64 },
 			});
 
-			if (avatarResponse?.error) {
-				setError(avatarResponse?.error);
-			} else {
-				setSuccess('Avatar uploaded successfully');
-				await update();
-			}
-		} catch (error) {
-			setError(error.message);
+			setSuccess('Avatar uploaded successfully');
+			await update();
+		} catch (error: unknown) {
+			setError((error as Error).message);
 		} finally {
 			setAvatarLoading(false);
 			setAvatar(null);
