@@ -17,7 +17,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { getAllPizzaPlacesWithRatings } from '@/app/actions';
 
@@ -28,7 +28,7 @@ type PizzaPlace = Prisma.PromiseReturnType<
 
 type PizzaSliceRating = PizzaPlace[number]['pizzaSliceRatings'][number];
 
-export default function PizzaSliceFeed() {
+export default function PizzaTable() {
 	const [loading, setLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [feed, setFeed] = useState<PizzaPlace | []>([]);
@@ -150,7 +150,7 @@ export default function PizzaSliceFeed() {
 						</TableHead>
 						<TableBody>
 							{feed.map((place) => (
-								<>
+								<React.Fragment key={place.id}>
 									<TableRow key={place.id}>
 										<TableCell>
 											<FontAwesomeIcon
@@ -203,12 +203,24 @@ export default function PizzaSliceFeed() {
 															<TableRow key={rating.id}>
 																<TableCell>
 																	<div className="flex items-center">
-																		<FontAwesomeIcon
-																			icon="user-circle"
-																			className="text-gray-500 mr-2"
-																			size="lg"
-																		/>
-																		{rating.user.username}
+																		{rating.user.image ? (
+																			<Image
+																				className="rounded-full"
+																				src={rating.user.image}
+																				alt="User image"
+																				width={17.5}
+																				height={17.5}
+																			/>
+																		) : (
+																			<FontAwesomeIcon
+																				icon="user-circle"
+																				className="text-gray-500"
+																				size="lg"
+																			/>
+																		)}
+																		<span className="ml-2">
+																			{rating.user.username}
+																		</span>
 																	</div>
 																</TableCell>
 																<TableCell>
@@ -219,11 +231,11 @@ export default function PizzaSliceFeed() {
 																</TableCell>
 																<TableCell>
 																	<Image
+																		className="mt-4 mb-4"
 																		src={rating.image || ''}
 																		alt="Pizza image"
 																		width={50}
 																		height={50}
-																		className="m-4"
 																	/>
 																</TableCell>
 																<TableCell>
@@ -245,7 +257,7 @@ export default function PizzaSliceFeed() {
 											</Collapse>
 										</TableCell>
 									</TableRow>
-								</>
+								</React.Fragment>
 							))}
 						</TableBody>
 					</Table>

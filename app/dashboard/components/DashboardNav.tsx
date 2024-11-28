@@ -11,7 +11,10 @@ export default function DashboardNav() {
 		<nav className="flex items-center justify-between p-6 w-full text-right bg-blue-700">
 			<ul className="flex space-x-4 justify-end w-full max-width m-auto">
 				<li className="mr-auto">
-					<FontAwesomeIcon icon="user" /> {session?.user?.username}
+					<FontAwesomeIcon icon="user" className="mr-1" />
+					<Link href={`/dashboard/profile/${session?.user?.username}`}>
+						{session?.user?.username}
+					</Link>
 				</li>
 				<li>
 					<Link href="/dashboard">Home</Link>

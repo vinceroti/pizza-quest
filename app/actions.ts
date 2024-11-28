@@ -242,6 +242,7 @@ export async function getAllPizzaPlacesWithRatings() {
 						user: {
 							select: {
 								username: true,
+								image: true,
 							},
 						},
 						comments: true,
@@ -419,6 +420,24 @@ export async function userSettingsChange({
 		return user;
 	} catch (error) {
 		console.error('Error updating user settings:', error);
+		throw error;
+	}
+}
+
+export async function getUserInfo(username: string) {
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				username,
+			},
+			select: {
+				username: true,
+				image: true,
+			},
+		});
+		return user;
+	} catch (error) {
+		console.error('Error fetching user info:', error);
 		throw error;
 	}
 }
