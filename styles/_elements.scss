@@ -199,9 +199,37 @@ p {
 a {
   @include font-p700;
   color: $white;
-  text-decoration: underline;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $yellow, #fdbb57, $yellow);
+    background-size: 200% 100%;
+    transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+  }
+
   &:hover {
-    text-decoration: none;
+    color: #ffffffc1;
+    &::after {
+      width: 100%;
+      animation: shimmerUnderline 1.5s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes shimmerUnderline {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 0%;
   }
 }
 

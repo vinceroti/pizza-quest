@@ -88,9 +88,9 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 
 	return (
 		<div className="mt-4 space-y-4">
-			<div className="text-center mb-">
+			<div className="text-center flex gap-2 justify-center">
 				<button
-					className={`button-link mr-2 ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+					className={`button-link ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
 					onClick={() => setFilter('all')}
 					disabled={filter === 'all'}
 				>
@@ -121,12 +121,17 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 						{feed.map((slice) => (
 							<Card
 								sx={{
-									padding: '8px',
+									padding: '16px',
 									maxWidth: '500px',
-									marginBottom: '8px',
+									marginBottom: '16px',
 									width: '100%',
 									display: 'flex',
 									flexWrap: 'wrap',
+									transition: 'all 0.3s ease',
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 8px 24px rgba(77, 144, 254, 0.3)',
+									},
 								}}
 								key={slice.id}
 							>
