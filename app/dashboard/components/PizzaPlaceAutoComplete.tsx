@@ -135,6 +135,7 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 					isLoading && (
 						<CircularProgress
 							size={24}
+							color="secondary"
 							style={{
 								position: 'absolute',
 								right: 10,

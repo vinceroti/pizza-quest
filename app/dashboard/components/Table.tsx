@@ -5,7 +5,6 @@ import {
 	Box,
 	Collapse,
 	IconButton,
-	InputAdornment,
 	Modal,
 	Paper,
 	Table,
@@ -14,7 +13,6 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 } from '@mui/material';
 import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,6 +21,8 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 import { getAllPizzaPlacesWithRatings } from '@/app/actions';
+
+import SearchBox from './SearchBox';
 
 // Extract the type of PizzaPlace from feed
 type PizzaPlace = Prisma.PromiseReturnType<
@@ -45,6 +45,8 @@ export default function PizzaTable() {
 	} | null>(null);
 	const [filter, setFilter] = useState<'all' | 'self'>('self');
 	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [sortField, setSortField] = useState<'name' | 'rating'>('rating');
+	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
 	async function getFeed() {
 		try {
@@ -83,7 +85,18 @@ export default function PizzaTable() {
 		setSelectedRating(null);
 	};
 
-	// Filter the feed based on the selected filter and search query
+	const handleSort = (field: 'name' | 'rating') => {
+		if (sortField === field) {
+			// Toggle direction if same field
+			setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+		} else {
+			// Set new field with default descending
+			setSortField(field);
+			setSortDirection(field === 'rating' ? 'desc' : 'asc');
+		}
+	};
+
+	// Filter and sort the feed based on the selected filter, search query, and sort settings
 	const filteredFeed = feed
 		.filter((place) => {
 			// Filter by self if needed
@@ -102,6 +115,19 @@ export default function PizzaTable() {
 				place.mainText.toLowerCase().includes(query) ||
 				place.description?.toLowerCase().includes(query)
 			);
+		})
+		.sort((a, b) => {
+			if (sortField === 'name') {
+				// Sort by name
+				const comparison = a.mainText.localeCompare(b.mainText);
+				return sortDirection === 'asc' ? comparison : -comparison;
+			} else {
+				// Sort by rating
+				const ratingA = ratings[a.id] || 0;
+				const ratingB = ratings[b.id] || 0;
+				const comparison = ratingA - ratingB;
+				return sortDirection === 'asc' ? comparison : -comparison;
+			}
 		});
 
 	const renderPizzaSlices = (rating?: number) => {
@@ -166,22 +192,8 @@ export default function PizzaTable() {
 						All
 					</button>
 				</div>
-				<TextField
-					placeholder="Search pizza places..."
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					variant="outlined"
-					size="small"
-					sx={{ width: '100%', maxWidth: '500px' }}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position="start">
-								<FontAwesomeIcon icon="search" className="text-gray-400" />
-							</InputAdornment>
-						),
-					}}
-				/>
 			</div>
+			<SearchBox value={searchQuery} onChange={setSearchQuery} />
 			{loading ? (
 				<FontAwesomeIcon
 					icon="circle-notch"
@@ -196,16 +208,44 @@ export default function PizzaTable() {
 						<TableHead>
 							<TableRow>
 								<TableCell>
-									<FontAwesomeIcon
-										icon="pizza-slice"
-										className="text-yellow-500"
-									/>{' '}
-									Pizza Place
+									<button
+										onClick={() => handleSort('name')}
+										className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
+									>
+										<FontAwesomeIcon
+											icon="pizza-slice"
+											className="text-yellow-500"
+										/>{' '}
+										Pizza Place
+										{sortField === 'name' && (
+											<FontAwesomeIcon
+												icon={
+													sortDirection === 'asc'
+														? 'chevron-up'
+														: 'chevron-down'
+												}
+											/>
+										)}
+									</button>
 								</TableCell>
 								<TableCell>Description</TableCell>
 								<TableCell>
-									<FontAwesomeIcon icon="star" className="text-yellow-500" />{' '}
-									Average Ratings
+									<button
+										onClick={() => handleSort('rating')}
+										className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
+									>
+										<FontAwesomeIcon icon="star" className="text-yellow-500" />{' '}
+										Average Ratings
+										{sortField === 'rating' && (
+											<FontAwesomeIcon
+												icon={
+													sortDirection === 'asc'
+														? 'chevron-up'
+														: 'chevron-down'
+												}
+											/>
+										)}
+									</button>
 								</TableCell>
 							</TableRow>
 						</TableHead>
@@ -347,7 +387,9 @@ export default function PizzaTable() {
 						left: '50%',
 						transform: 'translate(-50%, -50%)',
 						width: 600,
-						bgcolor: 'background.paper',
+						bgcolor: 'rgba(30, 58, 95, 0.95)',
+						backdropFilter: 'blur(10px)',
+						border: '1px solid rgba(77, 144, 254, 0.2)',
 						boxShadow: 24,
 						p: 4,
 						color: 'text.primary',

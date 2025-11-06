@@ -6,12 +6,13 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { getAllPizzaSliceData } from '@/app/actions';
 
 import CommentSection from './CommentSection';
 import LikeSection from './LikeSection';
+import SearchBox from './SearchBox';
 
 const renderPizzaSlices = (rating: number) => {
 	const fullSlices = Math.floor(rating);
@@ -60,8 +61,9 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 		Prisma.PromiseReturnType<typeof getAllPizzaSliceData>
 	>([]);
 	const [filter, setFilter] = useState<'all' | 'user'>('all');
+	const [searchQuery, setSearchQuery] = useState<string>('');
 
-	async function getFeed() {
+	const getFeed = useCallback(async () => {
 		try {
 			setLoading(true);
 			let sliceResponse:
@@ -80,11 +82,22 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 		} finally {
 			setLoading(false);
 		}
-	}
+	}, [filter, userId]);
 
 	useEffect(() => {
 		getFeed();
-	}, [filter]);
+	}, [getFeed]);
+
+	// Filter feed based on search query
+	const filteredFeed = feed.filter((slice) => {
+		if (!searchQuery.trim()) return true;
+		const query = searchQuery.toLowerCase();
+		return (
+			slice.pizzaPlace.mainText.toLowerCase().includes(query) ||
+			slice.user.username.toLowerCase().includes(query) ||
+			slice.notes?.toLowerCase().includes(query)
+		);
+	});
 
 	return (
 		<div className="mt-4 space-y-4">
@@ -104,6 +117,7 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 					Self
 				</button>
 			</div>
+			<SearchBox value={searchQuery} onChange={setSearchQuery} />
 			{loading ? (
 				<FontAwesomeIcon
 					icon="circle-notch"
@@ -114,11 +128,11 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 				<div className="text-center">{errorMessage}</div>
 			) : (
 				<div>
-					{feed.length === 0 && (
+					{filteredFeed.length === 0 && (
 						<div className="text-center mt-10">No pizza slices to show.</div>
 					)}
 					<div className="mt-10">
-						{feed.map((slice) => (
+						{filteredFeed.map((slice) => (
 							<Card
 								sx={{
 									padding: '16px',

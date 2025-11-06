@@ -79,6 +79,10 @@ const theme = createTheme({
 			styleOverrides: {
 				root: {
 					'& .MuiOutlinedInput-root': {
+						backgroundColor: 'rgba(0, 0, 0, 0.3)',
+						'& input': {
+							color: '#ffffff',
+						},
 						'& fieldset': {
 							borderColor: 'rgba(77, 144, 254, 0.3)',
 						},
@@ -88,6 +92,12 @@ const theme = createTheme({
 						'&.Mui-focused fieldset': {
 							borderColor: '#4d90fe',
 						},
+					},
+					'& .MuiInputLabel-root': {
+						color: 'rgba(255, 255, 255, 0.7)',
+					},
+					'& .MuiInputLabel-root.Mui-focused': {
+						color: '#ffc107',
 					},
 				},
 			},
