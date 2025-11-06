@@ -8,7 +8,7 @@ export default function Dashboard() {
 	const { data: session } = useSession();
 
 	return (
-		<div>
+		<div className="w-full max-width">
 			<h6>Welcome, {session?.user?.username}</h6>
 			<Table />
 		</div>
