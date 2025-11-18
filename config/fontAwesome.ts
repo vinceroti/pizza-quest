@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config, library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import {
+	faBars,
 	faChevronDown,
 	faChevronRight,
 	faChevronUp,
@@ -11,6 +12,7 @@ import {
 	faCog,
 	faHome,
 	faImage,
+	faMinus,
 	faPizzaSlice,
 	faPlus,
 	faRightFromBracket,
@@ -41,6 +43,8 @@ library.add(
 	faHome,
 	faClock,
 	faPlus,
+	faMinus,
 	faCog,
 	faRightFromBracket,
+	faBars,
 );

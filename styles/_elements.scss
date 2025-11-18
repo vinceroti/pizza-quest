@@ -1,4 +1,8 @@
 /** Apply styles to specific html tags */
+html {
+  background: #0a0a2e;
+}
+
 html, body {
   // Allow font-sizes to be consistent for mobile landscape/portrait views
   -webkit-text-size-adjust: 100%;
@@ -215,7 +219,8 @@ a {
     box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
   }
 
-  &:hover {
+  &:hover,
+  &.active {
     color: #ffffffc1;
     &::after {
       width: 100%;

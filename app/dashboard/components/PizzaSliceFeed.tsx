@@ -103,14 +103,14 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 		<div className="mt-4 space-y-4">
 			<div className="text-center flex gap-2 justify-center">
 				<button
-					className={`button-link ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+					className={`button-link ${filter === 'all' ? 'active' : ''}`}
 					onClick={() => setFilter('all')}
 					disabled={filter === 'all'}
 				>
 					All
 				</button>
 				<button
-					className={`button-link ${filter === 'user' ? 'opacity-50 cursor-not-allowed' : ''}`}
+					className={`button-link ${filter === 'user' ? 'active' : ''}`}
 					onClick={() => setFilter('user')}
 					disabled={filter === 'user'}
 				>

@@ -39,6 +39,8 @@ export default function PizzaTable() {
 	const [ratings, setRatings] = useState<{ [key: string]: number }>({});
 	const [open, setOpen] = useState<{ [key: string]: boolean }>({});
 	const [openModal, setOpenModal] = useState(false);
+	const [openImageModal, setOpenImageModal] = useState(false);
+	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [selectedRating, setSelectedRating] = useState<{
 		place: PizzaPlace[number];
 		rating: PizzaSliceRating;
@@ -83,6 +85,16 @@ export default function PizzaTable() {
 	const handleCloseModal = () => {
 		setOpenModal(false);
 		setSelectedRating(null);
+	};
+
+	const handleOpenImageModal = (imageUrl: string) => {
+		setSelectedImage(imageUrl);
+		setOpenImageModal(true);
+	};
+
+	const handleCloseImageModal = () => {
+		setOpenImageModal(false);
+		setSelectedImage(null);
 	};
 
 	const handleSort = (field: 'name' | 'rating') => {
@@ -178,14 +190,14 @@ export default function PizzaTable() {
 			<div className="flex flex-col items-center gap-4 mb-4">
 				<div className="text-center flex gap-2">
 					<button
-						className={`button-link ${filter === 'self' ? 'opacity-50 cursor-not-allowed' : ''}`}
+						className={`button-link ${filter === 'self' ? 'active' : ''}`}
 						onClick={() => setFilter('self')}
 						disabled={filter === 'self'}
 					>
 						Self
 					</button>
 					<button
-						className={`button-link ${filter === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+						className={`button-link ${filter === 'all' ? 'active' : ''}`}
 						onClick={() => setFilter('all')}
 						disabled={filter === 'all'}
 					>
@@ -228,7 +240,7 @@ export default function PizzaTable() {
 										)}
 									</button>
 								</TableCell>
-								<TableCell>Description</TableCell>
+								<TableCell>Location</TableCell>
 								<TableCell>
 									<button
 										onClick={() => handleSort('rating')}
@@ -261,36 +273,37 @@ export default function PizzaTable() {
 									<React.Fragment key={place.id}>
 										<TableRow key={place.id}>
 											<TableCell>
-												<FontAwesomeIcon
-													icon="pizza-slice"
-													className="text-yellow-500"
-												/>{' '}
-												{place.mainText}
+												<div className="flex items-center gap-2">
+													<IconButton
+														aria-label="expand row"
+														size="small"
+														onClick={() => handleToggle(place.id)}
+													>
+														<FontAwesomeIcon
+															size="xs"
+															icon={open[place.id] ? 'minus' : 'plus'}
+														/>
+													</IconButton>
+													<span>{place.mainText}</span>
+												</div>
 											</TableCell>
 											<TableCell>{place.description}</TableCell>
 											<TableCell>
-												<IconButton
-													aria-label="expand row"
-													size="small"
-													className="flex gap-2"
-													onClick={() => handleToggle(place.id)}
-												>
+												<div className="flex items-center gap-2">
 													<FontAwesomeIcon
 														icon="star"
+														size="lg"
 														className="text-yellow-500"
-													/>{' '}
-													{ratings[place.id] || 0}
-													<FontAwesomeIcon
-														icon={
-															open[place.id] ? 'chevron-up' : 'chevron-down'
-														}
 													/>
-												</IconButton>
+													<span>{ratings[place.id] || 0}</span>
+												</div>
 											</TableCell>
 										</TableRow>
 										<TableRow>
 											<TableCell
-												style={{ paddingBottom: 0, paddingTop: 0 }}
+												style={{
+													padding: 0,
+												}}
 												colSpan={6}
 											>
 												<Collapse
@@ -298,10 +311,20 @@ export default function PizzaTable() {
 													timeout="auto"
 													unmountOnExit
 												>
-													<Table size="small" aria-label="pizzas">
+													<Table
+														size="small"
+														aria-label="pizzas"
+														style={{
+															backgroundColor: 'rgba(15, 30, 50, 0.6)',
+															backdropFilter: 'blur(10px)',
+															border: '1px solid rgba(77, 144, 254, 0.2)',
+														}}
+													>
 														<TableHead>
 															<TableRow>
-																<TableCell>User</TableCell>
+																<TableCell style={{ paddingLeft: '2rem' }}>
+																	User
+																</TableCell>
 																<TableCell>Time Ago</TableCell>
 																<TableCell>Image</TableCell>
 																<TableCell>Rating</TableCell>
@@ -311,7 +334,7 @@ export default function PizzaTable() {
 														<TableBody>
 															{place.pizzaSliceRatings.map((rating) => (
 																<TableRow key={rating.id}>
-																	<TableCell>
+																	<TableCell style={{ paddingLeft: '2rem' }}>
 																		<div className="flex items-center">
 																			{rating.user.image ? (
 																				<Image
@@ -340,13 +363,23 @@ export default function PizzaTable() {
 																		ago
 																	</TableCell>
 																	<TableCell>
-																		<Image
-																			className="mt-4 mb-4"
-																			src={rating.image || ''}
-																			alt="Pizza image"
-																			width={50}
-																			height={50}
-																		/>
+																		{rating.image && (
+																			<button
+																				onClick={() =>
+																					handleOpenImageModal(rating.image!)
+																				}
+																				className="cursor-pointer hover:opacity-80 transition-opacity"
+																				aria-label="View full image"
+																			>
+																				<Image
+																					className="mt-4 mb-4"
+																					src={rating.image}
+																					alt="Pizza image"
+																					width={50}
+																					height={50}
+																				/>
+																			</button>
+																		)}
 																	</TableCell>
 																	<TableCell>
 																		<IconButton
@@ -418,6 +451,53 @@ export default function PizzaTable() {
 							{renderPizzaSlices(selectedRating?.rating.authenticity)}
 						</p>
 					</div>
+				</Box>
+			</Modal>
+			<Modal
+				open={openImageModal}
+				onClose={handleCloseImageModal}
+				aria-labelledby="image-modal-title"
+				aria-describedby="image-modal-description"
+			>
+				<Box
+					sx={{
+						position: 'absolute',
+						top: '50%',
+						left: '50%',
+						transform: 'translate(-50%, -50%)',
+						width: '60vw',
+						height: '80vh',
+						maxWidth: '1200px',
+						maxHeight: '1200px',
+						bgcolor: 'rgba(30, 58, 95, 0.95)',
+						backdropFilter: 'blur(10px)',
+						border: '1px solid rgba(77, 144, 254, 0.2)',
+						boxShadow: 24,
+						p: 2,
+						color: 'text.primary',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+						justifyContent: 'center',
+						overflow: 'hidden',
+					}}
+				>
+					{selectedImage && (
+						<Image
+							src={selectedImage}
+							alt="Full size pizza image"
+							width={1200}
+							height={1200}
+							style={{
+								width: 'auto',
+								height: '100%',
+								maxWidth: '100%',
+								maxHeight: '100%',
+								objectFit: 'contain',
+							}}
+							priority
+						/>
+					)}
 				</Box>
 			</Modal>
 		</div>
