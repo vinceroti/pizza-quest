@@ -3,6 +3,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -10,6 +11,7 @@ import PizzaIcon from '@/components/PizzaIcon';
 
 export default function DashboardNav() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const pathname = usePathname();
 	const textShadow = '1px 3px 3px rgba(0, 0, 0, 0.5)';
 
 	return (
@@ -69,7 +71,10 @@ export default function DashboardNav() {
 				{/* Desktop menu - hidden on mobile */}
 				<ul className="hidden md:flex space-x-7">
 					<li>
-						<Link href="/dashboard" className="flex items-center gap-2">
+						<Link
+							href="/dashboard"
+							className={`flex items-center gap-2 ${pathname === '/dashboard' ? 'active' : ''}`}
+						>
 							<FontAwesomeIcon icon="home" />
 							<span>Home</span>
 						</Link>
@@ -77,14 +82,17 @@ export default function DashboardNav() {
 					<li>
 						<Link
 							href="/dashboard/timeline"
-							className="flex items-center gap-2"
+							className={`flex items-center gap-2 ${pathname === '/dashboard/timeline' ? 'active' : ''}`}
 						>
 							<FontAwesomeIcon icon="clock" />
 							<span>Timeline</span>
 						</Link>
 					</li>
 					<li>
-						<Link href="/dashboard/new" className="flex items-center gap-2">
+						<Link
+							href="/dashboard/new"
+							className={`flex items-center gap-2 ${pathname === '/dashboard/new' ? 'active' : ''}`}
+						>
 							<FontAwesomeIcon icon="plus" />
 							<span>Submit Pizza</span>
 						</Link>
@@ -92,7 +100,7 @@ export default function DashboardNav() {
 					<li>
 						<Link
 							href="/dashboard/settings"
-							className="flex items-center gap-2"
+							className={`flex items-center gap-2 ${pathname === '/dashboard/settings' ? 'active' : ''}`}
 						>
 							<FontAwesomeIcon icon="cog" />
 							<span>Settings</span>
@@ -124,7 +132,7 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard"
-									className="flex items-center gap-2"
+									className={`flex items-center gap-2 ${pathname === '/dashboard' ? 'active' : ''}`}
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									<FontAwesomeIcon icon="home" />
@@ -134,7 +142,9 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/timeline"
-									className="flex items-center gap-2"
+									className={`flex items-center gap-2 ${
+										pathname === '/dashboard/timeline' ? 'active' : ''
+									}`}
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									<FontAwesomeIcon icon="clock" />
@@ -144,7 +154,9 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/new"
-									className="flex items-center gap-2"
+									className={`flex items-center gap-2 ${
+										pathname === '/dashboard/new' ? 'active' : ''
+									}`}
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									<FontAwesomeIcon icon="plus" />
@@ -154,7 +166,9 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/settings"
-									className="flex items-center gap-2"
+									className={`flex items-center gap-2 ${
+										pathname === '/dashboard/settings' ? 'active' : ''
+									}`}
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									<FontAwesomeIcon icon="cog" />
