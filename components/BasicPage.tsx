@@ -8,7 +8,7 @@ export default function LoginPage({
 	return (
 		<>
 			<Header />
-			<main className="flex grow flex-col items-center justify-between">
+			<main className="flex grow flex-col items-center justify-between relative z-10">
 				{children}
 			</main>
 		</>

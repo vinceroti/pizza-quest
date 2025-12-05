@@ -7,6 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 import * as React from 'react';
 
 import Footer from '@/components/Footer';
+import SpaceBackground from '@/components/SpaceBackground';
 import { Providers } from '~/providers';
 import theme from '~/theme';
 
@@ -18,6 +19,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body>
+				<SpaceBackground />
 				<div className="app">
 					<Providers>
 						<AppRouterCacheProvider>
