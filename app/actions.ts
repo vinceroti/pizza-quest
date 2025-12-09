@@ -538,7 +538,6 @@ export async function requestPasswordReset(email: string) {
 			`,
 		});
 
-		console.log('Email sent successfully to:', email);
 		return { success: true };
 	} catch (error) {
 		console.error('Error requesting password reset:', error);
