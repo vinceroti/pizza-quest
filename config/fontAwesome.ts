@@ -10,6 +10,7 @@ import {
 	faCircleNotch,
 	faClock,
 	faCog,
+	faEnvelope,
 	faHome,
 	faImage,
 	faMinus,
@@ -47,4 +48,5 @@ library.add(
 	faCog,
 	faRightFromBracket,
 	faBars,
+	faEnvelope,
 );

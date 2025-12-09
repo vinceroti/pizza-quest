@@ -1,17 +1,7 @@
 'use client';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoadingButton from '@mui/lab/LoadingButton';
-import {
-	Alert,
-	Box,
-	FormControl,
-	FormGroup,
-	Grid,
-	Rating,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Alert, FormControl, FormGroup, Grid, TextField } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -22,6 +12,8 @@ import { pizzaValidation } from '@/utils/validation';
 
 import ImageFileUpload from '../components/ImageFileUpload';
 import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
+import RatingInput from '../components/RatingInput';
+import SuccessMessage from '../components/SuccessMessage';
 
 export default function Dashboard() {
 	const { data: session } = useSession();
@@ -40,10 +32,6 @@ export default function Dashboard() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [file, setFile] = useState<File | null>(null);
 	const [success, setSuccess] = useState(false);
-
-	const PizzaIcon = ({ className }: { className?: string }) => (
-		<FontAwesomeIcon icon="pizza-slice" className={`m-0.5 ${className}`} />
-	);
 
 	const toBase64 = (file: File) =>
 		new Promise<string | ArrayBuffer | null>((resolve, reject) => {
@@ -100,18 +88,17 @@ export default function Dashboard() {
 	};
 
 	return (
-		<div>
-			<h4 className="mb-3">Upload and Rate Pizza Slices</h4>
+		<div
+			style={{
+				width: '100%',
+				maxWidth: '800px',
+				margin: '0 auto',
+				padding: '0 1rem',
+			}}
+		>
+			<h4 className="mb-3 text-center">Upload and Rate Pizza Slices</h4>
 			{success ? (
-				<div className="mt-20">
-					<h4>Success!</h4>
-					<FontAwesomeIcon
-						icon={{ prefix: 'far', iconName: 'circle-check' }}
-						className="light-green mb-5 mt-3"
-						size="4x"
-					/>
-					<p>Your pizza slice rating has been submitted successfully.</p>
-				</div>
+				<SuccessMessage message="Your pizza slice rating has been submitted successfully." />
 			) : (
 				<FormControl
 					component="form"
@@ -125,89 +112,45 @@ export default function Dashboard() {
 							}
 						/>
 						<Grid container spacing={2}>
-							<Grid item xs={6}>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">Overall Rating</Typography>
-									<Rating
-										name="overall-rating"
-										value={overall}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setOverall(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">Crust/Dough Rating</Typography>
-									<Rating
-										name="crust-dough-rating"
-										value={crustDough}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setCrustDough(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">Authenticity</Typography>
-									<Rating
-										name="authenticity"
-										value={authenticity}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setAuthenticity(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
+							<Grid item xs={12} sm={6}>
+								<RatingInput
+									label="Overall Rating"
+									name="overall-rating"
+									value={overall}
+									onChange={setOverall}
+								/>
+								<RatingInput
+									label="Crust/Dough Rating"
+									name="crust-dough-rating"
+									value={crustDough}
+									onChange={setCrustDough}
+								/>
+								<RatingInput
+									label="Authenticity"
+									name="authenticity"
+									value={authenticity}
+									onChange={setAuthenticity}
+								/>
 							</Grid>
-							<Grid item xs={6}>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">Sauce Rating</Typography>
-									<Rating
-										name="sauce-rating"
-										value={sauce}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setSauce(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">
-										Topping to Pizza Ratio
-									</Typography>
-									<Rating
-										name="topping-to-pizza-ratio"
-										value={toppingToPizzaRatio}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setToppingToPizzaRatio(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
-								<Box mb={2} mt={2}>
-									<Typography component="legend">Creativity</Typography>
-									<Rating
-										name="creativity"
-										value={creativity}
-										precision={0.5}
-										onChange={(event, newValue) => {
-											setCreativity(newValue);
-										}}
-										icon={<PizzaIcon />}
-										emptyIcon={<PizzaIcon className="opacity-55" />}
-									/>
-								</Box>
+							<Grid item xs={12} sm={6}>
+								<RatingInput
+									label="Sauce Rating"
+									name="sauce-rating"
+									value={sauce}
+									onChange={setSauce}
+								/>
+								<RatingInput
+									label="Topping to Pizza Ratio"
+									name="topping-to-pizza-ratio"
+									value={toppingToPizzaRatio}
+									onChange={setToppingToPizzaRatio}
+								/>
+								<RatingInput
+									label="Creativity"
+									name="creativity"
+									value={creativity}
+									onChange={setCreativity}
+								/>
 							</Grid>
 							<Grid item xs={12}>
 								<ImageFileUpload

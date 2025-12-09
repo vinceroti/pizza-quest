@@ -8,6 +8,7 @@ import * as React from 'react';
 
 import Footer from '@/components/Footer';
 import SpaceBackground from '@/components/SpaceBackground';
+import { roboto } from '~/fonts';
 import { Providers } from '~/providers';
 import theme from '~/theme';
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body>
+			<body className={roboto.className}>
 				<SpaceBackground />
 				<div className="app">
 					<Providers>

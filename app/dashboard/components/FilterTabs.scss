@@ -1,0 +1,44 @@
+.filter-tabs {
+	display: flex;
+	gap: 0;
+	border: 1px solid rgba(77, 144, 254, 0.3);
+	border-radius: 0.5rem;
+	overflow: hidden;
+	width: 100%;
+	max-width: 28rem;
+
+	button {
+		flex: 1;
+		padding: 1rem 2rem;
+		font-weight: 600;
+		font-size: 1rem;
+		transition: all 0.2s ease;
+		border: none;
+		cursor: pointer;
+
+		&:not(:first-child) {
+			border-left: 1px solid rgba(77, 144, 254, 0.3);
+		}
+
+		&.active {
+			background-color: rgba(77, 144, 254, 0.3);
+			color: white;
+			cursor: default;
+		}
+
+		&:not(.active) {
+			background-color: rgba(15, 30, 50, 0.6);
+			color: #d1d5db;
+
+			&:hover {
+				background-color: rgba(77, 144, 254, 0.15);
+				color: white;
+			}
+		}
+
+		&:disabled {
+			cursor: default;
+		}
+	}
+}
+

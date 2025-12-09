@@ -1,6 +1,6 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CircularProgress, TextField } from '@mui/material';
+import { CircularProgress, InputAdornment, TextField } from '@mui/material';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 interface SearchBoxProps {
@@ -43,48 +43,48 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 	};
 
 	return (
-		<div className="relative w-full max-w-md mx-auto mt-8 mb-3">
-			<div
-				style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
-			>
-				<TextField
-					label={label}
-					placeholder={placeholder}
-					variant="outlined"
-					fullWidth
-					value={inputValue}
-					onChange={handleInputChange}
-					className="mb-2"
-				/>
-				{inputValue && !isLoading ? (
-					<button
-						onClick={handleClear}
-						style={{
-							position: 'absolute',
-							right: 10,
-							top: '50%',
-							transform: 'translateY(-50%)',
-							background: 'none',
-							border: 'none',
-							cursor: 'pointer',
-						}}
-					>
-						<FontAwesomeIcon icon={faTimes} />
-					</button>
-				) : (
-					isLoading && (
-						<CircularProgress
-							size={24}
-							color="secondary"
-							style={{
-								position: 'absolute',
-								right: 10,
-								transform: 'translateY(-50%)',
-							}}
-						/>
-					)
-				)}
-			</div>
+		<div className="relative w-full max-w-md mx-auto mt-4 mb-2">
+			<TextField
+				label={label}
+				placeholder={placeholder}
+				variant="outlined"
+				fullWidth
+				value={inputValue}
+				onChange={handleInputChange}
+				className="mb-2"
+				size="medium"
+				InputProps={{
+					startAdornment: (
+						<InputAdornment position="start">
+							<FontAwesomeIcon
+								icon="search"
+								className={`${!inputValue ? 'opacity-50' : ''} transition-opacity duration-200`}
+							/>
+						</InputAdornment>
+					),
+					endAdornment: (
+						<InputAdornment position="end">
+							{inputValue && !isLoading ? (
+								<button
+									onClick={handleClear}
+									style={{
+										background: 'none',
+										border: 'none',
+										cursor: 'pointer',
+										padding: 0,
+										display: 'flex',
+										alignItems: 'center',
+									}}
+								>
+									<FontAwesomeIcon icon={faTimes} />
+								</button>
+							) : (
+								isLoading && <CircularProgress size={20} color="secondary" />
+							)}
+						</InputAdornment>
+					),
+				}}
+			/>
 		</div>
 	);
 };

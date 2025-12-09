@@ -130,12 +130,12 @@ export default function Signup() {
 							{errorMessage}
 						</Alert>
 					)}
-					<p className="mt-2">
+					<Box sx={{ mt: 2 }}>
 						Already have an account?
-						<Link href="/" className="ml-2">
+						<Link href="/" style={{ marginLeft: '0.5rem' }}>
 							Login
 						</Link>
-					</p>
+					</Box>
 				</Box>
 			</Box>
 		</Container>
