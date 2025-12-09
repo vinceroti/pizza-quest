@@ -520,22 +520,28 @@ export async function requestPasswordReset(email: string) {
 		const protocol = headersList.get('x-forwarded-proto') || 'http';
 		const resetUrl = `${protocol}://${host}/reset-password?token=${token}`;
 
+		const htmlContent = `
+			<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+				<h2 style="color: #4d90fe;">Pizza Quest</h2>
+				<p>You requested to reset your password.</p>
+				<p>Click the button below to set a new password:</p>
+				<a href="${resetUrl}"
+					style="display: inline-block; background-color: #4d90fe; color: white;
+					padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
+					Reset Password
+				</a>
+				<p style="color: #666; font-size: 14px;">This link will expire in 1 hour.</p>
+				<p style="color: #666; font-size: 14px;">
+					If you didn't request this, you can safely ignore this email.
+				</p>
+			</div>
+		`;
+
 		await transporter.sendMail({
 			from: `Pizza Quest <${process.env.GMAIL_USER}>`,
 			to: email,
 			subject: 'Reset your Pizza Quest password',
-			html: `
-				<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-					<h2 style="color: #4d90fe;">Pizza Quest</h2>
-					<p>You requested to reset your password.</p>
-					<p>Click the button below to set a new password:</p>
-					<a href="${resetUrl}" style="display: inline-block; background-color: #4d90fe; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
-						Reset Password
-					</a>
-					<p style="color: #666; font-size: 14px;">This link will expire in 1 hour.</p>
-					<p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
-				</div>
-			`,
+			html: htmlContent,
 		});
 
 		return { success: true };
