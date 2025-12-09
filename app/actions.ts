@@ -3,8 +3,10 @@
 import { PrismaClient } from '@prisma/client';
 import AWS from 'aws-sdk';
 import bcrypt from 'bcryptjs';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
+import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 
 import GooglePrediction from '@/interfaces/models/GooglePrediction';
@@ -18,6 +20,14 @@ import {
 } from '@/utils/validation';
 
 const prisma = new PrismaClient();
+
+const transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: process.env.GMAIL_USER,
+		pass: process.env.GMAIL_APP_PASSWORD,
+	},
+});
 
 AWS.config.update({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -505,20 +515,30 @@ export async function requestPasswordReset(email: string) {
 		});
 
 		// Send email with reset link
-		const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+		const headersList = headers();
+		const host = headersList.get('host');
+		const protocol = headersList.get('x-forwarded-proto') || 'http';
+		const resetUrl = `${protocol}://${host}/reset-password?token=${token}`;
 
-		// TODO: Implement email sending
-		// For now, just log the URL (you'll need to set up an email service)
-		// eslint-disable-next-line no-console
-		console.log('Password reset link:', resetUrl);
+		await transporter.sendMail({
+			from: `Pizza Quest <${process.env.GMAIL_USER}>`,
+			to: email,
+			subject: 'Reset your Pizza Quest password',
+			html: `
+				<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+					<h2 style="color: #4d90fe;">Pizza Quest</h2>
+					<p>You requested to reset your password.</p>
+					<p>Click the button below to set a new password:</p>
+					<a href="${resetUrl}" style="display: inline-block; background-color: #4d90fe; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">
+						Reset Password
+					</a>
+					<p style="color: #666; font-size: 14px;">This link will expire in 1 hour.</p>
+					<p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
+				</div>
+			`,
+		});
 
-		// If using Resend or similar service:
-		// await sendEmail({
-		//   to: user.email,
-		//   subject: 'Reset your Pizza Quest password',
-		//   html: `Click here to reset your password: ${resetUrl}`
-		// });
-
+		console.log('Email sent successfully to:', email);
 		return { success: true };
 	} catch (error) {
 		console.error('Error requesting password reset:', error);

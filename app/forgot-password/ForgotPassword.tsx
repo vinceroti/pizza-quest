@@ -1,5 +1,6 @@
 'use client';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -52,14 +53,18 @@ export default function ForgotPassword() {
 					alignItems: 'center',
 				}}
 			>
-				<h3 className="mb-4">Forgot Password</h3>
+				<h3 className="mb-5">Forgot Password</h3>
 				{success ? (
 					<div className="text-center">
-						<p className="mb-4">
+						<FontAwesomeIcon
+							icon="envelope"
+							className="text-5xl text-secondary mb-4"
+						/>
+						<p className="mb-8">
 							If an account exists with that email, we&apos;ve sent password
 							reset instructions.
 						</p>
-						<p className="text-sm text-gray-400 mb-4">
+						<p className="text-sm text-gray-400 mb-8">
 							Check your email for a link to reset your password.
 						</p>
 						<Link href="/">Back to Login</Link>

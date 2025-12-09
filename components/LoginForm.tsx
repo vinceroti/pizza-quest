@@ -106,6 +106,11 @@ export default function LoginForm() {
 							Password or email is incorrect.
 						</Alert>
 					)}
+					<Box sx={{ mt: 1 }}>
+						<Link href="/forgot-password" style={{ fontSize: '0.875rem' }}>
+							Forgot password?
+						</Link>
+					</Box>
 					<Box sx={{ textAlign: 'center', mt: 2 }}>
 						Don&apos;t have an account?
 						<Link href="/signup" style={{ marginLeft: '0.5rem' }}>
