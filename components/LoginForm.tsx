@@ -5,7 +5,6 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -94,7 +93,7 @@ export default function LoginForm() {
 						type="submit"
 						fullWidth
 						variant="contained"
-						sx={{ mt: 3, mb: 2 }}
+						sx={{ mt: 2, mb: 2 }}
 					>
 						Login
 					</LoadingButton>
@@ -107,12 +106,12 @@ export default function LoginForm() {
 							Password or email is incorrect.
 						</Alert>
 					)}
-					<Typography variant="body2" align="center" sx={{ mt: 2 }}>
+					<Box sx={{ textAlign: 'center', mt: 2 }}>
 						Don&apos;t have an account?
-						<Link href="/signup" className="ml-2">
+						<Link href="/signup" style={{ marginLeft: '0.5rem' }}>
 							Sign Up
 						</Link>
-					</Typography>
+					</Box>
 				</Box>
 			</Box>
 		</Container>

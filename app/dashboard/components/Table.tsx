@@ -2,10 +2,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-	Box,
 	Collapse,
 	IconButton,
-	Modal,
 	Paper,
 	Table,
 	TableBody,
@@ -22,6 +20,11 @@ import React, { useEffect, useState } from 'react';
 
 import { getAllPizzaPlacesWithRatings } from '@/app/actions';
 
+import FilterTabs from './FilterTabs';
+import ImageModal from './ImageModal';
+import LoadingSpinner from './LoadingSpinner';
+import PizzaRatingDisplay from './PizzaRatingDisplay';
+import RatingDetailModal from './RatingDetailModal';
 import SearchBox from './SearchBox';
 
 // Extract the type of PizzaPlace from feed
@@ -142,364 +145,268 @@ export default function PizzaTable() {
 			}
 		});
 
-	const renderPizzaSlices = (rating?: number) => {
-		if (!rating) {
-			return null;
-		}
-		const fullSlices = Math.floor(rating);
-		const hasHalfSlice = rating % 1 !== 0;
-		const emptySlices = 5 - fullSlices - (hasHalfSlice ? 1 : 0);
-
-		return (
-			<div className="flex items-center mt-2">
-				{Array.from({ length: fullSlices }).map((_, index) => (
-					<FontAwesomeIcon
-						key={`full-${index}`}
-						icon="pizza-slice"
-						className="text-yellow-500"
-					/>
-				))}
-				{hasHalfSlice && (
-					<span className="relative flex">
-						<FontAwesomeIcon
-							key="half"
-							icon="pizza-slice"
-							className="text-gray-300"
-						/>
-						<FontAwesomeIcon
-							key="half-colored"
-							icon="pizza-slice"
-							className="text-yellow-500 absolute top-0 left-0"
-							style={{ clipPath: 'inset(0 50% 0 0)' }}
-						/>
-					</span>
-				)}
-				{Array.from({ length: emptySlices }).map((_, index) => (
-					<FontAwesomeIcon
-						key={`empty-${index}`}
-						icon="pizza-slice"
-						className="text-gray-300"
-					/>
-				))}
-			</div>
-		);
-	};
-
 	return (
-		<div className="mt-4 space-y-4">
+		<div
+			className="mt-4 space-y-4"
+			style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}
+		>
 			<div className="flex flex-col items-center gap-4 mb-4">
-				<div className="text-center flex gap-2">
-					<button
-						className={`button-link ${filter === 'self' ? 'active' : ''}`}
-						onClick={() => setFilter('self')}
-						disabled={filter === 'self'}
-					>
-						Self
-					</button>
-					<button
-						className={`button-link ${filter === 'all' ? 'active' : ''}`}
-						onClick={() => setFilter('all')}
-						disabled={filter === 'all'}
-					>
-						All
-					</button>
-				</div>
+				<FilterTabs activeFilter={filter} onFilterChange={setFilter} />
 			</div>
 			<SearchBox value={searchQuery} onChange={setSearchQuery} />
-			{loading ? (
-				<FontAwesomeIcon
-					icon="circle-notch"
-					className="animate-spin mt-44 mx-auto"
-					size="3x"
-				/>
-			) : errorMessage ? (
-				<div className="text-center">{errorMessage}</div>
-			) : (
-				<TableContainer component={Paper}>
-					<Table>
-						<TableHead>
-							<TableRow>
-								<TableCell>
-									<button
-										onClick={() => handleSort('name')}
-										className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
-									>
-										<FontAwesomeIcon
-											icon="pizza-slice"
-											className="text-yellow-500"
-										/>{' '}
-										Pizza Place
-										{sortField === 'name' && (
-											<FontAwesomeIcon
-												icon={
-													sortDirection === 'asc'
-														? 'chevron-up'
-														: 'chevron-down'
-												}
-											/>
-										)}
-									</button>
-								</TableCell>
-								<TableCell>Location</TableCell>
-								<TableCell>
-									<button
-										onClick={() => handleSort('rating')}
-										className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
-									>
-										<FontAwesomeIcon icon="star" className="text-yellow-500" />{' '}
-										Average Ratings
-										{sortField === 'rating' && (
-											<FontAwesomeIcon
-												icon={
-													sortDirection === 'asc'
-														? 'chevron-up'
-														: 'chevron-down'
-												}
-											/>
-										)}
-									</button>
-								</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{filteredFeed.length === 0 ? (
+			<div style={{ minHeight: '400px' }}>
+				{loading ? (
+					<LoadingSpinner />
+				) : errorMessage ? (
+					<div className="text-center">{errorMessage}</div>
+				) : (
+					<TableContainer component={Paper}>
+						<Table>
+							<TableHead>
 								<TableRow>
-									<TableCell colSpan={3} className="text-center">
-										No pizza places to show.
+									<TableCell
+										style={{ paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+									>
+										<button
+											onClick={() => handleSort('name')}
+											className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
+										>
+											<Image
+												src="/pizza-slice-single.webp"
+												alt="Pizza slice"
+												width={16}
+												height={16}
+												className="inline-block"
+												style={{ objectFit: 'contain' }}
+											/>{' '}
+											Pizza Place
+											{sortField === 'name' && (
+												<FontAwesomeIcon
+													icon={
+														sortDirection === 'asc'
+															? 'chevron-up'
+															: 'chevron-down'
+													}
+												/>
+											)}
+										</button>
+									</TableCell>
+									<TableCell
+										style={{ paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+									>
+										Location
+									</TableCell>
+									<TableCell
+										style={{ paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+									>
+										<button
+											onClick={() => handleSort('rating')}
+											className="flex items-center gap-2 hover:text-yellow-500 transition-colors cursor-pointer"
+										>
+											<FontAwesomeIcon
+												icon="star"
+												className="text-yellow-500"
+											/>{' '}
+											Ratings
+											{sortField === 'rating' && (
+												<FontAwesomeIcon
+													icon={
+														sortDirection === 'asc'
+															? 'chevron-up'
+															: 'chevron-down'
+													}
+												/>
+											)}
+										</button>
 									</TableCell>
 								</TableRow>
-							) : (
-								filteredFeed.map((place) => (
-									<React.Fragment key={place.id}>
-										<TableRow key={place.id}>
-											<TableCell>
-												<div className="flex items-center gap-2">
-													<IconButton
-														aria-label="expand row"
-														size="small"
-														onClick={() => handleToggle(place.id)}
-													>
-														<FontAwesomeIcon
-															size="xs"
-															icon={open[place.id] ? 'minus' : 'plus'}
-														/>
-													</IconButton>
-													<span>{place.mainText}</span>
-												</div>
-											</TableCell>
-											<TableCell>{place.description}</TableCell>
-											<TableCell>
-												<div className="flex items-center gap-2">
-													<FontAwesomeIcon
-														icon="star"
-														size="lg"
-														className="text-yellow-500"
-													/>
-													<span>{ratings[place.id] || 0}</span>
-												</div>
-											</TableCell>
-										</TableRow>
-										<TableRow>
-											<TableCell
-												style={{
-													padding: 0,
-												}}
-												colSpan={6}
-											>
-												<Collapse
-													in={open[place.id]}
-													timeout="auto"
-													unmountOnExit
+							</TableHead>
+							<TableBody>
+								{filteredFeed.length === 0 ? (
+									<TableRow>
+										<TableCell colSpan={3} className="text-center">
+											No pizza places to show.
+										</TableCell>
+									</TableRow>
+								) : (
+									filteredFeed.map((place) => (
+										<React.Fragment key={place.id}>
+											<TableRow key={place.id}>
+												<TableCell
+													style={{
+														paddingTop: '0.75rem',
+														paddingBottom: '0.75rem',
+													}}
 												>
-													<Table
-														size="small"
-														aria-label="pizzas"
-														style={{
-															backgroundColor: 'rgba(15, 30, 50, 0.6)',
-															backdropFilter: 'blur(10px)',
-															border: '1px solid rgba(77, 144, 254, 0.2)',
-														}}
+													<div className="flex items-center gap-2">
+														<IconButton
+															aria-label="expand row"
+															size="small"
+															onClick={() => handleToggle(place.id)}
+														>
+															<FontAwesomeIcon
+																size="xs"
+																icon={open[place.id] ? 'minus' : 'plus'}
+															/>
+														</IconButton>
+														<span>{place.mainText}</span>
+													</div>
+												</TableCell>
+												<TableCell
+													style={{
+														paddingTop: '0.75rem',
+														paddingBottom: '0.75rem',
+													}}
+												>
+													{' '}
+													{place.description}
+												</TableCell>
+												<TableCell
+													style={{
+														paddingTop: '0.75rem',
+														paddingBottom: '0.75rem',
+													}}
+												>
+													<div className="flex items-center gap-2">
+														<FontAwesomeIcon
+															icon="star"
+															size="lg"
+															className="text-yellow-500"
+														/>
+														<span>{ratings[place.id] || 0}</span>
+													</div>
+												</TableCell>
+											</TableRow>
+											<TableRow>
+												<TableCell
+													style={{
+														padding: 0,
+													}}
+													colSpan={6}
+												>
+													<Collapse
+														in={open[place.id]}
+														timeout="auto"
+														unmountOnExit
 													>
-														<TableHead>
-															<TableRow>
-																<TableCell style={{ paddingLeft: '2rem' }}>
-																	User
-																</TableCell>
-																<TableCell>Time Ago</TableCell>
-																<TableCell>Image</TableCell>
-																<TableCell>Rating</TableCell>
-																<TableCell>Notes</TableCell>
-															</TableRow>
-														</TableHead>
-														<TableBody>
-															{place.pizzaSliceRatings.map((rating) => (
-																<TableRow key={rating.id}>
+														<Table
+															size="small"
+															aria-label="pizzas"
+															style={{
+																backgroundColor: 'rgba(15, 30, 50, 0.6)',
+																backdropFilter: 'blur(10px)',
+																border: '1px solid rgba(77, 144, 254, 0.2)',
+															}}
+														>
+															<TableHead>
+																<TableRow>
 																	<TableCell style={{ paddingLeft: '2rem' }}>
-																		<div className="flex items-center">
-																			{rating.user.image ? (
-																				<Image
-																					className="rounded-full"
-																					src={rating.user.image}
-																					alt="User image"
-																					width={17.5}
-																					height={17.5}
-																				/>
-																			) : (
-																				<FontAwesomeIcon
-																					icon="user-circle"
-																					className="text-gray-500"
-																					size="lg"
-																				/>
-																			)}
-																			<span className="ml-2">
-																				{rating.user.username}
-																			</span>
-																		</div>
+																		User
 																	</TableCell>
-																	<TableCell>
-																		{formatDistanceToNow(
-																			new Date(rating.createdAt),
-																		)}{' '}
-																		ago
-																	</TableCell>
-																	<TableCell>
-																		{rating.image && (
-																			<button
-																				onClick={() =>
-																					handleOpenImageModal(rating.image!)
-																				}
-																				className="cursor-pointer hover:opacity-80 transition-opacity"
-																				aria-label="View full image"
-																			>
-																				<Image
-																					className="mt-4 mb-4"
-																					src={rating.image}
-																					alt="Pizza image"
-																					width={50}
-																					height={50}
-																				/>
-																			</button>
-																		)}
-																	</TableCell>
-																	<TableCell>
-																		<IconButton
-																			onClick={() =>
-																				handleOpenModal(rating, place)
-																			}
-																			aria-label="rating"
-																			size="small"
-																		>
-																			{renderPizzaSlices(rating.overall)}
-																		</IconButton>
-																	</TableCell>
-																	<TableCell>{rating.notes}</TableCell>
+																	<TableCell>Time Ago</TableCell>
+																	<TableCell>Image</TableCell>
+																	<TableCell>Rating</TableCell>
+																	<TableCell>Notes</TableCell>
 																</TableRow>
-															))}
-														</TableBody>
-													</Table>
-												</Collapse>
-											</TableCell>
-										</TableRow>
-									</React.Fragment>
-								))
-							)}
-						</TableBody>
-					</Table>
-				</TableContainer>
-			)}
-			<Modal
+															</TableHead>
+															<TableBody>
+																{place.pizzaSliceRatings.map((rating) => (
+																	<TableRow key={rating.id}>
+																		<TableCell
+																			style={{
+																				paddingLeft: '2rem',
+																				paddingTop: '1rem',
+																				paddingBottom: '1rem',
+																			}}
+																		>
+																			<div className="flex items-center">
+																				{rating.user.image ? (
+																					<Image
+																						className="rounded-full"
+																						src={rating.user.image}
+																						alt="User image"
+																						width={17.5}
+																						height={17.5}
+																					/>
+																				) : (
+																					<FontAwesomeIcon
+																						icon="user-circle"
+																						className="text-gray-500"
+																						size="lg"
+																					/>
+																				)}
+																				<span className="ml-2">
+																					{rating.user.username}
+																				</span>
+																			</div>
+																		</TableCell>
+																		<TableCell>
+																			{formatDistanceToNow(
+																				new Date(rating.createdAt),
+																			)}{' '}
+																			ago
+																		</TableCell>
+																		<TableCell>
+																			{rating.image && (
+																				<button
+																					onClick={() => {
+																						const img = rating.image!;
+																						handleOpenImageModal(img);
+																					}}
+																					className="cursor-pointer hover:opacity-80 transition-opacity"
+																					aria-label="View full image"
+																				>
+																					<Image
+																						src={rating.image}
+																						alt="Pizza image"
+																						width={50}
+																						height={50}
+																					/>
+																				</button>
+																			)}
+																		</TableCell>
+																		<TableCell>
+																			<IconButton
+																				onClick={() =>
+																					handleOpenModal(rating, place)
+																				}
+																				aria-label="rating"
+																				size="small"
+																			>
+																				<PizzaRatingDisplay
+																					rating={rating.overall}
+																					className="mt-2"
+																				/>
+																			</IconButton>
+																		</TableCell>
+																		<TableCell>{rating.notes}</TableCell>
+																	</TableRow>
+																))}
+															</TableBody>
+														</Table>
+													</Collapse>
+												</TableCell>
+											</TableRow>
+										</React.Fragment>
+									))
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				)}
+			</div>
+			<RatingDetailModal
 				open={openModal}
 				onClose={handleCloseModal}
-				aria-labelledby="modal-title"
-				aria-describedby="modal-description"
-			>
-				<Box
-					sx={{
-						position: 'absolute',
-						top: '50%',
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						width: 600,
-						bgcolor: 'rgba(30, 58, 95, 0.95)',
-						backdropFilter: 'blur(10px)',
-						border: '1px solid rgba(77, 144, 254, 0.2)',
-						boxShadow: 24,
-						p: 4,
-						color: 'text.primary',
-					}}
-				>
-					<h5>
-						{selectedRating?.rating.user.username} Rating for{' '}
-						{selectedRating?.place.mainText}
-					</h5>
-					<div className="grid grid-cols-2 gap-6 mt-5">
-						<p>Overall: {renderPizzaSlices(selectedRating?.rating.overall)}</p>
-						<p>
-							Crust Dough:{' '}
-							{renderPizzaSlices(selectedRating?.rating.crustDough)}
-						</p>
-						<p>Sauce: {renderPizzaSlices(selectedRating?.rating.sauce)}</p>
-						<p>
-							Topping to Pizza Ratio:{' '}
-							{renderPizzaSlices(selectedRating?.rating.toppingToPizzaRatio)}
-						</p>
-						<p>
-							Creativity: {renderPizzaSlices(selectedRating?.rating.creativity)}
-						</p>
-						<p>
-							Authenticity:{' '}
-							{renderPizzaSlices(selectedRating?.rating.authenticity)}
-						</p>
-					</div>
-				</Box>
-			</Modal>
-			<Modal
+				username={selectedRating?.rating.user.username}
+				placeName={selectedRating?.place.mainText}
+				rating={selectedRating?.rating}
+			/>
+			<ImageModal
 				open={openImageModal}
 				onClose={handleCloseImageModal}
-				aria-labelledby="image-modal-title"
-				aria-describedby="image-modal-description"
-			>
-				<Box
-					sx={{
-						position: 'absolute',
-						top: '50%',
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						width: '60vw',
-						height: '80vh',
-						maxWidth: '1200px',
-						maxHeight: '1200px',
-						bgcolor: 'rgba(30, 58, 95, 0.95)',
-						backdropFilter: 'blur(10px)',
-						border: '1px solid rgba(77, 144, 254, 0.2)',
-						boxShadow: 24,
-						p: 2,
-						color: 'text.primary',
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-						justifyContent: 'center',
-						overflow: 'hidden',
-					}}
-				>
-					{selectedImage && (
-						<Image
-							src={selectedImage}
-							alt="Full size pizza image"
-							width={1200}
-							height={1200}
-							style={{
-								width: 'auto',
-								height: '100%',
-								maxWidth: '100%',
-								maxHeight: '100%',
-								objectFit: 'contain',
-							}}
-							priority
-						/>
-					)}
-				</Box>
-			</Modal>
+				imageUrl={selectedImage}
+			/>
 		</div>
 	);
 }

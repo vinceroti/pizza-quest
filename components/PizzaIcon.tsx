@@ -13,7 +13,7 @@ export default function PizzaIcon({
 }: PizzaIconProps) {
 	return (
 		<Image
-			src="/pizza-slice.gif"
+			src="/pizza-slice.webp"
 			alt="Pizza slice"
 			width={size}
 			height={size}
@@ -23,7 +23,6 @@ export default function PizzaIcon({
 				display: 'inline-block',
 				...style,
 			}}
-			unoptimized
 		/>
 	);
 }

@@ -14,17 +14,18 @@ datasource db {
 }
 
 model User {
-  id            Int                @id @default(autoincrement())
-  username      String             @unique
-  email         String             @unique
-  emailVerified DateTime?
-  image         String?
-  password      String
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  pizzaRatings  PizzaSliceRating[]
-  Comment       Comment[]
-  Like          Like[]
+  id                   Int                   @id @default(autoincrement())
+  username             String                @unique
+  email                String                @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  pizzaRatings         PizzaSliceRating[]
+  Comment              Comment[]
+  Like                 Like[]
+  passwordResetTokens  PasswordResetToken[]
 }
 
 
@@ -76,4 +77,13 @@ model Like {
   username           String
   userId             Int
   user               User             @relation(fields: [userId], references: [id])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    Int
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

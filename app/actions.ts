@@ -468,3 +468,139 @@ export async function avatarUpload({
 		throw error;
 	}
 }
+
+export async function requestPasswordReset(email: string) {
+	const { isValid: isEmailValid, emailErrorMsg } = emailValidation(email);
+
+	if (!isEmailValid) {
+		throw new Error(emailErrorMsg);
+	}
+
+	try {
+		// Find user by email
+		const user = await prisma.user.findUnique({
+			where: { email },
+		});
+
+		if (!user) {
+			// Don't reveal if user exists for security
+			return { success: true };
+		}
+
+		// Delete any existing tokens for this user
+		await prisma.passwordResetToken.deleteMany({
+			where: { userId: user.id },
+		});
+
+		// Generate new token
+		const token = uuidv4();
+		const expires = new Date(Date.now() + 3600000); // 1 hour from now
+
+		await prisma.passwordResetToken.create({
+			data: {
+				userId: user.id,
+				token,
+				expires,
+			},
+		});
+
+		// Send email with reset link
+		const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+
+		// TODO: Implement email sending
+		// For now, just log the URL (you'll need to set up an email service)
+		// eslint-disable-next-line no-console
+		console.log('Password reset link:', resetUrl);
+
+		// If using Resend or similar service:
+		// await sendEmail({
+		//   to: user.email,
+		//   subject: 'Reset your Pizza Quest password',
+		//   html: `Click here to reset your password: ${resetUrl}`
+		// });
+
+		return { success: true };
+	} catch (error) {
+		console.error('Error requesting password reset:', error);
+		throw new Error('Failed to request password reset');
+	}
+}
+
+export async function validateResetToken(token: string) {
+	try {
+		const resetToken = await prisma.passwordResetToken.findUnique({
+			where: { token },
+			include: { user: true },
+		});
+
+		if (!resetToken) {
+			return { valid: false, message: 'Invalid or expired reset token' };
+		}
+
+		if (resetToken.expires < new Date()) {
+			await prisma.passwordResetToken.delete({
+				where: { token },
+			});
+			return { valid: false, message: 'Reset token has expired' };
+		}
+
+		return {
+			valid: true,
+			email: resetToken.user.email,
+		};
+	} catch (error) {
+		console.error('Error validating reset token:', error);
+		return { valid: false, message: 'Invalid reset token' };
+	}
+}
+
+export async function resetPassword(
+	token: string,
+	password: string,
+	confirmPassword: string,
+) {
+	const { isValid: isPasswordValid, passwordErrorMsg } = passwordValidation(
+		password,
+		confirmPassword,
+	);
+
+	if (!isPasswordValid) {
+		throw new Error(passwordErrorMsg);
+	}
+
+	try {
+		const resetToken = await prisma.passwordResetToken.findUnique({
+			where: { token },
+		});
+
+		if (!resetToken) {
+			throw new Error('Invalid or expired reset token');
+		}
+
+		if (resetToken.expires < new Date()) {
+			await prisma.passwordResetToken.delete({
+				where: { token },
+			});
+			throw new Error('Reset token has expired');
+		}
+
+		// Hash new password
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		// Update user password
+		await prisma.user.update({
+			where: { id: resetToken.userId },
+			data: { password: hashedPassword },
+		});
+
+		// Delete used token
+		await prisma.passwordResetToken.delete({
+			where: { token },
+		});
+
+		return { success: true };
+	} catch (error) {
+		console.error('Error resetting password:', error);
+		throw error;
+	}
+}
