@@ -7,23 +7,24 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FormEvent, useEffect, useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 import { resetPassword, validateResetToken } from '@/app/actions';
+import { passwordValidation } from '@/utils/validation';
 
 export default function ResetPassword() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get('token');
 
+	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [passwordError, setPasswordError] = useState('');
+	const [confirmPasswordError, setConfirmPasswordError] = useState('');
 	const [validating, setValidating] = useState(true);
 	const [tokenValid, setTokenValid] = useState(false);
 	const [email, setEmail] = useState('');
-	const [passwordError, setPasswordError] = useState('');
-	const [confirmPasswordError, setConfirmPasswordError] = useState('');
-	const [success, setSuccess] = useState(false);
-	const [errorMessage, setErrorMessage] = useState('');
 
 	useEffect(() => {
 		async function checkToken() {
@@ -46,23 +47,26 @@ export default function ResetPassword() {
 		checkToken();
 	}, [token]);
 
-	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = new FormData(event.currentTarget);
+
+		setErrorMessage('');
 		setPasswordError('');
 		setConfirmPasswordError('');
-		setErrorMessage('');
 
-		const password = formData.get('password') as string;
-		const confirmPassword = formData.get('confirmPassword') as string;
+		const data = new FormData(event.currentTarget);
+		const password = data.get('password') as string;
+		const confirmPassword = data.get('confirmPassword') as string;
 
-		if (!password) {
-			setPasswordError('Password is required');
-			return;
-		}
+		const {
+			isValid: isPasswordValid,
+			passwordErrorMsg,
+			confirmPasswordErrorMsg,
+		} = passwordValidation(password, confirmPassword);
 
-		if (password !== confirmPassword) {
-			setConfirmPasswordError('Passwords do not match');
+		if (!isPasswordValid) {
+			setPasswordError(passwordErrorMsg);
+			setConfirmPasswordError(confirmPasswordErrorMsg);
 			return;
 		}
 
@@ -72,22 +76,24 @@ export default function ResetPassword() {
 		}
 
 		setLoading(true);
+
 		try {
 			await resetPassword(token, password, confirmPassword);
-			setSuccess(true);
-			setTimeout(() => {
-				router.push('/');
-			}, 3000);
+			await signIn('credentials', {
+				email,
+				password,
+				redirect: false,
+			});
+			router.push('/dashboard');
 		} catch (error: unknown) {
 			setErrorMessage((error as Error).message);
-		} finally {
 			setLoading(false);
 		}
 	};
 
 	if (validating) {
 		return (
-			<Container maxWidth="xs">
+			<Container component="main" maxWidth="xs">
 				<Box
 					sx={{
 						marginTop: 8,
@@ -104,7 +110,7 @@ export default function ResetPassword() {
 
 	if (!tokenValid) {
 		return (
-			<Container maxWidth="xs">
+			<Container component="main" maxWidth="xs">
 				<Box
 					sx={{
 						marginTop: 8,
@@ -125,7 +131,7 @@ export default function ResetPassword() {
 	}
 
 	return (
-		<Container maxWidth="xs">
+		<Container component="main" maxWidth="xs">
 			<Box
 				sx={{
 					marginTop: 8,
@@ -134,67 +140,59 @@ export default function ResetPassword() {
 					alignItems: 'center',
 				}}
 			>
-				<h3 className="mb-4">Reset Password</h3>
-				{success ? (
-					<div className="text-center">
-						<p className="text-green-500 mb-4">Password reset successful!</p>
-						<p className="text-sm text-gray-400">Redirecting to login...</p>
-					</div>
-				) : (
-					<Box
-						component="form"
-						noValidate
-						sx={{ mt: 1 }}
-						onSubmit={handleSubmit}
+				<h3>Reset Password</h3>
+				<p>Enter your new password for {email}</p>
+				<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						name="password"
+						label="Password"
+						type="password"
+						id="password"
+						autoComplete="new-password"
+						autoFocus
+						error={!!passwordError}
+						helperText={passwordError}
+					/>
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						name="confirmPassword"
+						label="Confirm Password"
+						type="password"
+						id="confirmPassword"
+						autoComplete="new-password"
+						error={!!confirmPasswordError}
+						helperText={confirmPasswordError}
+					/>
+					<LoadingButton
+						loading={loading}
+						type="submit"
+						fullWidth
+						variant="contained"
+						sx={{ mt: 3, mb: 2 }}
 					>
-						<p className="text-sm mb-4">
-							Enter your new password for <strong>{email}</strong>
-						</p>
-						<TextField
-							margin="normal"
-							required
-							fullWidth
-							name="password"
-							label="New Password"
-							type="password"
-							id="password"
-							autoComplete="new-password"
-							autoFocus
-							error={!!passwordError}
-							helperText={passwordError}
-						/>
-						<TextField
-							margin="normal"
-							required
-							fullWidth
-							name="confirmPassword"
-							label="Confirm New Password"
-							type="password"
-							id="confirmPassword"
-							autoComplete="new-password"
-							error={!!confirmPasswordError}
-							helperText={confirmPasswordError}
-						/>
-						<LoadingButton
-							loading={loading}
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
+						Reset Password
+					</LoadingButton>
+					{errorMessage && (
+						<Alert
+							severity="error"
+							variant="filled"
+							onClose={() => setErrorMessage('')}
 						>
-							Reset Password
-						</LoadingButton>
-						{errorMessage && (
-							<Alert
-								severity="error"
-								variant="filled"
-								onClose={() => setErrorMessage('')}
-							>
-								{errorMessage}
-							</Alert>
-						)}
+							{errorMessage}
+						</Alert>
+					)}
+					<Box sx={{ mt: 2 }}>
+						Remember your password?
+						<Link href="/" style={{ marginLeft: '0.5rem' }}>
+							Login
+						</Link>
 					</Box>
-				)}
+				</Box>
 			</Box>
 		</Container>
 	);

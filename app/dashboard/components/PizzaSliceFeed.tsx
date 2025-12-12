@@ -74,7 +74,7 @@ export default function PizzaSliceFeed({ userId }: { userId?: number }) {
 						{filteredFeed.length === 0 && (
 							<div className="text-center mt-10">No pizza slices to show.</div>
 						)}
-						<div className="mt-10">
+						<div className="mt-10 flex flex-col justify-center items-center">
 							{filteredFeed.map((slice) => (
 								<PizzaSliceCard key={slice.id} slice={slice} />
 							))}
