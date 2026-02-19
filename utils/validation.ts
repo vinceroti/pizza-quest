@@ -3,8 +3,8 @@ function passwordValidation(password: string, confirmPassword: string) {
 	let passwordErrorMsg = '';
 	let confirmPasswordErrorMsg = '';
 
-	if (password.length < 5) {
-		passwordErrorMsg = 'be at least 5 characters long';
+	if (password.length < 8) {
+		passwordErrorMsg = 'be at least 8 characters long';
 	}
 
 	if (!/[A-Z]/.test(password)) {
@@ -61,9 +61,8 @@ function emailValidation(email: string) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pizzaValidation(data: { [key: string]: any }) {
-	if (data.userId < -1) {
-		return 'User ID is required.';
-		// this should never happen
+	if (!data.pizzaPlace?.place_id) {
+		return 'Pizza place is required.';
 	}
 
 	if (data.overall < 1 || data.overall > 5) {
@@ -88,10 +87,6 @@ function pizzaValidation(data: { [key: string]: any }) {
 
 	if (data.authenticity < 1 || data.authenticity > 5) {
 		return 'Authenticity rating must be between 1 and 5 slices.';
-	}
-
-	if (data.pizzaPlace.length < 1) {
-		return 'Pizza place name is required.';
 	}
 
 	if (!data.image?.type || !data.image?.data) {

@@ -160,7 +160,7 @@ export default function PizzaTable() {
 				) : errorMessage ? (
 					<div className="text-center">{errorMessage}</div>
 				) : (
-					<TableContainer component={Paper}>
+					<TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
 						<Table>
 							<TableHead>
 								<TableRow>
@@ -370,7 +370,10 @@ export default function PizzaTable() {
 																				onClick={() =>
 																					handleOpenModal(rating, place)
 																				}
-																				aria-label="rating"
+																				aria-label={[
+																					'View detailed rating by',
+																					rating.user.username,
+																				].join(' ')}
 																				size="small"
 																			>
 																				<PizzaRatingDisplay

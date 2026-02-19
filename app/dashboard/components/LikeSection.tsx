@@ -4,7 +4,7 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Like } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
 	addLikeToPizzaSliceRating,
@@ -16,18 +16,6 @@ interface LikeSectionProps {
 	pizzaSliceRatingId: number;
 }
 
-const debounce = (func: (...args: unknown[]) => void, wait: number) => {
-	let timeout: NodeJS.Timeout;
-	return function executedFunction(...args: unknown[]) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
-};
-
 const LikeSection: React.FC<LikeSectionProps> = ({
 	likes,
 	pizzaSliceRatingId,
@@ -36,6 +24,7 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 
 	const [likeCount, setLikeCount] = useState<number>(likes?.length || 0);
 	const [hasLiked, setHasLiked] = useState<boolean>(false);
+	const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		if (session) {
@@ -46,62 +35,52 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 		}
 	}, [session, likes]);
 
-	const handleAddLike = async () => {
-		if (session && !hasLiked) {
+	const performLikeAction = useCallback(
+		async (shouldLike: boolean) => {
+			if (!session) return;
 			try {
-				const updatedLikes = await addLikeToPizzaSliceRating({
-					userId: session.user.id,
-					username: session.user.username,
-					pizzaSliceRatingId,
-				});
-				setLikeCount(updatedLikes.length);
-				setHasLiked(true);
+				if (shouldLike) {
+					const updatedLikes = await addLikeToPizzaSliceRating({
+						pizzaSliceRatingId,
+					});
+					setLikeCount(updatedLikes.length);
+					setHasLiked(true);
+				} else {
+					const updatedLikes = await removeLikeFromPizzaSliceRating({
+						pizzaSliceRatingId,
+					});
+					setLikeCount(updatedLikes.length);
+					setHasLiked(false);
+				}
 			} catch (error) {
-				setLikeCount((prevCount) => prevCount - 1);
-				setHasLiked(false);
-				console.error('Failed to add like:', error);
+				setHasLiked(!shouldLike);
+				setLikeCount((prev) => (shouldLike ? prev - 1 : prev + 1));
+				console.error('Failed to update like:', error);
 			}
-		}
-	};
-
-	const handleRemoveLike = async () => {
-		if (session && hasLiked) {
-			try {
-				const updatedLikes = await removeLikeFromPizzaSliceRating({
-					userId: session.user.id,
-					pizzaSliceRatingId,
-				});
-				setLikeCount(updatedLikes.length);
-				setHasLiked(false);
-			} catch (error) {
-				setLikeCount((prevCount) => prevCount + 1);
-				setHasLiked(true);
-				console.error('Failed to remove like:', error);
-			}
-		}
-	};
-
-	const debouncedHandleAddLike = useCallback(debounce(handleAddLike, 300), [
-		session,
-		hasLiked,
-	]);
-
-	const debouncedHandleRemoveLike = useCallback(
-		debounce(handleRemoveLike, 300),
-		[session, hasLiked],
+		},
+		[session, pizzaSliceRatingId],
 	);
 
 	const handleIconClick = () => {
-		if (hasLiked) {
-			setLikeCount((prevCount) => prevCount - 1);
-			setHasLiked(false);
-			debouncedHandleRemoveLike();
-		} else {
-			setLikeCount((prevCount) => prevCount + 1);
-			setHasLiked(true);
-			debouncedHandleAddLike();
+		const newHasLiked = !hasLiked;
+		setHasLiked(newHasLiked);
+		setLikeCount((prev) => (newHasLiked ? prev + 1 : prev - 1));
+
+		if (debounceTimer.current) {
+			clearTimeout(debounceTimer.current);
 		}
+		debounceTimer.current = setTimeout(() => {
+			performLikeAction(newHasLiked);
+		}, 300);
 	};
+
+	useEffect(() => {
+		return () => {
+			if (debounceTimer.current) {
+				clearTimeout(debounceTimer.current);
+			}
+		};
+	}, []);
 
 	return (
 		<div>
@@ -109,11 +88,15 @@ const LikeSection: React.FC<LikeSectionProps> = ({
 				<button
 					onClick={handleIconClick}
 					className="bg-none border-none cursor-pointer flex items-center"
+					aria-label={hasLiked ? 'Unlike this rating' : 'Like this rating'}
 				>
 					<FontAwesomeIcon
 						icon={faThumbsUp}
-						// eslint-disable-next-line max-len
-						className={`mr-2 ${hasLiked ? 'text-blue-500' : 'text-gray-500 hover:text-blue-500'} transition-colors duration-200`}
+						className={`mr-2 ${
+							hasLiked
+								? 'text-blue-500'
+								: 'text-gray-500 hover:text-blue-500'
+						} transition-colors duration-200`}
 						size="xl"
 					/>
 				</button>

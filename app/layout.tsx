@@ -20,8 +20,14 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={roboto.className}>
+				<a
+					href="#main-content"
+					className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-blue-600 focus:text-white"
+				>
+					Skip to main content
+				</a>
 				<SpaceBackground />
-				<div className="app">
+				<div className="app" id="main-content">
 					<Providers>
 						<AppRouterCacheProvider>
 							<NextTopLoader color="#ffc107" showSpinner={false} />

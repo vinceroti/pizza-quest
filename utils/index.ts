@@ -1,8 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-
+import prisma from '@/app/lib/prisma';
 import { PizzaDescriptors, PizzaItems } from '@/config/enums/PizzaItems';
-
-const prisma = new PrismaClient();
 
 function createPizzaUsername(): string {
 	const pizzaItems = Object.values(PizzaItems) as string[];
@@ -31,44 +28,4 @@ async function generatePizzaUsername(): Promise<string> {
 	return username;
 }
 
-function passwordValidation(password: string, confirmPassword: string) {
-	let isValid = true;
-	let passwordErrorMsg = '';
-	let confirmPasswordErrorMsg = '';
-
-	if (password.length < 8) {
-		passwordErrorMsg = 'Password must be at least 8 characters long.';
-	}
-
-	if (!/[A-Z]/.test(password)) {
-		passwordErrorMsg += ' Password must contain at least one uppercase letter.';
-	}
-
-	if (!/[a-z]/.test(password)) {
-		passwordErrorMsg += ' Password must contain at least one lowercase letter.';
-	}
-
-	if (!/[0-9]/.test(password)) {
-		passwordErrorMsg += ' Password must contain at least one digit.';
-	}
-
-	if (!/[^A-Za-z0-9]/.test(password)) {
-		passwordErrorMsg += 'Password must contain at least one special character.';
-	}
-
-	if (password !== confirmPassword) {
-		confirmPasswordErrorMsg = 'Passwords do not match.';
-	}
-
-	if (passwordErrorMsg || confirmPasswordErrorMsg) {
-		isValid = false;
-	}
-
-	return {
-		isValid,
-		passwordErrorMsg,
-		confirmPasswordErrorMsg,
-	};
-}
-
-export { generatePizzaUsername, passwordValidation };
+export { generatePizzaUsername };

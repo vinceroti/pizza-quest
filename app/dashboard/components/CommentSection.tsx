@@ -30,8 +30,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 			try {
 				setLoading(true);
 				const updatedComments = await addCommentToPizzaSliceRating({
-					userId: session.user.id,
-					username: session.user.username,
 					pizzaSliceRatingId,
 					text: newComment,
 				});
@@ -56,8 +54,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 				<List sx={{ padding: '0' }}>
 					{commentList
 						.slice(0, showAllComments ? commentList.length : 1)
-						.map((comment, index) => (
-							<ListItem key={index} alignItems="flex-start">
+						.map((comment) => (
+							<ListItem key={comment.id} alignItems="flex-start">
 								<FontAwesomeIcon
 									icon="user-circle"
 									className="text-gray-500 mr-2 mt-2"

@@ -38,11 +38,17 @@ export default function LoginForm() {
 		setErrorMessage(false);
 		setLoading(true);
 		try {
-			await signIn('credentials', {
+			const result = await signIn('credentials', {
 				redirect: false,
 				email: formData.get('email'),
 				password: formData.get('password'),
 			});
+
+			if (result?.error) {
+				setErrorMessage(true);
+				setLoading(false);
+				return;
+			}
 
 			await router.push('/dashboard');
 		} catch (error: unknown) {

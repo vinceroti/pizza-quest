@@ -30,8 +30,8 @@ export default function RatingDetailModal({
 		<Modal
 			open={open}
 			onClose={onClose}
-			aria-labelledby="modal-title"
-			aria-describedby="modal-description"
+			aria-labelledby="rating-modal-title"
+			aria-describedby="rating-modal-description"
 		>
 			<Box
 				sx={{
@@ -39,19 +39,23 @@ export default function RatingDetailModal({
 					top: '50%',
 					left: '50%',
 					transform: 'translate(-50%, -50%)',
-					width: 600,
+					width: { xs: '90vw', sm: 600 },
+					maxWidth: 600,
 					bgcolor: 'rgba(30, 58, 95, 0.95)',
 					backdropFilter: 'blur(10px)',
 					border: '1px solid rgba(77, 144, 254, 0.2)',
 					boxShadow: 24,
-					p: 4,
+					p: { xs: 2, sm: 4 },
 					color: 'text.primary',
 				}}
 			>
-				<h5>
+				<h5 id="rating-modal-title">
 					{username} Rating for {placeName}
 				</h5>
-				<div className="grid grid-cols-2 gap-6 mt-5">
+				<div
+					id="rating-modal-description"
+					className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-5"
+				>
 					<p>
 						Overall: <PizzaRatingDisplay rating={rating?.overall} />
 					</p>

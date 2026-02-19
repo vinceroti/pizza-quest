@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface FileUploadProps {
 	file: File | null;
@@ -23,14 +23,25 @@ const FileUpload: React.FC<FileUploadProps> = ({
 	onlyCornerButton,
 	imageClassName,
 }) => {
+	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (file) {
+			const url = URL.createObjectURL(file);
+			setPreviewUrl(url);
+			return () => URL.revokeObjectURL(url);
+		}
+		setPreviewUrl(null);
+	}, [file]);
+
 	return (
 		<div className={className}>
 			<div className="mb-3 flex justify-center">
 				<div className="image-upload-container m-auto relative flex">
-					{file && (
+					{file && previewUrl && (
 						<>
 							<Image
-								src={URL.createObjectURL(file)}
+								src={previewUrl}
 								alt={alt}
 								width={208}
 								height={117}
@@ -39,6 +50,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
 							<button
 								className="delete-image-button absolute top-0 right-0 bg-black bg-opacity-50 button-link p-2.5 rounded-bl-lg rounded-tr-lg flex items-center justify-center hover:bg-opacity-70 ease-in-out transition"
 								onClick={() => setFile(null)}
+								aria-label="Remove image"
+								type="button"
 							>
 								<FontAwesomeIcon icon="xmark" />
 							</button>
@@ -49,7 +62,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 			{(!onlyCornerButton || !file) && (
 				<>
 					<input
-						accept="image/*"
+						accept="image/jpeg,image/png,image/webp,image/gif"
 						id="contained-button-file"
 						type="file"
 						className="hidden"

@@ -1,6 +1,5 @@
 'use server';
 
-import { PrismaClient } from '@prisma/client';
 import AWS from 'aws-sdk';
 import bcrypt from 'bcryptjs';
 import { headers } from 'next/headers';
@@ -9,6 +8,8 @@ import { getServerSession } from 'next-auth';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 
+import { authOptions } from '@/app/lib/auth';
+import prisma from '@/app/lib/prisma';
 import GooglePrediction from '@/interfaces/models/GooglePrediction';
 import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { generatePizzaUsername } from '@/utils';
@@ -19,7 +20,13 @@ import {
 	usernameValidation,
 } from '@/utils/validation';
 
-const prisma = new PrismaClient();
+const ALLOWED_IMAGE_TYPES = [
+	'image/jpeg',
+	'image/png',
+	'image/webp',
+	'image/gif',
+];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
@@ -35,6 +42,14 @@ AWS.config.update({
 	region: process.env.AWS_REGION,
 });
 const s3 = new AWS.S3();
+
+async function getAuthenticatedUser() {
+	const session = await getServerSession(authOptions);
+	if (!session?.user?.id) {
+		throw new Error('Authentication required');
+	}
+	return session.user;
+}
 
 export async function signup(
 	email: string,
@@ -92,14 +107,14 @@ export async function signup(
 }
 
 export async function sessionRedirect() {
-	const session = await getServerSession();
+	const session = await getServerSession(authOptions);
 	if (session) {
 		redirect('/dashboard');
 	}
 }
 
 export async function protectedRedirect() {
-	const session = await getServerSession();
+	const session = await getServerSession(authOptions);
 	if (!session) {
 		redirect('/');
 	}
@@ -108,12 +123,21 @@ export async function protectedRedirect() {
 async function uploadImageToS3(
 	imageBuffer: Buffer,
 	mimeType: string,
-	subFolder: string, // Add subFolder parameter
+	subFolder: string,
 ): Promise<string> {
+	if (!ALLOWED_IMAGE_TYPES.includes(mimeType)) {
+		throw new Error(
+			'Invalid image type. Allowed types: JPEG, PNG, WebP, GIF',
+		);
+	}
+	if (imageBuffer.length > MAX_IMAGE_SIZE) {
+		throw new Error('Image size exceeds 5MB limit');
+	}
+
 	const imageId = uuidv4();
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME!,
-		Key: `${subFolder}/${imageId}`, // Include subFolder in the Key
+		Key: `${subFolder}/${imageId}`,
 		Body: imageBuffer,
 		ContentType: mimeType,
 		ACL: 'public-read',
@@ -128,7 +152,8 @@ async function uploadImageToS3(
 	}
 }
 
-export async function submitSlice(data: PizzaSlice) {
+export async function submitSlice(data: Omit<PizzaSlice, 'userId'>) {
+	const user = await getAuthenticatedUser();
 	const errorMsg = pizzaValidation(data);
 	if (errorMsg) {
 		throw new Error(errorMsg);
@@ -145,12 +170,10 @@ export async function submitSlice(data: PizzaSlice) {
 			'pizza-slices',
 		);
 
-		// Check if the pizza place already exists
 		let pizzaPlace = await prisma.pizzaPlace.findUnique({
 			where: { id: data.pizzaPlace.place_id },
 		});
 
-		// If the pizza place doesn't exist, create a new one
 		if (!pizzaPlace) {
 			pizzaPlace = await prisma.pizzaPlace.create({
 				data: {
@@ -162,21 +185,19 @@ export async function submitSlice(data: PizzaSlice) {
 			});
 		}
 
-		const newData = {
-			overall: data.overall,
-			crustDough: data.crustDough,
-			sauce: data.sauce,
-			toppingToPizzaRatio: data.toppingToPizzaRatio,
-			creativity: data.creativity,
-			authenticity: data.authenticity,
-			notes: data.notes,
-			userId: data.userId,
-			pizzaPlaceId: pizzaPlace.id,
-			image: imageUrl,
-		};
-
 		await prisma.pizzaSliceRating.create({
-			data: newData,
+			data: {
+				overall: data.overall,
+				crustDough: data.crustDough,
+				sauce: data.sauce,
+				toppingToPizzaRatio: data.toppingToPizzaRatio,
+				creativity: data.creativity,
+				authenticity: data.authenticity,
+				notes: data.notes,
+				userId: user.id,
+				pizzaPlaceId: pizzaPlace.id,
+				image: imageUrl,
+			},
 		});
 
 		return {
@@ -189,16 +210,12 @@ export async function submitSlice(data: PizzaSlice) {
 	}
 }
 
-/**
- * Fetches all pizza slice ratings made by a specific user.
- * @param userId The ID of the user whose pizza slice ratings to retrieve.
- * @returns A list of pizza slice ratings made by the specified user.
- */
-export async function getPersonalUserPizzaSliceData(userId: number) {
+export async function getPersonalUserPizzaSliceData() {
+	const user = await getAuthenticatedUser();
 	try {
 		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
 			where: {
-				userId: userId,
+				userId: user.id,
 			},
 		});
 		return pizzaSliceRatings;
@@ -208,32 +225,26 @@ export async function getPersonalUserPizzaSliceData(userId: number) {
 	}
 }
 
-/**
- * Fetches pizza slice ratings in the database for a specific user along with their associated pizza place data.
- * If no user ID is provided, it fetches all pizza slice ratings.
- * @param userId The ID of the user whose pizza slice ratings are to be fetched.
- * @returns A list of pizza slice ratings with pizza place data.
- */
 export async function getAllPizzaSliceData(userId?: number) {
 	try {
 		const pizzaSliceRatings = await prisma.pizzaSliceRating.findMany({
-			where: userId ? { userId } : undefined, // Filter by userId if provided
+			where: userId ? { userId } : undefined,
 			include: {
 				likes: true,
 				comments: true,
 				pizzaPlace: {
 					select: {
-						mainText: true, // Include only the main text of the pizza place
+						mainText: true,
 					},
 				},
 				user: {
 					select: {
-						username: true, // Include only the user's name
+						username: true,
 					},
 				},
 			},
 			orderBy: {
-				createdAt: 'desc', // Order by creation date
+				createdAt: 'desc',
 			},
 		});
 		return pizzaSliceRatings;
@@ -262,7 +273,6 @@ export async function getAllPizzaPlacesWithRatings() {
 			},
 		});
 
-		// Calculate the average rating for each pizza place
 		const averageRatings: { [key: string]: number } = {};
 		pizzaPlaces.forEach((place) => {
 			averageRatings[place.id] = place.pizzaSliceRatings.reduce(
@@ -281,10 +291,15 @@ export async function getAllPizzaPlacesWithRatings() {
 
 export async function searchPizzaPlaces(query: string) {
 	try {
-		const response = await fetch(
-			// eslint-disable-next-line max-len
-			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&components=country:us&key=${process.env.GOOGLE_PLACES_API_KEY}`,
-		);
+		const baseUrl =
+			'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+		const params = new URLSearchParams({
+			input: query,
+			types: 'establishment',
+			components: 'country:us',
+			key: process.env.GOOGLE_PLACES_API_KEY || '',
+		});
+		const response = await fetch(`${baseUrl}?${params.toString()}`);
 		const data = await response.json();
 		return data.predictions.filter((prediction: GooglePrediction) =>
 			prediction.types?.includes('restaurant'),
@@ -298,21 +313,18 @@ export async function searchPizzaPlaces(query: string) {
 export async function addCommentToPizzaSliceRating({
 	pizzaSliceRatingId,
 	text,
-	userId,
-	username,
 }: {
 	pizzaSliceRatingId: number;
 	text: string;
-	userId: number;
-	username: string;
 }) {
+	const user = await getAuthenticatedUser();
 	try {
 		await prisma.comment.create({
 			data: {
 				pizzaSliceRatingId,
 				text,
-				userId,
-				username,
+				userId: user.id,
+				username: user.username,
 			},
 		});
 		const comments = await prisma.comment.findMany({
@@ -329,19 +341,16 @@ export async function addCommentToPizzaSliceRating({
 
 export async function addLikeToPizzaSliceRating({
 	pizzaSliceRatingId,
-	userId,
-	username,
 }: {
 	pizzaSliceRatingId: number;
-	userId: number;
-	username: string;
 }) {
+	const user = await getAuthenticatedUser();
 	try {
 		await prisma.like.create({
 			data: {
 				pizzaSliceRatingId,
-				userId,
-				username,
+				userId: user.id,
+				username: user.username,
 			},
 		});
 		const likes = await prisma.like.findMany({
@@ -358,16 +367,15 @@ export async function addLikeToPizzaSliceRating({
 
 export async function removeLikeFromPizzaSliceRating({
 	pizzaSliceRatingId,
-	userId,
 }: {
 	pizzaSliceRatingId: number;
-	userId: number;
 }) {
+	const user = await getAuthenticatedUser();
 	try {
 		await prisma.like.deleteMany({
 			where: {
 				pizzaSliceRatingId,
-				userId,
+				userId: user.id,
 			},
 		});
 		const likes = await prisma.like.findMany({
@@ -383,14 +391,13 @@ export async function removeLikeFromPizzaSliceRating({
 }
 
 export async function userSettingsChange({
-	userId,
 	email,
 	username,
 }: {
-	userId: number;
 	email: string;
 	username: string;
 }) {
+	const authenticatedUser = await getAuthenticatedUser();
 	const { isValid: isEmailValid, emailErrorMsg } = emailValidation(email);
 	const { isValid: isUsernameValid, usernameErrorMsg } =
 		usernameValidation(username);
@@ -404,12 +411,11 @@ export async function userSettingsChange({
 	}
 
 	try {
-		// Check if another user with the same email exists
 		const existingUser = await prisma.user.findFirst({
 			where: {
 				email,
 				id: {
-					not: userId,
+					not: authenticatedUser.id,
 				},
 			},
 		});
@@ -420,7 +426,7 @@ export async function userSettingsChange({
 
 		const user = await prisma.user.update({
 			where: {
-				id: userId,
+				id: authenticatedUser.id,
 			},
 			data: {
 				email,
@@ -453,12 +459,11 @@ export async function getUserInfo(username: string) {
 }
 
 export async function avatarUpload({
-	userId,
 	image,
 }: {
-	userId: number;
 	image: { type: string; data: string };
 }) {
+	const authenticatedUser = await getAuthenticatedUser();
 	try {
 		const strippedImage = image.data.replace(/^data:image\/[a-z]+;base64,/, '');
 		const imageBuffer = Buffer.from(strippedImage, 'base64');
@@ -466,7 +471,7 @@ export async function avatarUpload({
 
 		const user = await prisma.user.update({
 			where: {
-				id: userId,
+				id: authenticatedUser.id,
 			},
 			data: {
 				image: imageUrl,
@@ -487,24 +492,20 @@ export async function requestPasswordReset(email: string) {
 	}
 
 	try {
-		// Find user by email
 		const user = await prisma.user.findUnique({
 			where: { email },
 		});
 
 		if (!user) {
-			// Don't reveal if user exists for security
 			return { success: true };
 		}
 
-		// Delete any existing tokens for this user
 		await prisma.passwordResetToken.deleteMany({
 			where: { userId: user.id },
 		});
 
-		// Generate new token
 		const token = uuidv4();
-		const expires = new Date(Date.now() + 3600000); // 1 hour from now
+		const expires = new Date(Date.now() + 3600000);
 
 		await prisma.passwordResetToken.create({
 			data: {
@@ -514,7 +515,6 @@ export async function requestPasswordReset(email: string) {
 			},
 		});
 
-		// Send email with reset link
 		const headersList = headers();
 		const host = headersList.get('host');
 		const protocol = headersList.get('x-forwarded-proto') || 'http';
@@ -609,16 +609,13 @@ export async function resetPassword(
 			throw new Error('Reset token has expired');
 		}
 
-		// Hash new password
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		// Update user password
 		await prisma.user.update({
 			where: { id: resetToken.userId },
 			data: { password: hashedPassword },
 		});
 
-		// Delete used token
 		await prisma.passwordResetToken.delete({
 			where: { token },
 		});

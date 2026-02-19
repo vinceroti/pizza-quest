@@ -26,7 +26,7 @@ export default function SpaceBackground() {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ ease: 'easeInOut', duration: 1 }}
-			className="fixed inset-0 -z-1"
+			className="fixed inset-0 -z-10"
 		>
 			{/* Animated stars */}
 			{stars.map((star, index) => (

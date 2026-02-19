@@ -67,6 +67,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 							{inputValue && !isLoading ? (
 								<button
 									onClick={handleClear}
+									aria-label="Clear search"
 									style={{
 										background: 'none',
 										border: 'none',

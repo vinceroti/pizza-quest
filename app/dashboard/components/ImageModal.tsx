@@ -16,8 +16,7 @@ export default function ImageModal({
 		<Modal
 			open={open}
 			onClose={onClose}
-			aria-labelledby="image-modal-title"
-			aria-describedby="image-modal-description"
+			aria-label="Full size pizza image"
 		>
 			<Box
 				sx={{
@@ -25,8 +24,8 @@ export default function ImageModal({
 					top: '50%',
 					left: '50%',
 					transform: 'translate(-50%, -50%)',
-					width: '60vw',
-					height: '80vh',
+					width: { xs: '95vw', sm: '80vw', md: '60vw' },
+					height: { xs: '60vh', sm: '70vh', md: '80vh' },
 					maxWidth: '1200px',
 					maxHeight: '1200px',
 					bgcolor: 'rgba(30, 58, 95, 0.95)',

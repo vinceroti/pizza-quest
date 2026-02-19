@@ -2,12 +2,12 @@
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Alert, FormControl, FormGroup, Grid, TextField } from '@mui/material';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import { submitSlice } from '@/app/actions';
 import GooglePrediction from '@/interfaces/models/GooglePrediction';
-import { PizzaSlice } from '@/interfaces/models/PizzaSlice';
+import { type PizzaSlice } from '@/interfaces/models/PizzaSlice';
+import { toBase64 } from '@/utils/fileUtils';
 import { pizzaValidation } from '@/utils/validation';
 
 import ImageFileUpload from '../components/ImageFileUpload';
@@ -16,8 +16,6 @@ import RatingInput from '../components/RatingInput';
 import SuccessMessage from '../components/SuccessMessage';
 
 export default function Dashboard() {
-	const { data: session } = useSession();
-
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
 	const [overall, setOverall] = useState<number | null>(0);
 	const [crustDough, setCrustDough] = useState<number | null>(0);
@@ -32,14 +30,6 @@ export default function Dashboard() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [file, setFile] = useState<File | null>(null);
 	const [success, setSuccess] = useState(false);
-
-	const toBase64 = (file: File) =>
-		new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => resolve(reader.result);
-			reader.onerror = (error) => reject(error);
-		});
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -57,7 +47,6 @@ export default function Dashboard() {
 			authenticity,
 			notes,
 			image: { type: file?.type, data: fileBase64 },
-			userId: session?.user?.id,
 		};
 
 		const errorMsg = pizzaValidation(data);
@@ -70,7 +59,7 @@ export default function Dashboard() {
 		setLoading(true);
 
 		try {
-			await submitSlice(data as PizzaSlice);
+			await submitSlice(data as Omit<PizzaSlice, 'userId'>);
 			setSuccess(true);
 		} catch (error: unknown) {
 			setErrorMessage((error as Error).message);

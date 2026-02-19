@@ -7,8 +7,9 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import { toBase64 } from '@/utils/fileUtils';
 import { emailValidation, usernameValidation } from '@/utils/validation';
-import { avatarUpload } from '~/actions';
+import { avatarUpload, userSettingsChange } from '~/actions';
 
 import ImageFileUpload from '../components/ImageFileUpload';
 
@@ -30,14 +31,6 @@ export default function Settings() {
 			setUsername(session.user.username || '');
 		}
 	}, [session]);
-
-	const toBase64 = (file: File) =>
-		new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => resolve(reader.result);
-			reader.onerror = (error) => reject(error);
-		});
 
 	const handleFileChange = async (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -69,11 +62,8 @@ export default function Settings() {
 		}
 
 		try {
-			await update({
-				email,
-				username,
-			});
-
+			await userSettingsChange({ email, username });
+			await update({ email, username });
 			setSuccess('Settings updated successfully');
 		} catch (error: unknown) {
 			setError((error as Error).message);
@@ -91,9 +81,7 @@ export default function Settings() {
 		setSuccess(null);
 
 		try {
-			const userId = session?.user?.id;
 			if (!avatar) throw new Error('Avatar is missing');
-			if (!userId) throw new Error('User ID is missing');
 
 			const avatarBase64 = await toBase64(avatar);
 
@@ -102,7 +90,6 @@ export default function Settings() {
 			}
 
 			await avatarUpload({
-				userId,
 				image: { type: avatar.type, data: avatarBase64 },
 			});
 
@@ -117,12 +104,12 @@ export default function Settings() {
 	};
 
 	return (
-		<div>
+		<div className="w-full max-w-2xl mx-auto">
 			<h3 className="mb-6 w-full">User Settings</h3>
-			<Box className="p-4 max-w-xxl flex space-x-4 items-stretch">
-				<Box className="w-1/4 mr-5">
+			<Box className="p-4 flex flex-col sm:flex-row gap-6 items-start">
+				<Box className="w-full sm:w-1/3 flex-shrink-0">
 					<form
-						className="h-full flex flex-col justify-between items-center"
+						className="flex flex-col items-center gap-4"
 						onSubmit={handleAvatarSubmit}
 					>
 						{!session?.user?.image && !avatar && (
@@ -143,7 +130,7 @@ export default function Settings() {
 							setFile={setAvatar}
 							alt="Avatar"
 							onlyCornerButton
-							imageClassName="h-28 w-28 object-cover"
+							imageClassName="h-28 w-28 object-cover rounded-full"
 							handleFileChange={handleFileChange}
 						/>
 						{avatar && (
@@ -158,7 +145,7 @@ export default function Settings() {
 						)}
 					</form>
 				</Box>
-				<Box className="w-1/2">
+				<Box className="w-full sm:flex-1">
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<TextField
 							label="Email"
