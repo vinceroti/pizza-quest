@@ -3,6 +3,7 @@ import '@/styles/pages/app.scss';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import type { Metadata, Viewport } from 'next';
 import NextTopLoader from 'nextjs-toploader';
 import * as React from 'react';
 
@@ -11,6 +12,17 @@ import SpaceBackground from '@/components/SpaceBackground';
 import { roboto } from '~/fonts';
 import { Providers } from '~/providers';
 import theme from '~/theme';
+
+export const viewport: Viewport = {
+	width: 'device-width',
+	initialScale: 1,
+	viewportFit: 'cover',
+};
+
+export const metadata: Metadata = {
+	title: 'Pizza Quest',
+	description: 'Rate and discover the best pizza',
+};
 
 export default function RootLayout({
 	children,

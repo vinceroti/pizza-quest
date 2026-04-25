@@ -1,10 +1,10 @@
 /** Apply styles to specific html tags */
 html {
   background: #0a0a2e;
+  overscroll-behavior: none;
 }
 
 html, body {
-  // Allow font-sizes to be consistent for mobile landscape/portrait views
   -webkit-text-size-adjust: 100%;
   font-size: $em-base;
   @include media(desktop down) {
