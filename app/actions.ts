@@ -291,6 +291,16 @@ export async function getAllPizzaPlacesWithRatings() {
 	}
 }
 
+export async function getUserRatedPlaceIds(): Promise<string[]> {
+	const user = await getAuthenticatedUser();
+	const ratings = await prisma.pizzaSliceRating.findMany({
+		where: { userId: user.id },
+		select: { pizzaPlaceId: true },
+		distinct: ['pizzaPlaceId'],
+	});
+	return ratings.map((rating) => rating.pizzaPlaceId);
+}
+
 export async function searchPizzaPlaces(query: string) {
 	try {
 		const baseUrl =
@@ -648,7 +658,7 @@ async function fetchUserRatingStats(userId: number) {
 		where: { userId },
 		include: {
 			pizzaPlace: {
-				select: { mainText: true },
+				select: { id: true, mainText: true },
 			},
 		},
 		orderBy: { overall: 'desc' },
@@ -663,6 +673,7 @@ async function fetchUserRatingStats(userId: number) {
 		),
 		topRated: topRated
 			? {
+					placeId: topRated.pizzaPlace.id,
 					name: topRated.pizzaPlace.mainText,
 					rating: topRated.overall,
 				}
@@ -687,6 +698,7 @@ async function fetchMostPopularPlace() {
 	}
 
 	return {
+		placeId: topPlace.id,
 		name: topPlace.mainText,
 		avgRating: calculateAverage(
 			topPlace.pizzaSliceRatings.map((rating) => rating.overall),

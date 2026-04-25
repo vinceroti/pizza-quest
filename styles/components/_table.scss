@@ -5,6 +5,19 @@
   margin-right: auto;
 }
 
+@keyframes pizza-row-flash {
+  0%, 100% {
+    background-color: transparent;
+  }
+  30% {
+    background-color: rgba(255, 193, 7, 0.18);
+  }
+}
+
+.pizza-table__row--focus-flash {
+  animation: pizza-row-flash 1.5s ease-in-out;
+}
+
 .pizza-table .MuiTableCell-root {
   &.pizza-table__cell {
     padding-top: 0.75rem;

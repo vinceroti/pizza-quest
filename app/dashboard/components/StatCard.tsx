@@ -8,7 +8,6 @@ interface StatCardProps {
 	label: string;
 	value: string | number;
 	subValue?: React.ReactNode;
-	onClick?: () => void;
 }
 
 export default function StatCard({
@@ -17,14 +16,9 @@ export default function StatCard({
 	label,
 	value,
 	subValue,
-	onClick,
 }: StatCardProps) {
-	const baseClass =
-		'glass-card flex flex-col items-center p-5 rounded-xl min-w-0';
-	const interactiveClass = onClick ? 'glass-card--interactive' : '';
-
-	const content = (
-		<>
+	return (
+		<div className="glass-card flex flex-col items-center p-5 rounded-xl min-w-0">
 			<FontAwesomeIcon
 				icon={icon as never}
 				className={`mb-3 stat-card__icon ${iconColorClass}`}
@@ -38,20 +32,6 @@ export default function StatCard({
 			{subValue && (
 				<div className="mt-2 text-sm stat-card__sub-value">{subValue}</div>
 			)}
-		</>
+		</div>
 	);
-
-	if (onClick) {
-		return (
-			<button
-				type="button"
-				onClick={onClick}
-				className={`${baseClass} ${interactiveClass}`}
-			>
-				{content}
-			</button>
-		);
-	}
-
-	return <div className={baseClass}>{content}</div>;
 }

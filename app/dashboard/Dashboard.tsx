@@ -17,11 +17,22 @@ type DashboardStats = Prisma.PromiseReturnType<typeof getDashboardStats>;
 interface DashboardProps {
 	stats: DashboardStats;
 	tableData: PizzaPlaceData;
+	userRatedPlaceIds: string[];
 }
 
-export default function Dashboard({ stats, tableData }: DashboardProps) {
+export default function Dashboard({
+	stats,
+	tableData,
+	userRatedPlaceIds,
+}: DashboardProps) {
 	const { data: session } = useSession();
 	const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
+	const [focusedPlaceId, setFocusedPlaceId] = useState<string | null>(null);
+
+	const focusPlace = (tab: DashboardTab, placeId: string) => {
+		setActiveTab(tab);
+		setFocusedPlaceId(placeId);
+	};
 
 	return (
 		<div className="w-full max-width">
@@ -30,16 +41,32 @@ export default function Dashboard({ stats, tableData }: DashboardProps) {
 				The quest for the greatest slice continues.
 			</p>
 
-			<DashboardTabs activeTab={activeTab} onTabChange={setActiveTab} />
+			<DashboardTabs
+				activeTab={activeTab}
+				onTabChange={(tab) => {
+					setActiveTab(tab);
+					setFocusedPlaceId(null);
+				}}
+			/>
 
 			{activeTab === 'overview' && (
-				<OverviewPanel stats={stats} onTabChange={setActiveTab} />
+				<OverviewPanel stats={stats} onFocusPlace={focusPlace} />
 			)}
 			{activeTab === 'my-places' && (
-				<Table initialData={tableData} filter="self" />
+				<Table
+					initialData={tableData}
+					filter="self"
+					focusedPlaceId={focusedPlaceId}
+					userRatedPlaceIds={userRatedPlaceIds}
+				/>
 			)}
 			{activeTab === 'all-places' && (
-				<Table initialData={tableData} filter="all" />
+				<Table
+					initialData={tableData}
+					filter="all"
+					focusedPlaceId={focusedPlaceId}
+					userRatedPlaceIds={userRatedPlaceIds}
+				/>
 			)}
 		</div>
 	);

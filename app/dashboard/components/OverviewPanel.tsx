@@ -15,12 +15,12 @@ type DashboardStats = Prisma.PromiseReturnType<typeof getDashboardStats>;
 
 interface OverviewPanelProps {
 	stats: DashboardStats;
-	onTabChange: (tab: DashboardTab) => void;
+	onFocusPlace: (tab: DashboardTab, placeId: string) => void;
 }
 
 export default function OverviewPanel({
 	stats,
-	onTabChange,
+	onFocusPlace,
 }: OverviewPanelProps) {
 	return (
 		<div>
@@ -30,7 +30,6 @@ export default function OverviewPanel({
 					iconColorClass="icon-color--yellow"
 					label="Your Ratings"
 					value={stats.userRatingCount}
-					onClick={() => onTabChange('my-places')}
 				/>
 				<StatCard
 					icon="star"
@@ -42,29 +41,32 @@ export default function OverviewPanel({
 							<PizzaRatingDisplay rating={stats.userAvgRating} />
 						) : undefined
 					}
-					onClick={() => onTabChange('my-places')}
 				/>
 				<StatCard
 					icon="store"
 					iconColorClass="icon-color--blue-light"
 					label="Places Explored"
 					value={stats.totalPlaces}
-					onClick={() => onTabChange('all-places')}
 				/>
 				<StatCard
 					icon="chart-bar"
 					iconColorClass="icon-color--blue"
 					label="Total Ratings"
 					value={stats.totalRatings}
-					onClick={() => onTabChange('all-places')}
 				/>
 			</div>
 
 			<HighlightCards
 				topRated={stats.topRated}
 				mostPopularPlace={stats.mostPopularPlace}
-				onTopRatedClick={() => onTabChange('my-places')}
-				onMostPopularClick={() => onTabChange('all-places')}
+				onTopRatedClick={() =>
+					stats.topRated &&
+					onFocusPlace('my-places', stats.topRated.placeId)
+				}
+				onMostPopularClick={() =>
+					stats.mostPopularPlace &&
+					onFocusPlace('all-places', stats.mostPopularPlace.placeId)
+				}
 			/>
 
 			<Link href="/dashboard/new" className="submit-cta">

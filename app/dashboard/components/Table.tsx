@@ -15,8 +15,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { getAllPizzaPlacesWithRatings } from '@/app/actions';
 
@@ -36,15 +35,38 @@ type PizzaSliceRating = PizzaPlace[number]['pizzaSliceRatings'][number];
 interface PizzaTableProps {
 	initialData: PizzaPlaceData;
 	filter: 'all' | 'self';
+	focusedPlaceId?: string | null;
+	userRatedPlaceIds: string[];
 }
 
-export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
-	const { data: session } = useSession();
+export default function PizzaTable({
+	initialData,
+	filter,
+	focusedPlaceId,
+	userRatedPlaceIds,
+}: PizzaTableProps) {
 	const [feed] = useState<PizzaPlace>(initialData.pizzaPlaces);
 	const [ratings] = useState<{ [key: string]: number }>(
 		initialData.averageRatings,
 	);
-	const [open, setOpen] = useState<{ [key: string]: boolean }>({});
+	const [open, setOpen] = useState<{ [key: string]: boolean }>(
+		focusedPlaceId ? { [focusedPlaceId]: true } : {},
+	);
+	const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+
+	useEffect(() => {
+		if (!focusedPlaceId) return;
+		setOpen((prev) => ({ ...prev, [focusedPlaceId]: true }));
+		const row = rowRefs.current[focusedPlaceId];
+		if (row) {
+			row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			row.classList.add('pizza-table__row--focus-flash');
+			const timeout = window.setTimeout(() => {
+				row.classList.remove('pizza-table__row--focus-flash');
+			}, 1600);
+			return () => window.clearTimeout(timeout);
+		}
+	}, [focusedPlaceId]);
 	const [openModal, setOpenModal] = useState(false);
 	const [openImageModal, setOpenImageModal] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -97,10 +119,8 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 
 	const filteredFeed = feed
 		.filter((place) => {
-			if (filter === 'self' && session) {
-				return place.pizzaSliceRatings.some(
-					(rating) => rating.userId === session.user.id,
-				);
+			if (filter === 'self') {
+				return userRatedPlaceIds.includes(place.id);
 			}
 			return true;
 		})
@@ -196,11 +216,18 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 								</TableCell>
 							</TableRow>
 						) : (
-							filteredFeed.map((place) => (
+							filteredFeed.map((place) => {
+								const userHasRated = userRatedPlaceIds.includes(place.id);
+								return (
 								<React.Fragment key={place.id}>
-									<TableRow key={place.id}>
+									<TableRow
+										key={place.id}
+										ref={(el) => {
+											rowRefs.current[place.id] = el;
+										}}
+									>
 										<TableCell className="pizza-table__cell">
-											<div className="flex items-center gap-2">
+											<div className="flex items-center gap-2 flex-wrap">
 												<IconButton
 													aria-label="expand row"
 													size="small"
@@ -212,6 +239,12 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 													/>
 												</IconButton>
 												<span>{place.mainText}</span>
+												{filter === 'all' && userHasRated && (
+													<span className="badge badge--gold">
+														<FontAwesomeIcon icon="check" />
+														Yours
+													</span>
+												)}
 											</div>
 										</TableCell>
 										<TableCell className="pizza-table__cell">
@@ -356,7 +389,8 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 										</TableCell>
 									</TableRow>
 								</React.Fragment>
-							))
+								);
+							})
 						)}
 					</TableBody>
 				</Table>

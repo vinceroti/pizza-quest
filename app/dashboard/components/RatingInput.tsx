@@ -31,8 +31,8 @@ export default function RatingInput({
 	);
 
 	return (
-		<div className="mb-4 mt-4">
-			<p className="mb-2">{label}</p>
+		<div className="rating-input">
+			<p className="rating-input__label">{label}</p>
 			<div
 				className="inline-flex items-center gap-1"
 				role="radiogroup"

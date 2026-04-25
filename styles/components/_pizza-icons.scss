@@ -17,6 +17,22 @@
   clip-path: inset(0 50% 0 0);
 }
 
+.rating-input {
+  background: rgba(30, 58, 95, 0.45);
+  border: 1px solid rgba($light-blue, 0.2);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.rating-input__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $opaque-text-color-medium;
+  margin-bottom: 0.5rem;
+}
+
 .rating-input__button {
   width: 28px;
   height: 28px;

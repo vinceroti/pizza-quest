@@ -1,6 +1,7 @@
 import {
 	getAllPizzaPlacesWithRatings,
 	getDashboardStats,
+	getUserRatedPlaceIds,
 	protectedRedirect,
 } from '~/actions';
 
@@ -9,10 +10,17 @@ import Dashboard from './Dashboard';
 export default async function Page() {
 	await protectedRedirect();
 
-	const [stats, tableData] = await Promise.all([
+	const [stats, tableData, userRatedPlaceIds] = await Promise.all([
 		getDashboardStats(),
 		getAllPizzaPlacesWithRatings(),
+		getUserRatedPlaceIds(),
 	]);
 
-	return <Dashboard stats={stats} tableData={tableData} />;
+	return (
+		<Dashboard
+			stats={stats}
+			tableData={tableData}
+			userRatedPlaceIds={userRatedPlaceIds}
+		/>
+	);
 }

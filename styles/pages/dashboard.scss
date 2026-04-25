@@ -78,10 +78,19 @@ button.glass-card--blue,
   box-shadow: 0 8px 24px rgba(255, 152, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
+  &::after {
+    display: none;
+  }
+
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
+    color: #1a0d00;
     box-shadow: 0 12px 32px rgba(255, 152, 0, 0.35), 0 4px 8px rgba(0, 0, 0, 0.25);
+
+    &::after {
+      display: none;
+    }
   }
 
   &:active {
@@ -111,14 +120,16 @@ button.glass-card--blue,
 
 .submit-toggles {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
   margin: 0.5rem 0 1.25rem;
 }
 
 .segmented {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.4rem;
 }
 
@@ -127,11 +138,11 @@ button.glass-card--blue,
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: $opaque-text-color-medium;
+  text-align: center;
 }
 
 .segmented__group {
   display: inline-flex;
-  align-self: flex-start;
   background: rgba(30, 58, 95, 0.45);
   border: 1px solid rgba($light-blue, 0.2);
   border-radius: 999px;
@@ -195,6 +206,21 @@ button.glass-card--blue,
   background: rgba($yellow, 0.18);
   border-color: rgba($yellow, 0.4);
   color: $yellow;
+}
+
+.badge--blue {
+  background: rgba($light-blue, 0.22);
+  border-color: rgba($light-blue, 0.5);
+  color: $light-blue;
+}
+
+.badge--ghost {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: $opaque-text-color-medium;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
 }
 
 .stat-card__icon {

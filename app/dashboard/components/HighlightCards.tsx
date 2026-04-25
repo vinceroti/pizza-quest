@@ -5,8 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PizzaRatingDisplay from './PizzaRatingDisplay';
 
 interface HighlightCardsProps {
-	topRated: { name: string; rating: number } | null;
+	topRated: { placeId: string; name: string; rating: number } | null;
 	mostPopularPlace: {
+		placeId: string;
 		name: string;
 		avgRating: number;
 		ratingCount: number;
@@ -31,15 +32,10 @@ export default function HighlightCards({
 					onClick={onTopRatedClick}
 					className="glass-card--gold glass-card--interactive p-5 rounded-xl text-left"
 				>
-					<div className="flex items-center gap-2 mb-3">
-						<FontAwesomeIcon
-							icon="trophy"
-							className="icon-color--yellow"
-						/>
-						<span className="text-xs uppercase tracking-wider highlight-label">
-							Your Top Rated
-						</span>
-					</div>
+					<span className="badge badge--gold mb-3">
+						<FontAwesomeIcon icon="trophy" />
+						Your Top Rated
+					</span>
 					<p className="font-semibold mb-1">{topRated.name}</p>
 					<PizzaRatingDisplay rating={topRated.rating} />
 				</button>
@@ -50,28 +46,23 @@ export default function HighlightCards({
 					onClick={onMostPopularClick}
 					className="glass-card--blue glass-card--interactive p-5 rounded-xl text-left"
 				>
-					<div className="flex items-center gap-2 mb-3">
-						<FontAwesomeIcon
-							icon="fire"
-							className="icon-color--orange"
-						/>
-						<span className="text-xs uppercase tracking-wider highlight-label">
-							Most Popular
-						</span>
-					</div>
+					<span className="badge badge--blue mb-3">
+						<FontAwesomeIcon icon="fire" />
+						Most Popular
+					</span>
 					<p className="font-semibold mb-1">
 						{mostPopularPlace.name}
 					</p>
-					<div className="flex items-center gap-3">
+					<div className="flex flex-wrap items-center gap-2">
 						<PizzaRatingDisplay
 							rating={mostPopularPlace.avgRating}
 						/>
-						<span className="text-xs highlight-sub-text">
-							({mostPopularPlace.ratingCount}{' '}
+						<span className="badge badge--ghost">
+							<FontAwesomeIcon icon="chart-bar" />
+							{mostPopularPlace.ratingCount}{' '}
 							{mostPopularPlace.ratingCount === 1
 								? 'rating'
 								: 'ratings'}
-							)
 						</span>
 					</div>
 				</button>
