@@ -101,7 +101,7 @@ export default function DashboardNav() {
 					<li>
 						<button
 							className="button-link flex items-center gap-2"
-							onClick={() => signOut()}
+							onClick={() => signOut({ callbackUrl: '/' })}
 						>
 							<FontAwesomeIcon icon="right-from-bracket" />
 							<span>Logout</span>
@@ -172,7 +172,7 @@ export default function DashboardNav() {
 									className="button-link flex items-center gap-2"
 									onClick={() => {
 										setMobileMenuOpen(false);
-										signOut();
+										signOut({ callbackUrl: '/' });
 									}}
 								>
 									<FontAwesomeIcon icon="right-from-bracket" />
