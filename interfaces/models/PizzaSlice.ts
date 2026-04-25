@@ -1,7 +1,11 @@
+import { PizzaFormat, PizzaSource } from '@prisma/client';
+
 import GooglePrediction from './GooglePrediction';
 
 export interface PizzaSlice {
 	pizzaPlace: GooglePrediction;
+	source: PizzaSource;
+	format: PizzaFormat;
 	overall: number;
 	crustDough: number;
 	sauce: number;

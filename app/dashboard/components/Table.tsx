@@ -186,11 +186,11 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 							<TableRow>
 								<TableCell colSpan={3} sx={{ border: 'none' }}>
 									<EmptyState
-										title={searchQuery ? 'No matches' : 'No pizza places yet'}
+										title={searchQuery ? "Nothin' matches" : 'The oven is empty'}
 										message={
 											searchQuery
-												? 'Try a different search term.'
-												: 'Submit your first pizza rating to get started!'
+												? "Couldn't find any slices like that."
+												: 'Drop a rating and start the quest.'
 										}
 									/>
 								</TableCell>
@@ -248,6 +248,7 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 															<TableCell>Time Ago</TableCell>
 															<TableCell>Image</TableCell>
 															<TableCell>Rating</TableCell>
+															<TableCell>Type</TableCell>
 															<TableCell>Notes</TableCell>
 														</TableRow>
 													</TableHead>
@@ -317,6 +318,34 @@ export default function PizzaTable({ initialData, filter }: PizzaTableProps) {
 																			className="mt-2"
 																		/>
 																	</IconButton>
+																</TableCell>
+																<TableCell>
+																	<div className="flex flex-wrap gap-1">
+																		<span className="badge">
+																			<FontAwesomeIcon
+																				icon={
+																					rating.source === 'HOMEMADE'
+																						? 'house'
+																						: 'store'
+																				}
+																			/>
+																			{rating.source === 'HOMEMADE'
+																				? 'Homemade'
+																				: 'Purchased'}
+																		</span>
+																		<span className="badge badge--gold">
+																			<FontAwesomeIcon
+																				icon={
+																					rating.format === 'WHOLE_PIE'
+																						? 'circle'
+																						: 'pizza-slice'
+																				}
+																			/>
+																			{rating.format === 'WHOLE_PIE'
+																				? 'Whole Pie'
+																				: 'Slice'}
+																		</span>
+																	</div>
 																</TableCell>
 																<TableCell>{rating.notes}</TableCell>
 															</TableRow>

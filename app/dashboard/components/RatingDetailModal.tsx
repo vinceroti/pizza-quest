@@ -1,4 +1,6 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, Modal } from '@mui/material';
+import { PizzaFormat, PizzaSource } from '@prisma/client';
 
 import PizzaRatingDisplay from './PizzaRatingDisplay';
 
@@ -9,6 +11,8 @@ type RatingData = {
 	toppingToPizzaRatio?: number;
 	creativity?: number;
 	authenticity?: number;
+	source?: PizzaSource;
+	format?: PizzaFormat;
 };
 
 type RatingDetailModalProps = {
@@ -52,6 +56,26 @@ export default function RatingDetailModal({
 				<h5 id="rating-modal-title">
 					{username} Rating for {placeName}
 				</h5>
+				{(rating?.source || rating?.format) && (
+					<div className="flex flex-wrap gap-2 mt-3">
+						{rating?.source && (
+							<span className="badge">
+								<FontAwesomeIcon
+									icon={rating.source === 'HOMEMADE' ? 'house' : 'store'}
+								/>
+								{rating.source === 'HOMEMADE' ? 'Homemade' : 'Purchased'}
+							</span>
+						)}
+						{rating?.format && (
+							<span className="badge badge--gold">
+								<FontAwesomeIcon
+									icon={rating.format === 'WHOLE_PIE' ? 'circle' : 'pizza-slice'}
+								/>
+								{rating.format === 'WHOLE_PIE' ? 'Whole Pie' : 'Slice'}
+							</span>
+						)}
+					</div>
+				)}
 				<div
 					id="rating-modal-description"
 					className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-5"

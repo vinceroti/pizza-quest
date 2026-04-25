@@ -11,18 +11,26 @@ interface HighlightCardsProps {
 		avgRating: number;
 		ratingCount: number;
 	} | null;
+	onTopRatedClick?: () => void;
+	onMostPopularClick?: () => void;
 }
 
 export default function HighlightCards({
 	topRated,
 	mostPopularPlace,
+	onTopRatedClick,
+	onMostPopularClick,
 }: HighlightCardsProps) {
 	if (!topRated && !mostPopularPlace) return null;
 
 	return (
 		<div className="grid gap-4 mb-8 highlights-grid">
 			{topRated && (
-				<div className="glass-card--gold p-5 rounded-xl text-left">
+				<button
+					type="button"
+					onClick={onTopRatedClick}
+					className="glass-card--gold glass-card--interactive p-5 rounded-xl text-left"
+				>
 					<div className="flex items-center gap-2 mb-3">
 						<FontAwesomeIcon
 							icon="trophy"
@@ -34,10 +42,14 @@ export default function HighlightCards({
 					</div>
 					<p className="font-semibold mb-1">{topRated.name}</p>
 					<PizzaRatingDisplay rating={topRated.rating} />
-				</div>
+				</button>
 			)}
 			{mostPopularPlace && (
-				<div className="glass-card--blue p-5 rounded-xl text-left">
+				<button
+					type="button"
+					onClick={onMostPopularClick}
+					className="glass-card--blue glass-card--interactive p-5 rounded-xl text-left"
+				>
 					<div className="flex items-center gap-2 mb-3">
 						<FontAwesomeIcon
 							icon="fire"
@@ -62,7 +74,7 @@ export default function HighlightCards({
 							)
 						</span>
 					</div>
-				</div>
+				</button>
 			)}
 		</div>
 	);

@@ -66,8 +66,8 @@ export default function LoginForm() {
 					alignItems: 'center',
 				}}
 			>
-				<h3>Welcome!</h3>
-				<p>Login to your journey for the greatest pizza slice.</p>
+				<h3>Welcome back.</h3>
+				<p>The pizza is waiting.</p>
 				<Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
 					<TextField
 						margin="normal"

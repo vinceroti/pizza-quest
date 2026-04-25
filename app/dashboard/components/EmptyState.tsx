@@ -9,15 +9,16 @@ interface EmptyStateProps {
 
 export default function EmptyState({
 	title = 'No slices yet',
-	message = 'Be the first to rate a pizza!',
+	message = "It's quiet in here. Suspiciously quiet.",
 }: EmptyStateProps) {
 	return (
 		<div className="flex flex-col items-center justify-center py-16 px-4">
 			<div className="relative mb-6 empty-state__image">
 				<Image
-					src="/pizza-slice-single.webp"
+					src="/pizza-slice.gif"
 					alt=""
 					fill
+					unoptimized
 					className="object-contain"
 				/>
 			</div>

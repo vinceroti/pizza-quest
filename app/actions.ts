@@ -187,6 +187,8 @@ export async function submitSlice(data: Omit<PizzaSlice, 'userId'>) {
 
 		await prisma.pizzaSliceRating.create({
 			data: {
+				source: data.source,
+				format: data.format,
 				overall: data.overall,
 				crustDough: data.crustDough,
 				sauce: data.sauce,

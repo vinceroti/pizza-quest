@@ -65,6 +65,14 @@ function pizzaValidation(data: { [key: string]: any }) {
 		return 'Pizza place is required.';
 	}
 
+	if (data.source !== 'HOMEMADE' && data.source !== 'PURCHASED') {
+		return 'Please choose Homemade or Purchased.';
+	}
+
+	if (data.format !== 'SLICE' && data.format !== 'WHOLE_PIE') {
+		return 'Please choose Slice or Whole Pie.';
+	}
+
 	if (data.overall < 1 || data.overall > 5) {
 		return 'Overall rating must be between 1 and 5 slices.';
 	}

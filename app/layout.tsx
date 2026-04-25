@@ -17,11 +17,21 @@ export const viewport: Viewport = {
 	width: 'device-width',
 	initialScale: 1,
 	viewportFit: 'cover',
+	themeColor: '#1e3a5f',
 };
 
 export const metadata: Metadata = {
 	title: 'Pizza Quest',
 	description: 'Rate and discover the best pizza',
+	applicationName: 'Pizza Quest',
+	appleWebApp: {
+		capable: true,
+		title: 'Pizza Quest',
+		statusBarStyle: 'black-translucent',
+	},
+	other: {
+		'mobile-web-app-capable': 'yes',
+	},
 };
 
 export default function RootLayout({

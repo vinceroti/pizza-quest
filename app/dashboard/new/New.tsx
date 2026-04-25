@@ -2,6 +2,7 @@
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Alert, FormControl, FormGroup, Grid, TextField } from '@mui/material';
+import { PizzaFormat, PizzaSource } from '@prisma/client';
 import { useState } from 'react';
 
 import { submitSlice } from '@/app/actions';
@@ -13,10 +14,13 @@ import { pizzaValidation } from '@/utils/validation';
 import ImageFileUpload from '../components/ImageFileUpload';
 import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
 import RatingInput from '../components/RatingInput';
+import SegmentedToggle from '../components/SegmentedToggle';
 import SuccessMessage from '../components/SuccessMessage';
 
 export default function New() {
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
+	const [source, setSource] = useState<PizzaSource>('PURCHASED');
+	const [format, setFormat] = useState<PizzaFormat>('SLICE');
 	const [overall, setOverall] = useState<number | null>(0);
 	const [crustDough, setCrustDough] = useState<number | null>(0);
 	const [sauce, setSauce] = useState<number | null>(0);
@@ -39,6 +43,8 @@ export default function New() {
 
 		const data = {
 			pizzaPlace,
+			source,
+			format,
 			overall,
 			crustDough,
 			sauce,
@@ -78,9 +84,12 @@ export default function New() {
 
 	return (
 		<div className="form-container">
-			<h4 className="mb-3 text-center">Upload and Rate Pizza Slices</h4>
+			<h4 className="mb-1 text-center">Rate a Slice</h4>
+			<p className="mb-5 text-center submit-page__subtitle">
+				The good, the bad, the soggy. Tell us about it.
+			</p>
 			{success ? (
-				<SuccessMessage message="Your pizza slice rating has been submitted successfully." />
+				<SuccessMessage />
 			) : (
 				<FormControl
 					component="form"
@@ -93,6 +102,30 @@ export default function New() {
 								setPizzaPlace(value)
 							}
 						/>
+						<div className="submit-toggles">
+							<SegmentedToggle
+								label="Source"
+								value={source}
+								onChange={(v) => setSource(v as PizzaSource)}
+								options={[
+									{ value: 'PURCHASED', label: 'Purchased', icon: 'store' },
+									{ value: 'HOMEMADE', label: 'Homemade', icon: 'house' },
+								]}
+							/>
+							<SegmentedToggle
+								label="Format"
+								value={format}
+								onChange={(v) => setFormat(v as PizzaFormat)}
+								options={[
+									{ value: 'SLICE', label: 'Slice', icon: 'pizza-slice' },
+									{
+										value: 'WHOLE_PIE',
+										label: 'Whole Pie',
+										icon: 'circle',
+									},
+								]}
+							/>
+						</div>
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<RatingInput

@@ -73,8 +73,8 @@ export default function Signup() {
 					alignItems: 'center',
 				}}
 			>
-				<h3>Let&apos;s Get Started</h3>
-				<p>Your quest for the greatest pizza slice begins now!</p>
+				<h3>Start the Quest.</h3>
+				<p>Sign up and start logging slices.</p>
 				<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
 					<TextField
 						margin="normal"

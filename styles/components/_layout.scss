@@ -17,3 +17,27 @@
   max-height: 100%;
   object-fit: contain;
 }
+
+.submit-page__subtitle {
+  color: $opaque-text-color-medium;
+  font-size: 0.95rem;
+}
+
+.success-pizza {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 1.25rem;
+  animation: success-pizza-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes success-pizza-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.footer__small {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  margin-top: 0.5rem;
+  font-style: italic;
+}

@@ -25,14 +25,16 @@ export default function Dashboard({ stats, tableData }: DashboardProps) {
 
 	return (
 		<div className="w-full max-width">
-			<h4 className="mb-1">Welcome back, {session?.user?.username}</h4>
+			<h4 className="mb-1">Hey, {session?.user?.username}</h4>
 			<p className="mb-6 dashboard-subtitle">
-				Your pizza quest at a glance
+				The quest for the greatest slice continues.
 			</p>
 
 			<DashboardTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-			{activeTab === 'overview' && <OverviewPanel stats={stats} />}
+			{activeTab === 'overview' && (
+				<OverviewPanel stats={stats} onTabChange={setActiveTab} />
+			)}
 			{activeTab === 'my-places' && (
 				<Table initialData={tableData} filter="self" />
 			)}

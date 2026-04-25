@@ -29,10 +29,22 @@ model User {
 }
 
 
+enum PizzaSource {
+  HOMEMADE
+  PURCHASED
+}
+
+enum PizzaFormat {
+  SLICE
+  WHOLE_PIE
+}
+
 model PizzaSliceRating {
   id                  Int       @id @default(autoincrement())
   pizzaPlaceId        String
   pizzaPlace          PizzaPlace @relation(fields: [pizzaPlaceId], references: [id])
+  source              PizzaSource @default(PURCHASED)
+  format              PizzaFormat @default(SLICE)
   overall             Float
   crustDough          Float
   sauce               Float
