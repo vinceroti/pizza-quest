@@ -83,10 +83,16 @@ export default function Signup() {
 						id="email"
 						label="Email"
 						name="email"
+						type="email"
 						autoComplete="email"
 						autoFocus
 						error={!!emailError}
 						helperText={emailError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<TextField
 						margin="normal"
@@ -99,6 +105,11 @@ export default function Signup() {
 						autoComplete="new-password"
 						error={!!passwordError}
 						helperText={passwordError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<TextField
 						margin="normal"
@@ -111,6 +122,11 @@ export default function Signup() {
 						autoComplete="new-password"
 						error={!!confirmPasswordError}
 						helperText={confirmPasswordError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<LoadingButton
 						loading={loading}
@@ -132,7 +148,7 @@ export default function Signup() {
 					)}
 					<Box sx={{ mt: 2 }}>
 						Already have an account?
-						<Link href="/" style={{ marginLeft: '0.5rem' }}>
+						<Link href="/" className="ml-2">
 							Login
 						</Link>
 					</Box>

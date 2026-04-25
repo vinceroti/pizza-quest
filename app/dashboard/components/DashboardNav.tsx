@@ -12,24 +12,16 @@ import PizzaIcon from '@/components/PizzaIcon';
 export default function DashboardNav() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const pathname = usePathname();
-	const textShadow = '1px 3px 3px rgba(0, 0, 0, 0.5)';
-
 	return (
-		<nav className="p-6 w-full dashboard-nav sticky -top-[1px] z-10">
+		<nav className="px-6 pb-6 w-full dashboard-nav sticky -top-[1px] z-10">
 			<div className="flex items-center justify-between w-full max-width m-auto">
 				{/* Header - always visible */}
 				<div className="flex items-center">
 					<PizzaIcon
 						size={30}
-						className="mr-3 mt-1"
-						style={{
-							filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4))',
-						}}
+						className="mr-3 mt-1 pizza-icon--drop-shadow"
 					/>
-					<h1
-						className="text-center m-0 font-semibold text-2xl"
-						style={{ textShadow }}
-					>
+					<h1 className="text-center m-0 font-semibold text-2xl text-shadow">
 						Pizza Quest
 					</h1>
 				</div>

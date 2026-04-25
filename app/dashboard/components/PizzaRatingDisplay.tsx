@@ -26,33 +26,24 @@ export default function PizzaRatingDisplay({
 					alt="Pizza slice"
 					width={16}
 					height={16}
-					className="inline-block"
-					style={{ objectFit: 'contain' }}
+					className="pizza-icon"
 				/>
 			))}
 			{hasHalfSlice && (
-				<span
-					className="relative inline-flex"
-					style={{ width: 16, height: 16 }}
-				>
+				<span className="relative inline-flex pizza-rating__half-container">
 					<Image
 						src="/pizza-slice-single.webp"
 						alt="Half pizza slice"
 						width={16}
 						height={16}
-						className="opacity-30"
-						style={{ objectFit: 'contain' }}
+						className="opacity-30 pizza-icon"
 					/>
 					<Image
 						src="/pizza-slice-single.webp"
 						alt="Half pizza slice colored"
 						width={16}
 						height={16}
-						className="absolute top-0 left-0"
-						style={{
-							objectFit: 'contain',
-							clipPath: 'inset(0 50% 0 0)',
-						}}
+						className="absolute top-0 left-0 pizza-rating__half-clip"
 					/>
 				</span>
 			)}
@@ -63,8 +54,7 @@ export default function PizzaRatingDisplay({
 					alt="Empty pizza slice"
 					width={16}
 					height={16}
-					className="inline-block opacity-30"
-					style={{ objectFit: 'contain' }}
+					className="pizza-icon opacity-30"
 				/>
 			))}
 		</div>

@@ -153,8 +153,15 @@ export default function Settings() {
 							fullWidth
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
+							type="email"
+							autoComplete="email"
 							error={!!emailError}
 							helperText={emailError}
+							inputProps={{
+								autoCapitalize: 'none',
+								autoCorrect: 'off',
+								spellCheck: 'false',
+							}}
 						/>
 						<TextField
 							label="Username"
@@ -162,8 +169,14 @@ export default function Settings() {
 							fullWidth
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
+							autoComplete="username"
 							error={!!usernameError}
 							helperText={usernameError}
+							inputProps={{
+								autoCapitalize: 'none',
+								autoCorrect: 'off',
+								spellCheck: 'false',
+							}}
 						/>
 						<LoadingButton
 							loading={loading}

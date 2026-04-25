@@ -1,3 +1,5 @@
+import '@/styles/pages/dashboard.scss';
+
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -149,9 +151,7 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 			aria-haspopup="listbox"
 			aria-controls="pizza-place-listbox"
 		>
-			<div
-				style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
-			>
+			<div className="autocomplete__input-wrapper">
 				<TextField
 					label="Search for Pizza Places"
 					variant="outlined"
@@ -162,27 +162,26 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 					className="mb-2"
 					required
 					disabled={isDisabled}
-					aria-autocomplete="list"
-					aria-controls={showSuggestions ? 'pizza-place-listbox' : undefined}
-					aria-activedescendant={
-						highlightedIndex >= 0
-							? `pizza-suggestion-${highlightedIndex}`
-							: undefined
-					}
+					inputProps={{
+						autoCapitalize: 'none',
+						autoCorrect: 'off',
+						autoComplete: 'off',
+						spellCheck: 'false',
+						'aria-autocomplete': 'list',
+						'aria-controls': showSuggestions
+							? 'pizza-place-listbox'
+							: undefined,
+						'aria-activedescendant':
+							highlightedIndex >= 0
+								? `pizza-suggestion-${highlightedIndex}`
+								: undefined,
+					}}
 				/>
 				{isDisabled ? (
 					<button
 						onClick={handleClear}
 						aria-label="Clear selection"
-						style={{
-							position: 'absolute',
-							right: 10,
-							top: '50%',
-							transform: 'translateY(-50%)',
-							background: 'none',
-							border: 'none',
-							cursor: 'pointer',
-						}}
+						className="autocomplete__clear-btn"
 					>
 						<FontAwesomeIcon icon={faTimes} />
 					</button>
@@ -191,11 +190,7 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 						<CircularProgress
 							size={24}
 							color="secondary"
-							style={{
-								position: 'absolute',
-								right: 10,
-								transform: 'translateY(-50%)',
-							}}
+							className="autocomplete__spinner"
 						/>
 					)
 				)}

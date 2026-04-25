@@ -47,13 +47,7 @@ export default function ImageModal({
 						alt="Full size pizza image"
 						width={1200}
 						height={1200}
-						style={{
-							width: 'auto',
-							height: '100%',
-							maxWidth: '100%',
-							maxHeight: '100%',
-							objectFit: 'contain',
-						}}
+						className="image-modal__image"
 						priority
 					/>
 				)}

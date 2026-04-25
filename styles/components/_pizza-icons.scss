@@ -1,0 +1,52 @@
+.pizza-icon {
+  object-fit: contain;
+  display: inline-block;
+}
+
+.pizza-icon--drop-shadow {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.pizza-rating__half-container {
+  width: 16px;
+  height: 16px;
+}
+
+.pizza-rating__half-clip {
+  object-fit: contain;
+  clip-path: inset(0 50% 0 0);
+}
+
+.rating-input__button {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.rating-input__slice {
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.rating-input__slice--active {
+  transform: scale(1.1);
+}
+
+.rating-input__slice--half-left {
+  object-fit: contain;
+  display: block;
+  clip-path: inset(0 50% 0 0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: scale(1.05);
+}
+
+.rating-input__slice--half-right {
+  object-fit: contain;
+  display: block;
+  clip-path: inset(0 0 0 50%);
+  transition: opacity 0.2s ease;
+}

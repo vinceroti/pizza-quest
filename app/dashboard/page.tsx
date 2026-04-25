@@ -1,7 +1,18 @@
-import { protectedRedirect } from '~/actions';
+import {
+	getAllPizzaPlacesWithRatings,
+	getDashboardStats,
+	protectedRedirect,
+} from '~/actions';
 
 import Dashboard from './Dashboard';
+
 export default async function Page() {
 	await protectedRedirect();
-	return <Dashboard />;
+
+	const [stats, tableData] = await Promise.all([
+		getDashboardStats(),
+		getAllPizzaPlacesWithRatings(),
+	]);
+
+	return <Dashboard stats={stats} tableData={tableData} />;
 }

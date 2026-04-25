@@ -54,15 +54,7 @@ export default function RatingInput({
 							onMouseMove={(e) =>
 								setHoverValue(getValueFromEvent(index, e))
 							}
-							className="relative block"
-							style={{
-								width: SLICE_SIZE,
-								height: SLICE_SIZE,
-								cursor: 'pointer',
-								background: 'none',
-								border: 'none',
-								padding: 0,
-							}}
+							className="relative block rating-input__button"
 							aria-label={`${index + 1} slice${index === 0 ? '' : 's'}`}
 						>
 							{halfFilled ? (
@@ -72,14 +64,7 @@ export default function RatingInput({
 										alt=""
 										width={SLICE_SIZE}
 										height={SLICE_SIZE}
-										style={{
-											objectFit: 'contain',
-											display: 'block',
-											clipPath: 'inset(0 50% 0 0)',
-											transition:
-												'opacity 0.2s ease, transform 0.2s ease',
-											transform: 'scale(1.05)',
-										}}
+										className="rating-input__slice--half-left"
 										draggable={false}
 									/>
 									<Image
@@ -87,13 +72,7 @@ export default function RatingInput({
 										alt=""
 										width={SLICE_SIZE}
 										height={SLICE_SIZE}
-										className="opacity-30 absolute top-0 left-0"
-										style={{
-											objectFit: 'contain',
-											display: 'block',
-											clipPath: 'inset(0 0 0 50%)',
-											transition: 'opacity 0.2s ease',
-										}}
+										className="opacity-30 absolute top-0 left-0 rating-input__slice--half-right"
 										draggable={false}
 									/>
 								</>
@@ -103,16 +82,9 @@ export default function RatingInput({
 									alt=""
 									width={SLICE_SIZE}
 									height={SLICE_SIZE}
-									className={filled ? '' : 'opacity-30'}
-									style={{
-										objectFit: 'contain',
-										display: 'block',
-										transition:
-											'opacity 0.2s ease, transform 0.2s ease',
-										transform: filled
-											? 'scale(1.1)'
-											: 'scale(1)',
-									}}
+									className={`rating-input__slice ${
+										filled ? 'rating-input__slice--active' : 'opacity-30'
+									}`}
 									draggable={false}
 								/>
 							)}

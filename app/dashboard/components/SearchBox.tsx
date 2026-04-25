@@ -1,3 +1,5 @@
+import '@/styles/pages/dashboard.scss';
+
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CircularProgress, InputAdornment, TextField } from '@mui/material';
@@ -53,6 +55,12 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 				onChange={handleInputChange}
 				className="mb-2"
 				size="medium"
+				inputProps={{
+					autoCapitalize: 'none',
+					autoCorrect: 'off',
+					autoComplete: 'off',
+					spellCheck: 'false',
+				}}
 				InputProps={{
 					startAdornment: (
 						<InputAdornment position="start">
@@ -68,14 +76,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 								<button
 									onClick={handleClear}
 									aria-label="Clear search"
-									style={{
-										background: 'none',
-										border: 'none',
-										cursor: 'pointer',
-										padding: 0,
-										display: 'flex',
-										alignItems: 'center',
-									}}
+									className="icon-button-reset"
 								>
 									<FontAwesomeIcon icon={faTimes} />
 								</button>

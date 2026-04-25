@@ -87,10 +87,16 @@ export default function ForgotPassword() {
 							id="email"
 							label="Email Address"
 							name="email"
+							type="email"
 							autoComplete="email"
 							autoFocus
 							error={!!emailError}
 							helperText={emailError}
+							inputProps={{
+								autoCapitalize: 'none',
+								autoCorrect: 'off',
+								spellCheck: 'false',
+							}}
 						/>
 						<LoadingButton
 							loading={loading}

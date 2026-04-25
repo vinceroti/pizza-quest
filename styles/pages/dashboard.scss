@@ -1,0 +1,141 @@
+.dashboard-subtitle {
+  color: $opaque-text-color-medium;
+  font-size: 0.9rem;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.highlights-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.glass-card {
+  background: rgba(30, 58, 95, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($light-blue, 0.2);
+}
+
+.glass-card--gold {
+  @extend .glass-card;
+  border-color: rgba($yellow, 0.3);
+}
+
+.glass-card--blue {
+  @extend .glass-card;
+  border-color: rgba($light-blue, 0.3);
+}
+
+.stat-card__icon {
+  font-size: 1.5rem;
+}
+
+.stat-card__value {
+  color: $white;
+}
+
+.stat-card__label {
+  color: $opaque-text-color-medium;
+}
+
+.stat-card__sub-value {
+  color: $opaque-text-color-light;
+}
+
+.highlight-label {
+  color: $opaque-text-color-medium;
+}
+
+.highlight-sub-text {
+  color: $opaque-text-color-medium;
+}
+
+.icon-color--yellow {
+  color: $yellow;
+}
+
+.icon-color--yellow-light {
+  color: #ffd54f;
+}
+
+.icon-color--blue-light {
+  color: #7fb3ff;
+}
+
+.icon-color--blue {
+  color: $light-blue;
+}
+
+.icon-color--orange {
+  color: #ff6b35;
+}
+
+.empty-state__image {
+  width: 100px;
+  height: 100px;
+  opacity: 0.4;
+  filter: grayscale(50%);
+}
+
+.empty-state__title {
+  color: $opaque-text-color-light;
+  font-weight: 600;
+}
+
+.empty-state__message {
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 280px;
+}
+
+.loading-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pizza-feed {
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pizza-feed__list {
+  min-height: 400px;
+}
+
+.icon-button-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.autocomplete__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.autocomplete__clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.autocomplete__spinner {
+  position: absolute;
+  right: 10px;
+  transform: translateY(-50%);
+}

@@ -626,3 +626,85 @@ export async function resetPassword(
 		throw error;
 	}
 }
+
+function calculateAverage(values: number[]): number {
+	if (values.length === 0) return 0;
+	const total = values.reduce((sum, value) => sum + value, 0);
+	return Math.round((total / values.length) * 10) / 10;
+}
+
+async function fetchDashboardCounts() {
+	const [totalPlaces, totalRatings] = await Promise.all([
+		prisma.pizzaPlace.count(),
+		prisma.pizzaSliceRating.count(),
+	]);
+	return { totalPlaces, totalRatings };
+}
+
+async function fetchUserRatingStats(userId: number) {
+	const userRatings = await prisma.pizzaSliceRating.findMany({
+		where: { userId },
+		include: {
+			pizzaPlace: {
+				select: { mainText: true },
+			},
+		},
+		orderBy: { overall: 'desc' },
+	});
+
+	const topRated = userRatings[0] || null;
+
+	return {
+		userRatingCount: userRatings.length,
+		userAvgRating: calculateAverage(
+			userRatings.map((rating) => rating.overall),
+		),
+		topRated: topRated
+			? {
+					name: topRated.pizzaPlace.mainText,
+					rating: topRated.overall,
+				}
+			: null,
+	};
+}
+
+async function fetchMostPopularPlace() {
+	const topPlace = await prisma.pizzaPlace.findFirst({
+		include: {
+			pizzaSliceRatings: {
+				select: { overall: true },
+			},
+		},
+		orderBy: {
+			pizzaSliceRatings: { _count: 'desc' },
+		},
+	});
+
+	if (!topPlace || topPlace.pizzaSliceRatings.length === 0) {
+		return null;
+	}
+
+	return {
+		name: topPlace.mainText,
+		avgRating: calculateAverage(
+			topPlace.pizzaSliceRatings.map((rating) => rating.overall),
+		),
+		ratingCount: topPlace.pizzaSliceRatings.length,
+	};
+}
+
+export async function getDashboardStats() {
+	const user = await getAuthenticatedUser();
+
+	const [counts, userStats, mostPopularPlace] = await Promise.all([
+		fetchDashboardCounts(),
+		fetchUserRatingStats(user.id),
+		fetchMostPopularPlace(),
+	]);
+
+	return {
+		...counts,
+		...userStats,
+		mostPopularPlace,
+	};
+}

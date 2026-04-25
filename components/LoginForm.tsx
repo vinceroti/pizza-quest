@@ -76,10 +76,16 @@ export default function LoginForm() {
 						id="email"
 						label="Email"
 						name="email"
+						type="email"
 						autoComplete="email"
 						autoFocus
 						error={!!emailError}
 						helperText={emailError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<TextField
 						variant="outlined"
@@ -93,6 +99,11 @@ export default function LoginForm() {
 						autoComplete="current-password"
 						error={!!passwordError}
 						helperText={passwordError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<LoadingButton
 						loading={loading}
@@ -113,13 +124,13 @@ export default function LoginForm() {
 						</Alert>
 					)}
 					<Box sx={{ mt: 1 }}>
-						<Link href="/forgot-password" style={{ fontSize: '0.875rem' }}>
+						<Link href="/forgot-password" className="text-sm">
 							Forgot password?
 						</Link>
 					</Box>
 					<Box sx={{ textAlign: 'center', mt: 2 }}>
 						Don&apos;t have an account?
-						<Link href="/signup" style={{ marginLeft: '0.5rem' }}>
+						<Link href="/signup" className="ml-2">
 							Sign Up
 						</Link>
 					</Box>

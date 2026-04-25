@@ -5,13 +5,12 @@ const config: CapacitorConfig = {
 	appName: 'Pizza Quest',
 	webDir: 'out',
 	server: {
-		// Replace with your actual Vercel deployment URL
-		url: 'https://pizza-quest.vercel.app',
-		cleartext: false,
+		url: 'http://localhost:3000',
+		cleartext: true,
 	},
 	ios: {
 		allowsLinkPreview: false,
-		scrollEnabled: false,
+		scrollEnabled: true,
 	},
 	plugins: {
 		SplashScreen: {

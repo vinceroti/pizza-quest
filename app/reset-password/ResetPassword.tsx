@@ -155,6 +155,11 @@ export default function ResetPassword() {
 						autoFocus
 						error={!!passwordError}
 						helperText={passwordError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<TextField
 						margin="normal"
@@ -167,6 +172,11 @@ export default function ResetPassword() {
 						autoComplete="new-password"
 						error={!!confirmPasswordError}
 						helperText={confirmPasswordError}
+						inputProps={{
+							autoCapitalize: 'none',
+							autoCorrect: 'off',
+							spellCheck: 'false',
+						}}
 					/>
 					<LoadingButton
 						loading={loading}
@@ -188,7 +198,7 @@ export default function ResetPassword() {
 					)}
 					<Box sx={{ mt: 2 }}>
 						Remember your password?
-						<Link href="/" style={{ marginLeft: '0.5rem' }}>
+						<Link href="/" className="ml-2">
 							Login
 						</Link>
 					</Box>

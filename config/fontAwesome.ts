@@ -4,6 +4,7 @@ import { config, library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import {
 	faBars,
+	faChartBar,
 	faChevronDown,
 	faChevronRight,
 	faChevronUp,
@@ -11,6 +12,7 @@ import {
 	faClock,
 	faCog,
 	faEnvelope,
+	faFire,
 	faHome,
 	faImage,
 	faMinus,
@@ -19,7 +21,10 @@ import {
 	faRightFromBracket,
 	faSearch,
 	faStar,
+	faStore,
+	faTable,
 	faTimes,
+	faTrophy,
 	faUser,
 	faUserCircle,
 	faXmark,
@@ -49,4 +54,9 @@ library.add(
 	faRightFromBracket,
 	faBars,
 	faEnvelope,
+	faTrophy,
+	faFire,
+	faStore,
+	faTable,
+	faChartBar,
 );

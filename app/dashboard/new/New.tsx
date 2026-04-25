@@ -15,7 +15,7 @@ import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
 import RatingInput from '../components/RatingInput';
 import SuccessMessage from '../components/SuccessMessage';
 
-export default function Dashboard() {
+export default function New() {
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
 	const [overall, setOverall] = useState<number | null>(0);
 	const [crustDough, setCrustDough] = useState<number | null>(0);
@@ -77,14 +77,7 @@ export default function Dashboard() {
 	};
 
 	return (
-		<div
-			style={{
-				width: '100%',
-				maxWidth: '800px',
-				margin: '0 auto',
-				padding: '0 1rem',
-			}}
-		>
+		<div className="form-container">
 			<h4 className="mb-3 text-center">Upload and Rate Pizza Slices</h4>
 			{success ? (
 				<SuccessMessage message="Your pizza slice rating has been submitted successfully." />

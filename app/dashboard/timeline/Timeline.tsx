@@ -2,10 +2,21 @@
 
 import { useSession } from 'next-auth/react';
 
-import PizzaSliceFeed from '../components/PizzaSliceFeed';
+import PizzaSliceFeed, {
+	type PizzaSliceFeedData,
+} from '../components/PizzaSliceFeed';
 
-export default function Timeline() {
+interface TimelineProps {
+	initialFeedData: PizzaSliceFeedData;
+}
+
+export default function Timeline({ initialFeedData }: TimelineProps) {
 	const { data: session } = useSession();
 
-	return <PizzaSliceFeed userId={session?.user?.id} />;
+	return (
+		<PizzaSliceFeed
+			userId={session?.user?.id}
+			initialData={initialFeedData}
+		/>
+	);
 }

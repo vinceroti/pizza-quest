@@ -43,9 +43,11 @@ export default function RootLayout({
 					<Providers>
 						<AppRouterCacheProvider>
 							<NextTopLoader color="#ffc107" showSpinner={false} />
-							<ThemeProvider theme={theme}>{children}</ThemeProvider>
+							<ThemeProvider theme={theme}>
+								{children}
+								<Footer />
+							</ThemeProvider>
 						</AppRouterCacheProvider>
-						<Footer />
 					</Providers>
 				</div>
 			</body>
