@@ -61,12 +61,16 @@ function emailValidation(email: string) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pizzaValidation(data: { [key: string]: any }) {
-	if (!data.pizzaPlace?.place_id) {
+	if (data.source !== 'HOMEMADE' && data.source !== 'PURCHASED') {
+		return 'Please choose Homemade or Purchased.';
+	}
+
+	if (data.source === 'PURCHASED' && !data.pizzaPlace?.place_id) {
 		return 'Pizza place is required.';
 	}
 
-	if (data.source !== 'HOMEMADE' && data.source !== 'PURCHASED') {
-		return 'Please choose Homemade or Purchased.';
+	if (data.source === 'HOMEMADE' && !data.customPlaceName?.trim()) {
+		return 'Give your homemade pizza a name.';
 	}
 
 	if (data.format !== 'SLICE' && data.format !== 'WHOLE_PIE') {

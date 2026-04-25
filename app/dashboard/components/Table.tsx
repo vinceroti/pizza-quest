@@ -122,7 +122,7 @@ export default function PizzaTable({
 			if (filter === 'self') {
 				return userRatedPlaceIds.includes(place.id);
 			}
-			return true;
+			return place.source !== 'HOMEMADE';
 		})
 		.filter((place) => {
 			if (!searchQuery.trim()) return true;

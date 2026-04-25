@@ -19,6 +19,7 @@ import SuccessMessage from '../components/SuccessMessage';
 
 export default function New() {
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);
+	const [customPlaceName, setCustomPlaceName] = useState('');
 	const [source, setSource] = useState<PizzaSource>('PURCHASED');
 	const [format, setFormat] = useState<PizzaFormat>('SLICE');
 	const [overall, setOverall] = useState<number | null>(0);
@@ -43,6 +44,7 @@ export default function New() {
 
 		const data = {
 			pizzaPlace,
+			customPlaceName,
 			source,
 			format,
 			overall,
@@ -97,11 +99,6 @@ export default function New() {
 					sx={{ width: '100%' }}
 				>
 					<FormGroup>
-						<PizzaPlaceAutoComplete
-							handleInputChange={(value: GooglePrediction | null) =>
-								setPizzaPlace(value)
-							}
-						/>
 						<div className="submit-toggles">
 							<SegmentedToggle
 								label="Source"
@@ -126,6 +123,29 @@ export default function New() {
 								]}
 							/>
 						</div>
+						{source === 'PURCHASED' ? (
+							<PizzaPlaceAutoComplete
+								handleInputChange={(value: GooglePrediction | null) =>
+									setPizzaPlace(value)
+								}
+							/>
+						) : (
+							<div className="w-full max-w-md mx-auto mb-3">
+								<TextField
+									label="Name your homemade pizza"
+									value={customPlaceName}
+									onChange={(e) => setCustomPlaceName(e.target.value)}
+									placeholder="Mom's recipe, Friday night dough, etc."
+									fullWidth
+									inputProps={{
+										autoCapitalize: 'words',
+										autoCorrect: 'off',
+										spellCheck: 'false',
+										maxLength: 80,
+									}}
+								/>
+							</div>
+						)}
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<RatingInput

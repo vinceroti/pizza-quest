@@ -67,6 +67,7 @@ model PizzaPlace {
   description         String
   mainText            String
   secondaryText       String
+  source              PizzaSource @default(PURCHASED)
   pizzaSliceRatings   PizzaSliceRating[]
 }
 

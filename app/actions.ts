@@ -152,6 +152,34 @@ async function uploadImageToS3(
 	}
 }
 
+async function upsertPurchasedPizzaPlace(prediction: GooglePrediction) {
+	const existing = await prisma.pizzaPlace.findUnique({
+		where: { id: prediction.place_id },
+	});
+	if (existing) return existing;
+	return prisma.pizzaPlace.create({
+		data: {
+			id: prediction.place_id,
+			description: prediction.description,
+			mainText: prediction.structured_formatting.main_text,
+			secondaryText: prediction.structured_formatting.secondary_text,
+			source: 'PURCHASED',
+		},
+	});
+}
+
+async function createHomemadePizzaPlace(name: string, username: string) {
+	return prisma.pizzaPlace.create({
+		data: {
+			id: `home_${uuidv4()}`,
+			description: `Homemade by ${username}`,
+			mainText: name,
+			secondaryText: `${username}'s kitchen`,
+			source: 'HOMEMADE',
+		},
+	});
+}
+
 export async function submitSlice(data: Omit<PizzaSlice, 'userId'>) {
 	const user = await getAuthenticatedUser();
 	const errorMsg = pizzaValidation(data);
@@ -170,20 +198,13 @@ export async function submitSlice(data: Omit<PizzaSlice, 'userId'>) {
 			'pizza-slices',
 		);
 
-		let pizzaPlace = await prisma.pizzaPlace.findUnique({
-			where: { id: data.pizzaPlace.place_id },
-		});
-
-		if (!pizzaPlace) {
-			pizzaPlace = await prisma.pizzaPlace.create({
-				data: {
-					id: data.pizzaPlace.place_id,
-					description: data.pizzaPlace.description,
-					mainText: data.pizzaPlace.structured_formatting.main_text,
-					secondaryText: data.pizzaPlace.structured_formatting.secondary_text,
-				},
-			});
-		}
+		const pizzaPlace =
+			data.source === 'HOMEMADE'
+				? await createHomemadePizzaPlace(
+						data.customPlaceName!.trim(),
+						user.username,
+					)
+				: await upsertPurchasedPizzaPlace(data.pizzaPlace!);
 
 		await prisma.pizzaSliceRating.create({
 			data: {
@@ -258,7 +279,14 @@ export async function getAllPizzaSliceData(userId?: number) {
 
 export async function getAllPizzaPlacesWithRatings() {
 	try {
+		const user = await getAuthenticatedUser();
 		const pizzaPlaces = await prisma.pizzaPlace.findMany({
+			where: {
+				OR: [
+					{ source: 'PURCHASED' },
+					{ pizzaSliceRatings: { some: { userId: user.id } } },
+				],
+			},
 			include: {
 				pizzaSliceRatings: {
 					include: {
@@ -647,8 +675,10 @@ function calculateAverage(values: number[]): number {
 
 async function fetchDashboardCounts() {
 	const [totalPlaces, totalRatings] = await Promise.all([
-		prisma.pizzaPlace.count(),
-		prisma.pizzaSliceRating.count(),
+		prisma.pizzaPlace.count({ where: { source: 'PURCHASED' } }),
+		prisma.pizzaSliceRating.count({
+			where: { pizzaPlace: { source: 'PURCHASED' } },
+		}),
 	]);
 	return { totalPlaces, totalRatings };
 }
@@ -683,6 +713,7 @@ async function fetchUserRatingStats(userId: number) {
 
 async function fetchMostPopularPlace() {
 	const topPlace = await prisma.pizzaPlace.findFirst({
+		where: { source: 'PURCHASED' },
 		include: {
 			pizzaSliceRatings: {
 				select: { overall: true },

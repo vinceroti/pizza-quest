@@ -3,7 +3,8 @@ import { PizzaFormat, PizzaSource } from '@prisma/client';
 import GooglePrediction from './GooglePrediction';
 
 export interface PizzaSlice {
-	pizzaPlace: GooglePrediction;
+	pizzaPlace: GooglePrediction | null;
+	customPlaceName?: string;
 	source: PizzaSource;
 	format: PizzaFormat;
 	overall: number;

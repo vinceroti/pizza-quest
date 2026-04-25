@@ -145,7 +145,7 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 	return (
 		<div
 			ref={containerRef}
-			className="relative w-full max-w-md mx-auto mt-8 mb-3"
+			className="relative w-full max-w-md mx-auto mb-3"
 			role="combobox"
 			aria-expanded={showSuggestions}
 			aria-haspopup="listbox"
