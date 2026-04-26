@@ -42,9 +42,17 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ user, token }) {
+		async jwt({ user, token, trigger, session }) {
 			if (user) {
 				token.user = { ...user };
+			}
+			// Merge client-side `update({...})` payloads into the JWT so
+			// useSession() reflects new email/username/image without a re-login.
+			if (trigger === 'update' && session) {
+				token.user = {
+					...((token.user as Record<string, unknown> | undefined) ?? {}),
+					...session,
+				};
 			}
 			return token;
 		},

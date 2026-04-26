@@ -6,9 +6,9 @@ import Link from 'next/link';
 
 import type { getDashboardStats } from '@/app/actions';
 
-import type { DashboardTab } from './DashboardTabs';
+import PizzaRatingDisplay from '../shared/PizzaRatingDisplay';
+import type { DashboardTab } from '../nav/DashboardTabs';
 import HighlightCards from './HighlightCards';
-import PizzaRatingDisplay from './PizzaRatingDisplay';
 import StatCard from './StatCard';
 
 type DashboardStats = Prisma.PromiseReturnType<typeof getDashboardStats>;

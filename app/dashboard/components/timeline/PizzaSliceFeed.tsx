@@ -7,11 +7,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getAllPizzaSliceData } from '@/app/actions';
 
-import EmptyState from './EmptyState';
+import EmptyState from '../shared/EmptyState';
+import LoadingSpinner from '../shared/LoadingSpinner';
+import SearchBox from '../shared/SearchBox';
 import FilterTabs from './FilterTabs';
-import LoadingSpinner from './LoadingSpinner';
 import PizzaSliceCard from './PizzaSliceCard';
-import SearchBox from './SearchBox';
 
 export type PizzaSliceFeedData = Prisma.PromiseReturnType<
 	typeof getAllPizzaSliceData
@@ -67,7 +67,9 @@ export default function PizzaSliceFeed({
 			<div className="flex flex-col items-center gap-4 mb-4">
 				<FilterTabs activeFilter={filter} onFilterChange={setFilter} />
 			</div>
-			<SearchBox value={searchQuery} onChange={setSearchQuery} />
+			<div className="w-full max-w-md mx-auto mt-4 mb-2">
+				<SearchBox value={searchQuery} onChange={setSearchQuery} />
+			</div>
 			<div className="pizza-feed__list">
 				{loading ? (
 					<LoadingSpinner />

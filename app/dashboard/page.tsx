@@ -10,7 +10,7 @@ import Dashboard from './Dashboard';
 export default async function Page() {
 	await protectedRedirect();
 
-	const [stats, tableData, userRatedPlaceIds] = await Promise.all([
+	const [stats, placesData, userRatedPlaceIds] = await Promise.all([
 		getDashboardStats(),
 		getAllPizzaPlacesWithRatings(),
 		getUserRatedPlaceIds(),
@@ -19,7 +19,7 @@ export default async function Page() {
 	return (
 		<Dashboard
 			stats={stats}
-			tableData={tableData}
+			placesData={placesData}
 			userRatedPlaceIds={userRatedPlaceIds}
 		/>
 	);

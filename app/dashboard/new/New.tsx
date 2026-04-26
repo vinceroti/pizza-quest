@@ -11,11 +11,11 @@ import { type PizzaSlice } from '@/interfaces/models/PizzaSlice';
 import { toBase64 } from '@/utils/fileUtils';
 import { pizzaValidation } from '@/utils/validation';
 
-import ImageFileUpload from '../components/ImageFileUpload';
-import PizzaPlaceAutoComplete from '../components/PizzaPlaceAutoComplete';
-import RatingInput from '../components/RatingInput';
-import SegmentedToggle from '../components/SegmentedToggle';
-import SuccessMessage from '../components/SuccessMessage';
+import ImageFileUpload from '../components/shared/ImageFileUpload';
+import PizzaPlaceAutoComplete from '../components/submit/PizzaPlaceAutoComplete';
+import RatingInput from '../components/submit/RatingInput';
+import SegmentedToggle from '../components/submit/SegmentedToggle';
+import SuccessMessage from '../components/submit/SuccessMessage';
 
 export default function New() {
 	const [pizzaPlace, setPizzaPlace] = useState<GooglePrediction | null>(null);

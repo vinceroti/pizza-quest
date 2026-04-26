@@ -2,7 +2,7 @@ import '@/styles/pages/dashboard.scss';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import PizzaRatingDisplay from './PizzaRatingDisplay';
+import PizzaRatingDisplay from '../shared/PizzaRatingDisplay';
 
 interface HighlightCardsProps {
 	topRated: { placeId: string; name: string; rating: number } | null;

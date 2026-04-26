@@ -45,7 +45,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 	};
 
 	return (
-		<div className="relative w-full max-w-md mx-auto mt-4 mb-2">
+		<div className="search-box relative w-full">
 			<TextField
 				label={label}
 				placeholder={placeholder}
@@ -53,7 +53,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 				fullWidth
 				value={inputValue}
 				onChange={handleInputChange}
-				className="mb-2"
 				size="medium"
 				inputProps={{
 					autoCapitalize: 'none',

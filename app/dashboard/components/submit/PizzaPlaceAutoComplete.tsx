@@ -145,7 +145,7 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 	return (
 		<div
 			ref={containerRef}
-			className="relative w-full max-w-md mx-auto mb-3"
+			className="search-box relative w-full max-w-md mx-auto mb-3"
 			role="combobox"
 			aria-expanded={showSuggestions}
 			aria-haspopup="listbox"
@@ -207,7 +207,8 @@ const PizzaPlaceAutoComplete: React.FC<PizzaPlaceAutoCompleteProps> = ({
 						backdropFilter: 'blur(10px)',
 						width: '100%',
 						border: '1px solid rgba(77, 144, 254, 0.3)',
-						borderRadius: '4px',
+						borderRadius: '12px',
+						marginTop: '4px',
 						maxHeight: '200px',
 						overflowY: 'auto',
 						color: 'text.primary',

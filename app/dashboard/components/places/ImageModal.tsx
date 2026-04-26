@@ -1,4 +1,5 @@
-import { Box, Modal } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Box, IconButton, Modal } from '@mui/material';
 import Image from 'next/image';
 
 type ImageModalProps = {
@@ -28,11 +29,12 @@ export default function ImageModal({
 					height: { xs: '60vh', sm: '70vh', md: '80vh' },
 					maxWidth: '1200px',
 					maxHeight: '1200px',
-					bgcolor: 'rgba(30, 58, 95, 0.95)',
-					backdropFilter: 'blur(10px)',
-					border: '1px solid rgba(77, 144, 254, 0.2)',
-					boxShadow: 24,
-					p: 2,
+				bgcolor: 'rgba(30, 58, 95, 0.95)',
+				backdropFilter: 'blur(10px)',
+				border: '1px solid rgba(77, 144, 254, 0.2)',
+				borderRadius: '16px',
+				boxShadow: 24,
+				p: 2,
 					color: 'text.primary',
 					display: 'flex',
 					flexDirection: 'column',
@@ -41,6 +43,22 @@ export default function ImageModal({
 					overflow: 'hidden',
 				}}
 			>
+				<IconButton
+					onClick={onClose}
+					aria-label="Close image"
+					sx={{
+						position: 'absolute',
+						top: 8,
+						right: 8,
+						width: 44,
+						height: 44,
+						color: 'rgba(255,255,255,0.85)',
+						bgcolor: 'rgba(0,0,0,0.4)',
+						'&:hover': { bgcolor: 'rgba(0,0,0,0.6)' },
+					}}
+				>
+					<FontAwesomeIcon icon="xmark" />
+				</IconButton>
 				{imageUrl && (
 					<Image
 						src={imageUrl}

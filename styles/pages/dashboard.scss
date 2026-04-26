@@ -299,13 +299,18 @@ button.glass-card--blue,
   min-height: 400px;
 }
 
+// Min hit area = WCAG 2.2 AA SC 2.5.8 floor (24px) + a little margin so adjacent
+// targets don't fail the spacing exception. 32px is a good "icon-only" default.
 .icon-button-reset {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
 }
 
 .autocomplete__input-wrapper {
@@ -316,12 +321,30 @@ button.glass-card--blue,
 
 .autocomplete__clear-btn {
   position: absolute;
-  right: 10px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
+  border-radius: 999px;
   cursor: pointer;
+  color: $opaque-text-color-light;
+
+  &:hover,
+  &:focus-visible {
+    color: $white;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($yellow, 0.6);
+    outline-offset: 2px;
+  }
 }
 
 .autocomplete__spinner {

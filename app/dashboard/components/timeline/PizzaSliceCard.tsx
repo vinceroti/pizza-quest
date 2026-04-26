@@ -7,9 +7,9 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { getAllPizzaSliceData } from '@/app/actions';
 
+import PizzaRatingDisplay from '../shared/PizzaRatingDisplay';
 import CommentSection from './CommentSection';
 import LikeSection from './LikeSection';
-import PizzaRatingDisplay from './PizzaRatingDisplay';
 
 type PizzaSlice = Prisma.PromiseReturnType<typeof getAllPizzaSliceData>[number];
 

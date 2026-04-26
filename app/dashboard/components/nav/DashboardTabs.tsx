@@ -18,9 +18,9 @@ export default function DashboardTabs({
 	onTabChange,
 }: DashboardTabsProps) {
 	const baseStyles = [
-		'flex-1 py-3 px-4 font-semibold text-sm',
-		'transition-all duration-200 border-none',
-		'flex items-center justify-center gap-2',
+		'flex-1 py-3 px-2 sm:px-4 font-semibold text-xs sm:text-sm',
+		'transition-all duration-200 border-none min-h-[44px]',
+		'flex items-center justify-center gap-1.5 sm:gap-2',
 	].join(' ');
 	const activeStyles = 'bg-blue-500/30 text-white cursor-default';
 	const inactiveStyles =
@@ -28,7 +28,7 @@ export default function DashboardTabs({
 
 	return (
 		<div
-			className="flex border border-blue-400/30 rounded-lg overflow-hidden w-full max-w-md mx-auto mb-8"
+			className="flex glass-card rounded-xl overflow-hidden w-full max-w-md mx-auto mb-8"
 			role="tablist"
 		>
 			{tabs.map((tab, index) => (

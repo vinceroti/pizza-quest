@@ -5,6 +5,7 @@ import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import {
 	faBars,
 	faChartBar,
+	faCheck,
 	faChevronDown,
 	faChevronRight,
 	faChevronUp,
@@ -63,4 +64,5 @@ library.add(
 	faChartBar,
 	faHouse,
 	faCircle,
+	faCheck,
 );

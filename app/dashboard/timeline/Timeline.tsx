@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 
 import PizzaSliceFeed, {
 	type PizzaSliceFeedData,
-} from '../components/PizzaSliceFeed';
+} from '../components/timeline/PizzaSliceFeed';
 
 interface TimelineProps {
 	initialFeedData: PizzaSliceFeedData;

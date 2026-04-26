@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import { protectedRedirect } from '~/actions';
 
-import DashboardNav from './components/DashboardNav';
+import DashboardNav from './components/nav/DashboardNav';
 
 export default async function Layout({ children }: { children: ReactNode }) {
 	await protectedRedirect();

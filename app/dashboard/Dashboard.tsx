@@ -8,21 +8,21 @@ import { useState } from 'react';
 
 import type { getDashboardStats } from '@/app/actions';
 
-import DashboardTabs, { type DashboardTab } from './components/DashboardTabs';
-import OverviewPanel from './components/OverviewPanel';
-import Table, { type PizzaPlaceData } from './components/Table';
+import DashboardTabs, { type DashboardTab } from './components/nav/DashboardTabs';
+import OverviewPanel from './components/overview/OverviewPanel';
+import Places, { type PizzaPlaceData } from './components/places/Places';
 
 type DashboardStats = Prisma.PromiseReturnType<typeof getDashboardStats>;
 
 interface DashboardProps {
 	stats: DashboardStats;
-	tableData: PizzaPlaceData;
+	placesData: PizzaPlaceData;
 	userRatedPlaceIds: string[];
 }
 
 export default function Dashboard({
 	stats,
-	tableData,
+	placesData,
 	userRatedPlaceIds,
 }: DashboardProps) {
 	const { data: session } = useSession();
@@ -53,16 +53,16 @@ export default function Dashboard({
 				<OverviewPanel stats={stats} onFocusPlace={focusPlace} />
 			)}
 			{activeTab === 'my-places' && (
-				<Table
-					initialData={tableData}
+				<Places
+					initialData={placesData}
 					filter="self"
 					focusedPlaceId={focusedPlaceId}
 					userRatedPlaceIds={userRatedPlaceIds}
 				/>
 			)}
 			{activeTab === 'all-places' && (
-				<Table
-					initialData={tableData}
+				<Places
+					initialData={placesData}
 					filter="all"
 					focusedPlaceId={focusedPlaceId}
 					userRatedPlaceIds={userRatedPlaceIds}

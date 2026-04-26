@@ -28,9 +28,11 @@ export default function DashboardNav() {
 
 				{/* Hamburger button - only visible on mobile */}
 				<button
-					className="md:hidden text-white relative w-6 h-6"
+					className="md:hidden text-white relative w-11 h-11 -mr-2 flex items-center justify-center"
 					onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-					aria-label="Toggle menu"
+					aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+					aria-expanded={mobileMenuOpen}
+					aria-controls="mobile-menu"
 					type="button"
 				>
 					<AnimatePresence>
@@ -114,17 +116,20 @@ export default function DashboardNav() {
 			<AnimatePresence>
 				{mobileMenuOpen && (
 					<motion.div
+						id="mobile-menu"
 						initial={{ height: 0, opacity: 0 }}
 						animate={{ height: 'auto', opacity: 1 }}
 						exit={{ height: 0, opacity: 0 }}
 						transition={{ duration: 0.3, ease: 'easeInOut' }}
 						className="md:hidden"
 					>
-						<ul className="flex flex-col space-y-4 pt-6 pb-3 ">
+						<ul className="flex flex-col pt-4 pb-3">
 							<li>
 								<Link
 									href="/dashboard"
-									className={`flex items-center gap-2 ${pathname === '/dashboard' ? 'active' : ''}`}
+									className={`flex items-center gap-3 min-h-[44px] py-2 ${
+										pathname === '/dashboard' ? 'active' : ''
+									}`}
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									<FontAwesomeIcon icon="home" />
@@ -134,7 +139,7 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/timeline"
-									className={`flex items-center gap-2 ${
+									className={`flex items-center gap-3 min-h-[44px] py-2 ${
 										pathname === '/dashboard/timeline' ? 'active' : ''
 									}`}
 									onClick={() => setMobileMenuOpen(false)}
@@ -146,7 +151,7 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/new"
-									className={`flex items-center gap-2 ${
+									className={`flex items-center gap-3 min-h-[44px] py-2 ${
 										pathname === '/dashboard/new' ? 'active' : ''
 									}`}
 									onClick={() => setMobileMenuOpen(false)}
@@ -158,7 +163,7 @@ export default function DashboardNav() {
 							<li>
 								<Link
 									href="/dashboard/settings"
-									className={`flex items-center gap-2 ${
+									className={`flex items-center gap-3 min-h-[44px] py-2 ${
 										pathname === '/dashboard/settings' ? 'active' : ''
 									}`}
 									onClick={() => setMobileMenuOpen(false)}
@@ -169,7 +174,7 @@ export default function DashboardNav() {
 							</li>
 							<li>
 								<button
-									className="button-link flex items-center gap-2"
+									className="button-link flex items-center gap-3 min-h-[44px] py-2 w-full text-left"
 									onClick={() => {
 										setMobileMenuOpen(false);
 										signOut({ callbackUrl: '/' });

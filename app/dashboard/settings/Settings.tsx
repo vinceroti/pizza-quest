@@ -11,7 +11,7 @@ import { toBase64 } from '@/utils/fileUtils';
 import { emailValidation, usernameValidation } from '@/utils/validation';
 import { avatarUpload, userSettingsChange } from '~/actions';
 
-import ImageFileUpload from '../components/ImageFileUpload';
+import ImageFileUpload from '../components/shared/ImageFileUpload';
 
 export default function Settings() {
 	const { data: session, update } = useSession();
@@ -89,12 +89,12 @@ export default function Settings() {
 				throw new Error('Error converting avatar to base64');
 			}
 
-			await avatarUpload({
+			const updatedUser = await avatarUpload({
 				image: { type: avatar.type, data: avatarBase64 },
 			});
 
 			setSuccess('Avatar uploaded successfully');
-			await update();
+			await update({ image: updatedUser.image });
 		} catch (error: unknown) {
 			setError((error as Error).message);
 		} finally {
