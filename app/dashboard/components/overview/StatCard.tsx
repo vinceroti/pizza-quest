@@ -18,7 +18,7 @@ export default function StatCard({
 	subValue,
 }: StatCardProps) {
 	return (
-		<div className="glass-card flex flex-col items-center p-5 rounded-xl min-w-0">
+		<div className="glass-card flex flex-col items-center p-5 rounded-xl min-w-0 text-center">
 			<FontAwesomeIcon
 				icon={icon as never}
 				className={`mb-3 stat-card__icon ${iconColorClass}`}

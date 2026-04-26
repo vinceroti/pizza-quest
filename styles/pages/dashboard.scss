@@ -259,6 +259,65 @@ button.glass-card--blue,
   color: #7fb3ff;
 }
 
+.place-details__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.place-details__description {
+  color: $opaque-text-color-medium;
+  max-width: 52rem;
+}
+
+.place-details__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 180px;
+}
+
+.place-details__summary-label {
+  color: $opaque-text-color-medium;
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.place-details__summary-count {
+  color: $opaque-text-color-light;
+  font-size: 0.9rem;
+}
+
+.place-details__section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .place-details__section-header {
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.place-details__cta {
+  margin: 0;
+  max-width: 320px;
+  width: 100%;
+}
+
+.place-details__empty {
+  align-items: center;
+  color: $opaque-text-color-medium;
+  display: inline-flex;
+  gap: 0.6rem;
+}
+
 .icon-color--blue {
   color: $light-blue;
 }

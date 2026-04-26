@@ -319,6 +319,66 @@ export async function getAllPizzaPlacesWithRatings() {
 	}
 }
 
+export async function getPizzaPlaceDetails(placeId: string) {
+	try {
+		const user = await getAuthenticatedUser();
+		const pizzaPlace = await prisma.pizzaPlace.findFirst({
+			where: {
+				id: placeId,
+				OR: [
+					{ source: 'PURCHASED' },
+					{ pizzaSliceRatings: { some: { userId: user.id } } },
+				],
+			},
+			include: {
+				pizzaSliceRatings: {
+					include: {
+						user: {
+							select: {
+								username: true,
+								image: true,
+							},
+						},
+						comments: true,
+						likes: true,
+					},
+					orderBy: {
+						createdAt: 'desc',
+					},
+				},
+			},
+		});
+
+		if (!pizzaPlace) {
+			return null;
+		}
+
+		const averageRating = pizzaPlace.pizzaSliceRatings.length
+			? calculateAverage(
+					pizzaPlace.pizzaSliceRatings.map((rating) => rating.overall),
+				)
+			: 0;
+
+		const yourRatings = pizzaPlace.pizzaSliceRatings.filter(
+			(rating) => rating.userId === user.id,
+		);
+		const communityRatings = pizzaPlace.pizzaSliceRatings.filter(
+			(rating) => rating.userId !== user.id,
+		);
+
+		return {
+			pizzaPlace,
+			averageRating,
+			yourRatings,
+			communityRatings,
+			userHasRated: yourRatings.length > 0,
+		};
+	} catch (error) {
+		console.error('Error fetching pizza place details:', error);
+		throw error;
+	}
+}
+
 export async function getUserRatedPlaceIds(): Promise<string[]> {
 	const user = await getAuthenticatedUser();
 	const ratings = await prisma.pizzaSliceRating.findMany({

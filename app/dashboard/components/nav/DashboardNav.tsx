@@ -16,7 +16,10 @@ export default function DashboardNav() {
 		<nav className="px-6 pb-6 w-full dashboard-nav sticky -top-[1px] z-10">
 			<div className="flex items-center justify-between w-full max-width m-auto">
 				{/* Header - always visible */}
-				<div className="flex items-center">
+				<Link
+					href="/dashboard"
+					className="flex items-center text-inherit no-underline"
+				>
 					<PizzaIcon
 						size={30}
 						className="mr-3 mt-1 pizza-icon--drop-shadow"
@@ -24,7 +27,7 @@ export default function DashboardNav() {
 					<h1 className="text-center m-0 font-semibold text-2xl text-shadow">
 						Pizza Quest
 					</h1>
-				</div>
+				</Link>
 
 				{/* Hamburger button - only visible on mobile */}
 				<button

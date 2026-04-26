@@ -1,27 +1,18 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Collapse } from '@mui/material';
+import Link from 'next/link';
 
-import type { PizzaPlace, PizzaSliceRating } from './Places';
-import RatingCard from './RatingCard';
+import type { PizzaPlace } from './Places';
 
 interface PlaceCardProps {
 	place: PizzaPlace;
 	rating: number;
-	isOpen: boolean;
 	showYoursBadge: boolean;
-	onToggle: (id: string) => void;
-	onOpenRating: (rating: PizzaSliceRating, place: PizzaPlace) => void;
-	onOpenImage: (imageUrl: string) => void;
 }
 
 export default function PlaceCard({
 	place,
 	rating,
-	isOpen,
 	showYoursBadge,
-	onToggle,
-	onOpenRating,
-	onOpenImage,
 }: PlaceCardProps) {
 	const ratingCount = place.pizzaSliceRatings.length;
 
@@ -30,11 +21,8 @@ export default function PlaceCard({
 			data-place-id={place.id}
 			className="place-card glass-card rounded-xl"
 		>
-			<button
-				type="button"
-				onClick={() => onToggle(place.id)}
-				aria-expanded={isOpen}
-				aria-controls={`place-${place.id}-details`}
+			<Link
+				href={`/dashboard/places/${place.id}`}
 				className="place-card__header"
 			>
 				<div className="place-card__main">
@@ -59,28 +47,9 @@ export default function PlaceCard({
 					</div>
 				</div>
 				<span className="place-card__chevron" aria-hidden="true">
-					<FontAwesomeIcon icon={isOpen ? 'chevron-up' : 'chevron-down'} />
+					<FontAwesomeIcon icon="chevron-right" />
 				</span>
-			</button>
-
-			<Collapse in={isOpen} timeout="auto" unmountOnExit>
-				<div
-					id={`place-${place.id}-details`}
-					className="place-card__details"
-				>
-					<ul className="space-y-3 m-0 p-0 list-none">
-						{place.pizzaSliceRatings.map((sliceRating) => (
-							<li key={sliceRating.id}>
-								<RatingCard
-									rating={sliceRating}
-									onOpenRating={(r) => onOpenRating(r, place)}
-									onOpenImage={onOpenImage}
-								/>
-							</li>
-						))}
-					</ul>
-				</div>
-			</Collapse>
+			</Link>
 		</article>
 	);
 }
