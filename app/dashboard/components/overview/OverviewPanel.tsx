@@ -6,8 +6,8 @@ import Link from 'next/link';
 
 import type { getDashboardStats } from '@/app/actions';
 
-import PizzaRatingDisplay from '../shared/PizzaRatingDisplay';
 import type { DashboardTab } from '../nav/DashboardTabs';
+import PizzaRatingDisplay from '../shared/PizzaRatingDisplay';
 import HighlightCards from './HighlightCards';
 import StatCard from './StatCard';
 
@@ -60,8 +60,7 @@ export default function OverviewPanel({
 				topRated={stats.topRated}
 				mostPopularPlace={stats.mostPopularPlace}
 				onTopRatedClick={() =>
-					stats.topRated &&
-					onFocusPlace('my-places', stats.topRated.placeId)
+					stats.topRated && onFocusPlace('my-places', stats.topRated.placeId)
 				}
 				onMostPopularClick={() =>
 					stats.mostPopularPlace &&
