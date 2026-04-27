@@ -259,10 +259,44 @@ button.glass-card--blue,
   color: #7fb3ff;
 }
 
+// =====================================================
+// Place details page
+// Matches the 900px content rail used by the rest of
+// the dashboard (stats-grid, highlights-grid, .place-list).
+// `.app` sets text-align: center globally; reset here so
+// the page reads naturally left-aligned on every viewport.
+// =====================================================
+.place-details {
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
 .place-details__back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 32px;
+  padding: 0.35rem 0.6rem;
+  margin-left: -0.6rem; // visually flush with the section while keeping a hit area
+  border-radius: 8px;
+  color: $opaque-text-color-light;
+  text-decoration: none;
+  transition: color 0.18s ease, background 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $white;
+    background: rgba(255, 255, 255, 0.06);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($yellow, 0.6);
+    outline-offset: 2px;
+  }
 }
 
 .place-details__description {
@@ -275,6 +309,11 @@ button.glass-card--blue,
   flex-direction: column;
   gap: 0.5rem;
   min-width: 180px;
+
+  @media (min-width: 768px) {
+    align-items: flex-end;
+    text-align: right;
+  }
 }
 
 .place-details__summary-label {
@@ -305,17 +344,51 @@ button.glass-card--blue,
   }
 }
 
+// Inline section CTA — scaled down from the dashboard hero
+// "Rate a Pizza" submit-cta so it reads as a single-line
+// action button instead of a hero panel.
 .place-details__cta {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
   margin: 0;
-  max-width: 320px;
-  width: 100%;
+  width: auto;
+  max-width: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  align-self: flex-start;
+  white-space: nowrap;
+
+  .submit-cta__label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .submit-cta__sub {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    align-self: stretch;
+    justify-content: center;
+  }
 }
 
 .place-details__empty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
   color: $opaque-text-color-medium;
-  display: inline-flex;
-  gap: 0.6rem;
+  text-align: center;
+
+  .svg-inline--fa {
+    font-size: 1.75rem;
+    opacity: 0.6;
+  }
 }
 
 .icon-color--blue {

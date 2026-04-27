@@ -41,11 +41,11 @@ export default function PlaceDetails({ details }: PlaceDetailsProps) {
 	};
 
 	return (
-		<div className="w-full max-width place-details">
+		<div className="place-details">
 			<div className="mb-6">
 				<Link href="/dashboard" className="place-details__back-link">
 					<FontAwesomeIcon icon="arrow-left" />
-					Back to dashboard
+					<span>Back to dashboard</span>
 				</Link>
 			</div>
 
@@ -88,10 +88,8 @@ export default function PlaceDetails({ details }: PlaceDetailsProps) {
 						</p>
 					</div>
 					<Link href="/dashboard/new" className="submit-cta place-details__cta">
+						<FontAwesomeIcon icon="plus" />
 						<span className="submit-cta__label">Add Your Rating</span>
-						<span className="submit-cta__sub">
-							Start a new rating entry for this place.
-						</span>
 					</Link>
 				</div>
 
@@ -111,7 +109,7 @@ export default function PlaceDetails({ details }: PlaceDetailsProps) {
 						))}
 					</ul>
 				) : (
-					<div className="place-details__empty mt-5">
+					<div className="place-details__empty">
 						<FontAwesomeIcon icon="pizza-slice" />
 						<span>You haven’t rated this one yet.</span>
 					</div>
@@ -144,7 +142,7 @@ export default function PlaceDetails({ details }: PlaceDetailsProps) {
 						))}
 					</ul>
 				) : (
-					<div className="place-details__empty mt-5">
+					<div className="place-details__empty">
 						<FontAwesomeIcon icon="camera" />
 						<span>No one else has rated this place yet.</span>
 					</div>
